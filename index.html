@@ -48,6 +48,20 @@
       cursor: pointer; font-family: monospace; font-size: 14px;
     }
     button:hover { background: #444; }
+    #dpad { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 8px; }
+    .dpad-row { display: flex; gap: 4px; }
+    .ctrl-btn {
+      width: 36px; height: 36px;
+      background: #2a2a2a; color: white;
+      border: 1px solid #555; cursor: pointer;
+      font-size: 16px; font-family: monospace;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0; border-radius: 4px;
+      user-select: none;
+    }
+    .ctrl-btn.wide { width: 80px; font-size: 12px; }
+    .ctrl-btn:hover { background: #3a3a3a; }
+    .ctrl-btn:active { background: #555; transform: scale(0.95); }
     #bmc {
       position: fixed;
       bottom: 20px;
@@ -76,14 +90,21 @@
     <h2>LINES</h2>  <p id="lines">0</p>
     <h2>NEXT</h2>
     <canvas id="next-canvas" width="120" height="80" style="border:1px solid #333; margin-bottom:18px;"></canvas>
+    <button id="pause-btn" onclick="togglePause()" style="width:100%; margin-bottom:18px;">⏸ Pause</button>
     <h2>CONTROLS</h2>
-    <small>
-      ← → &nbsp;Move<br>
-      ↑ &nbsp;&nbsp;&nbsp;Rotate<br>
-      ↓ &nbsp;&nbsp;&nbsp;Soft drop<br>
-      Space Hard drop<br>
-      P &nbsp;&nbsp;&nbsp;Pause
-    </small>
+    <div id="dpad">
+      <div class="dpad-row">
+        <button class="ctrl-btn" onclick="handleControl('ArrowUp')" title="Rotate">↑</button>
+      </div>
+      <div class="dpad-row">
+        <button class="ctrl-btn" onclick="handleControl('ArrowLeft')" title="Move left">←</button>
+        <button class="ctrl-btn" onclick="handleControl('ArrowDown')" title="Soft drop">↓</button>
+        <button class="ctrl-btn" onclick="handleControl('ArrowRight')" title="Move right">→</button>
+      </div>
+      <div class="dpad-row">
+        <button class="ctrl-btn wide" onclick="handleControl(' ')" title="Hard drop">⬇ Drop</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -318,12 +339,46 @@
 
   // ── input ─────────────────────────────────────────────────
 
+  function handleControl(key) {
+    if (gameOver || paused) return;
+    switch (key) {
+      case 'ArrowLeft':
+        if (!collides(piece.shape, piece.x - 1, piece.y)) piece.x--;
+        break;
+      case 'ArrowRight':
+        if (!collides(piece.shape, piece.x + 1, piece.y)) piece.x++;
+        break;
+      case 'ArrowDown':
+        if (!collides(piece.shape, piece.x, piece.y + 1)) piece.y++;
+        else lock();
+        break;
+      case 'ArrowUp': {
+        const rot = rotate(piece.shape);
+        if      (!collides(rot, piece.x,     piece.y)) { piece.shape = rot; }
+        else if (!collides(rot, piece.x + 1, piece.y)) { piece.shape = rot; piece.x++; }
+        else if (!collides(rot, piece.x - 1, piece.y)) { piece.shape = rot; piece.x--; }
+        break;
+      }
+      case ' ':
+        while (!collides(piece.shape, piece.x, piece.y + 1)) piece.y++;
+        lock();
+        break;
+    }
+    draw();
+  }
+
+  function togglePause() {
+    if (gameOver) return;
+    paused = !paused;
+    if (!paused) { lastTime = null; dropAccum = 0; }
+    document.getElementById('pause-btn').textContent = paused ? '▶ Resume' : '⏸ Pause';
+  }
+
   document.addEventListener('keydown', e => {
     if (gameOver) return;
 
     if (e.key === 'p' || e.key === 'P') {
-      paused = !paused;
-      if (!paused) { lastTime = null; dropAccum = 0; }
+      togglePause();
       return;
     }
     if (paused) return;
