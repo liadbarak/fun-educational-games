@@ -1,40 +1,76 @@
 /*
- * Clean-Up Snake.
+ * Food Rescue.
  *
- * The snake is a park clean-up crew: it collects dropped litter, and every so
- * often has to say which bin the thing it just picked up belongs in.
+ * The snake finds food dropped around the kitchen and has to put it away:
+ * anything still good goes in the fridge, anything that's just scraps goes in
+ * the bin. Picking a destination IS the answer — there's no quiz popup, the
+ * decision is the route you steer.
  *
  * Loop, pause, overlay and high score come from shared/shell.js.
  */
 
 const CELLS = 20, CELL = 20;
-const START_STEP_MS = 140, MIN_STEP_MS = 60, SPEEDUP_PER_ITEM = 4;
+const START_STEP_MS = 165, MIN_STEP_MS = 95, SPEEDUP_PER_DROPOFF = 3;
 
-/* Items collected between questions. */
-const ITEMS_PER_QUESTION = 5;
-const QUIZ_BONUS = 50;
+const POINTS_PICKUP = 5;
+const POINTS_RIGHT_BIN = 25;
 
-const BINS = ['Recycling', 'Compost', 'Trash'];
+/* Fixed corners, so the route becomes something a player learns rather than hunts for. */
+const FRIDGE = { x0: 0,  y0: 0, x1: 3,  y1: 1, kind: 'fridge' };
+const BIN    = { x0: 16, y0: 0, x1: 19, y1: 1, kind: 'bin' };
 
 /*
- * Deliberately unambiguous items only — sorting rules genuinely differ between
- * countries, so anything a council might disagree about (pizza boxes, coffee
- * cups, juice cartons) is left out.
+ * `fresh: true` means it's still good to eat and belongs in the fridge.
+ * No emoji is reused across the two lists — the same picture never means two
+ * different things, which matters when the whole game is telling them apart.
  */
-const LITTER = [
-  { icon: '📰', name: 'a newspaper',    bin: 'Recycling', fact: 'Paper can become new paper again.' },
-  { icon: '📦', name: 'a cardboard box', bin: 'Recycling', fact: 'Flatten boxes so they take up less room.' },
-  { icon: '🥫', name: 'a tin can',       bin: 'Recycling', fact: 'Metal can be melted down and reused forever.' },
-  { icon: '🧴', name: 'a plastic bottle', bin: 'Recycling', fact: 'Empty it first so it can be recycled.' },
-  { icon: '🍎', name: 'an apple core',   bin: 'Compost',   fact: 'Food scraps turn back into soil.' },
-  { icon: '🍌', name: 'a banana peel',   bin: 'Compost',   fact: 'Peels rot down and feed plants.' },
-  { icon: '🍂', name: 'dry leaves',      bin: 'Compost',   fact: 'Leaves make great compost.' },
-  { icon: '🥕', name: 'a carrot top',    bin: 'Compost',   fact: 'Veg scraps belong with the food waste.' },
-  { icon: '🍬', name: 'a sweet wrapper', bin: 'Trash',     fact: 'Shiny wrappers are too mixed up to recycle.' },
-  { icon: '🎈', name: 'a popped balloon', bin: 'Trash',    fact: 'Balloons hurt wildlife — always bin them.' },
-  { icon: '🧦', name: 'an old sock',     bin: 'Trash',     fact: 'Worn-out clothes go to textile bins or the trash.' },
-  { icon: '👟', name: 'a broken shoe',   bin: 'Trash',     fact: 'Shoes that still fit are better donated.' },
+const FOODS = [
+  { icon: '🍎', name: 'an apple',        fresh: true },
+  { icon: '🧀', name: 'some cheese',     fresh: true },
+  { icon: '🥛', name: 'a glass of milk', fresh: true },
+  { icon: '🥕', name: 'a carrot',        fresh: true },
+  { icon: '🍓', name: 'strawberries',    fresh: true },
+  { icon: '🥦', name: 'broccoli',        fresh: true },
+  { icon: '🍇', name: 'grapes',          fresh: true },
+  { icon: '🍅', name: 'a tomato',        fresh: true },
+
+  { icon: '🍌', name: 'a banana peel',   fresh: false },
+  { icon: '🦴', name: 'a chicken bone',  fresh: false },
+  { icon: '🍬', name: 'a sweet wrapper', fresh: false },
+  { icon: '🥤', name: 'an empty cup',    fresh: false },
+  { icon: '🥡', name: 'an empty box',    fresh: false },
 ];
+
+const FRESH_FOODS = FOODS.filter(f => f.fresh);
+const SCRAPS      = FOODS.filter(f => !f.fresh);
+
+const HOW_TO = `
+  <div class="howto">
+    <div class="howto-step">
+      <span class="howto-num">1</span>
+      <div class="howto-text">
+        Steer the snake onto the <b>food</b> to pick it up.
+      </div>
+      <div class="howto-demo" style="font-size:19px">🐍<span class="howto-arrow">→</span>🍎</div>
+    </div>
+
+    <div class="howto-step">
+      <span class="howto-num">2</span>
+      <div class="howto-text">
+        Still good to eat? Carry it to the <b>fridge</b>.
+      </div>
+      <div class="howto-demo" style="font-size:19px">🍎<span class="howto-arrow">→</span>🧊</div>
+    </div>
+
+    <div class="howto-step">
+      <span class="howto-num">3</span>
+      <div class="howto-text">
+        Only scraps left? Carry it to the <b>bin</b>.
+      </div>
+      <div class="howto-demo" style="font-size:19px">🍌<span class="howto-arrow">→</span>🗑️</div>
+    </div>
+  </div>
+`;
 
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
@@ -44,39 +80,10 @@ const THEME = {
   line:      cssVar('--board-line'),
   snake:     cssVar('--success'),
   snakeHead: '#2E8B5F',
+  fridge:    '#CFE6FA',
+  bin:       '#E2DCD3',
 };
 const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-
-const HOW_TO = `
-  <div class="howto">
-    <div class="howto-step">
-      <span class="howto-num">1</span>
-      <div class="howto-text">
-        Steer the snake onto the <b>litter</b> to pick it up. It grows a
-        little each time.
-      </div>
-      <div class="howto-demo" style="font-size:20px">🐍 <span class="howto-arrow">→</span> 🍌</div>
-    </div>
-
-    <div class="howto-step">
-      <span class="howto-num">2</span>
-      <div class="howto-text">
-        Don't hit the <b>walls</b> or your own <b>tail</b> — and it speeds up
-        as you go.
-      </div>
-      <div class="howto-demo" style="font-size:20px">🧱</div>
-    </div>
-
-    <div class="howto-step">
-      <span class="howto-num">3</span>
-      <div class="howto-text">
-        Every few pickups you'll be asked <b>which bin</b> it belongs in.
-        Getting it right is worth bonus points.
-      </div>
-      <div class="howto-demo" style="font-size:20px">♻️</div>
-    </div>
-  </div>
-`;
 
 const DIRECTIONS = {
   up:    { x:  0, y: -1 },
@@ -85,38 +92,48 @@ const DIRECTIONS = {
   right: { x:  1, y:  0 },
 };
 
-let snake;      // cells from head to tail
-let dir;        // direction being travelled this step
-let nextDir;    // direction queued by the player for the next step
-let item;       // the litter currently on the board
-let score, collected;
+let snake;        // cells from head to tail
+let dir;          // direction being travelled this step
+let nextDir;      // direction queued by the player for the next step
+let food;         // the item waiting on the floor, or null while carrying
+let carrying;     // the item the snake is holding, or null
+let score, saved, binned;
 let stepMs;
-let itemsSinceQuestion;
-let sortingMode = Prefs.read('sortingMode', true);
+let popups;       // [{ x, y, text, until }] floating score text
 
 /* ── state helpers ──────────────────────────────────────────── */
+
+const inZone = (x, y, z) => x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1;
 
 function isOnSnake(x, y) {
   return snake.some(cell => cell.x === x && cell.y === y);
 }
 
-/* Picks from the cells the snake is not occupying, so a full board can't hang the game. */
-function placeItem() {
+/* Fresh and scraps spawn equally often, even though the two lists differ in size. */
+function placeFood() {
+  const list = Math.random() < 0.5 ? FRESH_FOODS : SCRAPS;
+  const pick = list[Math.floor(Math.random() * list.length)];
+
   const free = [];
   for (let y = 0; y < CELLS; y++)
     for (let x = 0; x < CELLS; x++)
-      if (!isOnSnake(x, y)) free.push({ x, y });
+      if (!isOnSnake(x, y) && !inZone(x, y, FRIDGE) && !inZone(x, y, BIN)) free.push({ x, y });
 
-  if (!free.length) { item = null; return false; }
-
-  const spot = free[Math.floor(Math.random() * free.length)];
-  item = { ...spot, ...LITTER[Math.floor(Math.random() * LITTER.length)] };
-  return true;
+  food = free.length ? { ...free[Math.floor(Math.random() * free.length)], ...pick } : null;
 }
 
 function updateStats() {
   document.getElementById('score').textContent = score;
-  document.getElementById('collected').textContent = collected;
+  document.getElementById('saved').textContent = saved;
+  document.getElementById('binned').textContent = binned;
+
+  const hud = document.getElementById('carrying');
+  hud.textContent = carrying ? `${carrying.icon} ${carrying.name}` : 'nothing yet';
+  hud.classList.toggle('is-holding', Boolean(carrying));
+}
+
+function popup(x, y, text) {
+  popups.push({ x, y, text, until: Date.now() + 900 });
 }
 
 /* ── game logic ─────────────────────────────────────────────── */
@@ -129,59 +146,106 @@ function step() {
   /* The tail cell moves out of the way this step, so running into it is not a crash. */
   const hitSelf = snake.slice(0, -1).some(c => c.x === head.x && c.y === head.y);
   if (hitWall || hitSelf) {
-    shell.gameOver(score, `${collected} items cleaned up`);
+    shell.gameOver(score, `${saved} saved · ${binned} binned`);
     return;
   }
 
   snake.unshift(head);
+  snake.pop();                     // growth only happens on a drop-off
 
-  const picked = item && head.x === item.x && head.y === item.y;
-  if (!picked) {
-    snake.pop();               // only grow on the step where something was collected
+  if (!carrying && food && head.x === food.x && head.y === food.y) {
+    carrying = food;
+    food = null;
+    score += POINTS_PICKUP;
+    popup(head.x, head.y, `+${POINTS_PICKUP}`);
+    updateStats();
     return;
   }
 
-  const justPicked = item;
-  score += 10;
-  collected++;
-  stepMs = Math.max(MIN_STEP_MS, stepMs - SPEEDUP_PER_ITEM);
-  shell.setStepMs(stepMs);
-  updateStats();
-
-  if (!placeItem()) {          // board full — nothing left to collect
-    shell.gameOver(score, 'Park completely clean!');
-    return;
-  }
-
-  itemsSinceQuestion++;
-  if (sortingMode && itemsSinceQuestion >= ITEMS_PER_QUESTION) {
-    askSortingQuestion(justPicked);
+  if (carrying) {
+    if (inZone(head.x, head.y, FRIDGE)) dropOff('fridge', head);
+    else if (inZone(head.x, head.y, BIN)) dropOff('bin', head);
   }
 }
 
-function askSortingQuestion(litter) {
-  itemsSinceQuestion = 0;
+function dropOff(kind, at) {
+  const item = carrying;
+  const correct = (kind === 'fridge') === item.fresh;
+
+  carrying = null;
+  snake.push({ ...snake[snake.length - 1] });   // grow by one
+  stepMs = Math.max(MIN_STEP_MS, stepMs - SPEEDUP_PER_DROPOFF);
+  shell.setStepMs(stepMs);
+
+  if (correct) {
+    score += POINTS_RIGHT_BIN;
+    if (kind === 'fridge') saved++; else binned++;
+    popup(at.x, at.y, `+${POINTS_RIGHT_BIN}`);
+    placeFood();
+    updateStats();
+    return;
+  }
+
+  /*
+   * Wrong bin: no points lost, but pause long enough to read why. Freezing is
+   * the point here — this is the one moment the game is actually teaching.
+   */
+  updateStats();
   shell.suspend();
   shell.redraw();
-
-  Quiz.ask({
-    prompt: `You picked up ${litter.name}`,
-    question: `${litter.icon}  Which bin?`,
-    choices: BINS,
-    answer: litter.bin,
-    praise: 'Sorted right!',
-    teach: litter.fact,
-    onResult(correct) {
-      if (correct) {
-        score += QUIZ_BONUS;
-        updateStats();
-      }
+  Quiz.tell({
+    title: item.fresh ? 'That was still good!' : 'That one was just scraps',
+    note: item.fresh
+      ? `${item.icon} Food you can still eat goes in the fridge, not the bin.`
+      : `${item.icon} Scraps go in the bin — the fridge is for food you'll eat.`,
+    onDone() {
+      placeFood();
       shell.resume();
     },
   });
 }
 
 /* ── drawing ────────────────────────────────────────────────── */
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y,     x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x,     y + h, r);
+  ctx.arcTo(x,     y + h, x,     y,     r);
+  ctx.arcTo(x,     y,     x + w, y,     r);
+  ctx.closePath();
+}
+
+function drawZone(zone, fill, icon, label, isTarget) {
+  const x = zone.x0 * CELL, y = zone.y0 * CELL;
+  const w = (zone.x1 - zone.x0 + 1) * CELL;
+  const h = (zone.y1 - zone.y0 + 1) * CELL;
+
+  ctx.fillStyle = fill;
+  roundRect(x + 1, y + 1, w - 2, h - 2, 8);
+  ctx.fill();
+
+  /* While carrying, ring the destination that would be correct. */
+  if (isTarget) {
+    ctx.save();
+    ctx.strokeStyle = cssVar('--success');
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([5, 4]);
+    roundRect(x + 1, y + 1, w - 2, h - 2, 8);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.font = `16px ${EMOJI_FONT}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(icon, x + w / 2, y + h / 2 - 5);
+
+  ctx.font = `700 9px ${cssVar('--font')}`;
+  ctx.fillStyle = 'rgba(45,49,66,0.6)';
+  ctx.fillText(label, x + w / 2, y + h - 8);
+}
 
 function draw() {
   ctx.fillStyle = THEME.board;
@@ -194,11 +258,14 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, canvas.height); ctx.stroke();
   }
 
-  if (item) {
+  drawZone(FRIDGE, THEME.fridge, '🧊', 'FRIDGE', false);
+  drawZone(BIN,    THEME.bin,    '🗑️', 'BIN',    false);
+
+  if (food) {
     ctx.font = `${Math.round(CELL * 0.8)}px ${EMOJI_FONT}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(item.icon, item.x * CELL + CELL / 2, item.y * CELL + CELL / 2 + 1);
+    ctx.fillText(food.icon, food.x * CELL + CELL / 2, food.y * CELL + CELL / 2 + 1);
   }
 
   snake.forEach((cell, i) => {
@@ -206,16 +273,34 @@ function draw() {
     roundRect(cell.x * CELL + 1.5, cell.y * CELL + 1.5, CELL - 3, CELL - 3, 5);
     ctx.fill();
   });
+
+  /* What the snake is holding rides along on its head. */
+  if (carrying) {
+    const head = snake[0];
+    ctx.font = `${Math.round(CELL * 0.7)}px ${EMOJI_FONT}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(carrying.icon, head.x * CELL + CELL / 2, head.y * CELL + CELL / 2);
+  }
+
+  drawPopups();
 }
 
-function roundRect(x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y,     x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x,     y + h, r);
-  ctx.arcTo(x,     y + h, x,     y,     r);
-  ctx.arcTo(x,     y,     x + w, y,     r);
-  ctx.closePath();
+function drawPopups() {
+  const now = Date.now();
+  popups = popups.filter(p => p.until > now);
+
+  popups.forEach(p => {
+    const life = (p.until - now) / 900;             // 1 -> 0
+    ctx.save();
+    ctx.globalAlpha = life;
+    ctx.fillStyle = cssVar('--success');
+    ctx.font = `800 13px ${cssVar('--font')}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.text, p.x * CELL + CELL / 2, p.y * CELL + CELL / 2 - (1 - life) * 18);
+    ctx.restore();
+  });
 }
 
 /* ── input ──────────────────────────────────────────────────── */
@@ -250,9 +335,9 @@ document.querySelectorAll('[data-control]').forEach(btn =>
 /* ── wiring ─────────────────────────────────────────────────── */
 
 const shell = createGameShell({
-  name: 'snake',
-  title: 'CLEAN-UP SNAKE',
-  subtitle: 'Collect the litter — and know which bin it goes in',
+  name: 'foodrescue',
+  title: 'FOOD RESCUE',
+  subtitle: 'Good food to the fridge, scraps to the bin',
   howTo: HOW_TO,
   stepMs: START_STEP_MS,
 
@@ -265,12 +350,14 @@ const shell = createGameShell({
     ];
     dir = DIRECTIONS.right;
     nextDir = dir;
+    carrying = null;
     score = 0;
-    collected = 0;
-    itemsSinceQuestion = 0;
+    saved = 0;
+    binned = 0;
+    popups = [];
     stepMs = START_STEP_MS;
     shell.setStepMs(stepMs);
-    placeItem();
+    placeFood();
     updateStats();
     Quiz.hide();
   },
@@ -281,10 +368,3 @@ const shell = createGameShell({
 
 document.getElementById('pause-btn').addEventListener('click', () => shell.togglePause());
 document.getElementById('howto-btn').addEventListener('click', () => shell.showHowTo());
-
-const sortingToggle = document.getElementById('sorting-toggle');
-sortingToggle.checked = sortingMode;
-sortingToggle.addEventListener('change', () => {
-  sortingMode = sortingToggle.checked;
-  Prefs.write('sortingMode', sortingMode);
-});

@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Clean-Up Snake — Free Recycling &amp; Sorting Game for Kids</title>
-  <meta name="description" content="Classic Snake with a green twist: collect the litter and learn which bin it belongs in. A free recycling game for kids — no download, no signup.">
+  <title>Food Rescue — Free Food Waste Game for Kids</title>
+  <meta name="description" content="A free snake game about not wasting food: carry good food to the fridge and scraps to the bin. Teaches kids what can still be eaten — no download, no signup.">
   <link rel="canonical" href="https://liadbarak.github.io/fun-educational-games/snake/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Clean-Up Snake — Free Recycling Game for Kids">
-  <meta property="og:description" content="Collect the litter, sort it right. A free recycling game in your browser.">
+  <meta property="og:title" content="Food Rescue — Free Food Waste Game for Kids">
+  <meta property="og:description" content="Good food to the fridge, scraps to the bin. A free snake game about not wasting food.">
   <meta property="og:url" content="https://liadbarak.github.io/fun-educational-games/snake/">
   <meta name="twitter:card" content="summary_large_image">
 
@@ -22,17 +22,18 @@
   <canvas id="board" width="400" height="400"></canvas>
 
   <div id="info">
-    <span class="tag tag-nature">♻️ Recycling &amp; Sorting</span>
+    <span class="tag tag-nature">🍎 Food Waste &amp; Sorting</span>
 
     <div class="stats">
-      <div><h2>Score</h2>     <p id="score">0</p></div>
-      <div><h2>Collected</h2> <p id="collected">0</p></div>
+      <div><h2>Score</h2>  <p id="score">0</p></div>
+      <div><h2>Saved</h2>  <p id="saved">0</p></div>
+      <div><h2>Binned</h2> <p id="binned">0</p></div>
     </div>
 
-    <label class="toggle">
-      <input type="checkbox" id="sorting-toggle">
-      <span>Sorting questions</span>
-    </label>
+    <div class="carry-hud">
+      <h2>Carrying</h2>
+      <div id="carrying">nothing yet</div>
+    </div>
 
     <button id="howto-btn" class="btn-block">❓ How to play</button>
     <button id="pause-btn" class="btn-block">⏸ Pause</button>
@@ -54,11 +55,12 @@
 
 <aside class="parent-note">
   <strong>For parents</strong>
-  This game exercises <b>sorting waste into recycling, compost and general
-  rubbish</b>. Every few pickups, the snake asks which bin the last item belongs
-  in. A wrong answer explains why in one line, so the reasoning sticks rather
-  than just the rule. Only items that sort the same way in most countries are
-  used. Questions can be switched off with the tickbox above.
+  This game exercises <b>telling food that's still good from food that's
+  finished with</b> — the everyday judgement behind not wasting food. Rather
+  than answering a question about it, the child has to carry each item to the
+  fridge or the bin, so the decision is the move they make. Putting good food
+  in the bin costs no points; it pauses briefly to explain why it could still
+  have been eaten, then play continues.
 </aside>
 </div>
 

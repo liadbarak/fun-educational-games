@@ -93,6 +93,18 @@ canvas {
 .next-block h2 { margin-bottom: 6px; }
 .next-block canvas { margin-bottom: 16px; }
 
+/* Shows what the snake is holding, and what it is called. */
+.carry-hud { margin-bottom: 16px; }
+#carrying {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+#carrying.is-holding { background: #DCE9FF; color: var(--accent-dark); }
+
 /* Reference strip of the number pairs, for anyone still learning them. */
 .bonds { margin-bottom: 16px; }
 .bonds span {

@@ -80,6 +80,31 @@ const Quiz = (function () {
     }, correct ? CORRECT_MS : WRONG_MS);
   }
 
+  /**
+   * A message with no question — for telling the player something and moving on.
+   *
+   * @param {object}   m
+   * @param {string}   m.title
+   * @param {string}   m.note
+   * @param {string}   [m.tone]    'good' or 'teach' (default).
+   * @param {number}   [m.ms]      How long to leave it up.
+   * @param {function} [m.onDone]
+   */
+  function tell(m) {
+    clearTimeout(dismissTimer);
+    const box = ensurePanel();
+    box.className = m.tone === 'good' ? 'is-correct' : 'is-wrong';
+    box.style.display = 'block';
+    box.innerHTML = `
+      <div class="quiz-result">${m.title}</div>
+      <div class="quiz-note">${m.note}</div>
+    `;
+    dismissTimer = setTimeout(() => {
+      hide();
+      if (m.onDone) m.onDone();
+    }, m.ms || 2600);
+  }
+
   /* Two plausible near-misses, never negative and never a repeat of the answer. */
   function numberChoices(answer) {
     const choices = new Set([answer]);
@@ -110,5 +135,5 @@ const Quiz = (function () {
     });
   }
 
-  return { ask, askMath, hide };
+  return { ask, askMath, tell, hide };
 })();
