@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Play Snake Online — Free Classic Arcade Game</title>
-  <meta name="description" content="Play the classic Snake game free in your browser. No download, no signup — eat, grow, and practise planning ahead under pressure.">
+  <title>Clean-Up Snake — Free Recycling &amp; Sorting Game for Kids</title>
+  <meta name="description" content="Classic Snake with a green twist: collect the litter and learn which bin it belongs in. A free recycling game for kids — no download, no signup.">
   <link rel="canonical" href="https://liadbarak.github.io/fun-educational-games/snake/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Play Snake Online — Free Classic Arcade Game">
-  <meta property="og:description" content="The classic Snake game, free in your browser. No download, no signup.">
+  <meta property="og:title" content="Clean-Up Snake — Free Recycling Game for Kids">
+  <meta property="og:description" content="Collect the litter, sort it right. A free recycling game in your browser.">
   <meta property="og:url" content="https://liadbarak.github.io/fun-educational-games/snake/">
   <meta name="twitter:card" content="summary_large_image">
 
@@ -17,19 +17,27 @@
 </head>
 <body class="game-page">
 
+<div class="game-wrap">
 <div id="game">
   <canvas id="board" width="400" height="400"></canvas>
 
   <div id="info">
-    <span class="tag tag-logic">🧭 Planning &amp; Reaction</span>
+    <span class="tag tag-nature">♻️ Recycling &amp; Sorting</span>
 
-    <h2>SCORE</h2>  <p id="score">0</p>
-    <h2>LENGTH</h2> <p id="length">3</p>
+    <div class="stats">
+      <div><h2>Score</h2>     <p id="score">0</p></div>
+      <div><h2>Collected</h2> <p id="collected">0</p></div>
+    </div>
+
+    <label class="toggle">
+      <input type="checkbox" id="sorting-toggle">
+      <span>Sorting questions</span>
+    </label>
 
     <button id="pause-btn" class="btn-block">⏸ Pause</button>
     <a class="btn-support" href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">☕ Buy me a coffee</a>
 
-    <h2>CONTROLS</h2>
+    <h2>Controls</h2>
     <div id="dpad">
       <div class="dpad-row">
         <button class="ctrl-btn" data-control="up" title="Up">↑</button>
@@ -43,7 +51,18 @@
   </div>
 </div>
 
+<aside class="parent-note">
+  <strong>For parents</strong>
+  This game exercises <b>sorting waste into recycling, compost and general
+  rubbish</b>. Every few pickups, the snake asks which bin the last item belongs
+  in. A wrong answer explains why in one line, so the reasoning sticks rather
+  than just the rule. Only items that sort the same way in most countries are
+  used. Questions can be switched off with the tickbox above.
+</aside>
+</div>
+
 <script src="../shared/shell.js"></script>
+<script src="../shared/quiz.js"></script>
 <script src="snake.js"></script>
 <script>renderFooter('../');</script>
 </body>

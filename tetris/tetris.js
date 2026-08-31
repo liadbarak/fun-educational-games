@@ -14,16 +14,22 @@ const COLS = 10, ROWS = 20, SIZE = 30;
 const LANDINGS_PER_QUESTION = 5;
 const QUIZ_BONUS = 50;
 
+/* Softened from the arcade originals so a dark digit stays readable on every one. */
 const COLORS = [
   null,
-  '#00f0f0', // I - cyan
-  '#f0f000', // O - yellow
-  '#a000f0', // T - purple
-  '#00f000', // S - green
-  '#f00000', // Z - red
-  '#0000f0', // J - blue
-  '#f0a000', // L - orange
+  '#4FD1DE', // I - cyan
+  '#F7CE52', // O - yellow
+  '#B98CF0', // T - purple
+  '#6FCF80', // S - green
+  '#F87E79', // Z - red
+  '#7BA7F5', // J - blue
+  '#F9A75C', // L - orange
 ];
+
+const THEME = {
+  board: cssVar('--board-bg'),
+  line:  cssVar('--board-line'),
+};
 
 /*
  * Templates hold colour indexes; randomPiece turns them into cells with digits.
@@ -173,7 +179,7 @@ function askQuestion(contact) {
   shell.suspend();
   shell.redraw();          // paint the glow once; the loop is frozen so it stays put
 
-  MathQuiz.ask(contact.landed.n, contact.settled.n, (correct) => {
+  Quiz.askMath(contact.landed.n, contact.settled.n, (correct) => {
     if (correct) {
       score += QUIZ_BONUS;
       updateStats();
@@ -203,7 +209,7 @@ function drawCell(context, x, y, cell, size, dim) {
 
   /* Dark digit reads well on every one of the seven piece colours. */
   context.fillStyle = dim ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.75)';
-  context.font = `bold ${Math.round(size * 0.5)}px monospace`;
+  context.font = `800 ${Math.round(size * 0.52)}px ${cssVar('--font')}`;
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.fillText(cell.n, px + size / 2, py + size / 2 + 1);
@@ -212,19 +218,19 @@ function drawCell(context, x, y, cell, size, dim) {
 function drawHighlight(x, y) {
   const px = x * SIZE, py = y * SIZE;
   ctx.save();
-  ctx.strokeStyle = '#fff';
+  ctx.strokeStyle = cssVar('--accent');
   ctx.lineWidth = 3;
-  ctx.shadowColor = '#fff';
+  ctx.shadowColor = cssVar('--accent');
   ctx.shadowBlur = 14;
   ctx.strokeRect(px + 2, py + 2, SIZE - 4, SIZE - 4);
   ctx.restore();
 }
 
 function drawBoard() {
-  ctx.fillStyle = '#111';
+  ctx.fillStyle = THEME.board;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.strokeStyle = '#1e1e1e';
+  ctx.strokeStyle = THEME.line;
   ctx.lineWidth = 1;
   for (let r = 0; r <= ROWS; r++) {
     ctx.beginPath(); ctx.moveTo(0, r * SIZE); ctx.lineTo(canvas.width, r * SIZE); ctx.stroke();
@@ -239,7 +245,7 @@ function drawBoard() {
 
   const gy = ghostY();
   if (gy !== piece.y) {
-    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fillStyle = 'rgba(45,49,66,0.10)';
     piece.shape.forEach((row, r) =>
       row.forEach((cell, c) => {
         if (cell) ctx.fillRect((piece.x + c) * SIZE + 1, (gy + r) * SIZE + 1, SIZE - 2, SIZE - 2);
@@ -258,7 +264,7 @@ function drawBoard() {
 
 function drawNext() {
   const size = 24;
-  nextCtx.fillStyle = '#111';
+  nextCtx.fillStyle = THEME.board;
   nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
 
   const offX = Math.floor((nextCanvas.width  / size - nextPiece.shape[0].length) / 2);
@@ -350,7 +356,7 @@ const shell = createGameShell({
     nextPiece = randomPiece();
     shell.setStepMs(1000);
     updateStats();
-    MathQuiz.hide();
+    Quiz.hide();
   },
 
   onStep() {

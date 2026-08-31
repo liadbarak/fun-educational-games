@@ -46,6 +46,11 @@ const HighScore = {
   },
 };
 
+/* Reads a theme colour off :root, so style.css stays the only place colour lives. */
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 /* Player settings, same best-effort storage rules as the high score. */
 const Prefs = {
   read(key, fallback) {
@@ -180,7 +185,7 @@ function createGameShell(config) {
         ${detail ? `<p>${detail}</p>` : ''}
         <p>Score: ${score}</p>
         <p class="best">${isRecord ? '★ NEW BEST!' : `Best: ${best}`}</p>
-        <button data-action="start">PLAY AGAIN</button>
+        <button class="btn-primary" data-action="start">PLAY AGAIN</button>
       `);
     },
   };
@@ -196,7 +201,7 @@ function createGameShell(config) {
     <h2>${config.title}</h2>
     <p>${config.subtitle}</p>
     ${best ? `<p class="best">Best: ${best}</p>` : ''}
-    <button data-action="start">START</button>
+    <button class="btn-primary" data-action="start">START</button>
   `);
 
   /* One listener for both overlay buttons, so games never wire up onclick by hand. */

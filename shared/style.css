@@ -1,11 +1,46 @@
-/* Shared theme for every game on the site. Game-specific rules live in the game's own page. */
+/*
+ * Shared theme for every game on the site.
+ *
+ * All colour lives in the variables below — the games read the board colours
+ * straight off :root, so this block is the single place to retune the look.
+ */
+
+:root {
+  /* page */
+  --bg-top:     #EAF4FF;
+  --bg-bottom:  #FFF6EC;
+  --surface:    #FFFFFF;
+  --surface-2:  #F4F7FD;
+  --ink:        #2D3142;
+  --muted:      #6B7280;
+  --line:       #E3E9F4;
+
+  /* accents */
+  --accent:      #5B8DEF;
+  --accent-dark: #3E6FD0;
+  --warm:        #FF8A5B;
+  --success:     #3FAE72;
+  --gold:        #F5B93B;
+
+  /* playfield */
+  --board-bg:   #EEF2FA;
+  --board-line: #DCE3F0;
+
+  --radius: 16px;
+  --shadow: 0 2px 10px rgba(45,49,66,0.08);
+  --shadow-lg: 0 8px 30px rgba(45,49,66,0.16);
+
+  --font: ui-rounded, 'SF Pro Rounded', 'Nunito', 'Segoe UI Variable',
+          'Segoe UI', system-ui, -apple-system, sans-serif;
+}
 
 * { box-sizing: border-box; }
 
 body {
-  background: #111;
-  color: #fff;
-  font-family: monospace;
+  background: linear-gradient(165deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font);
   margin: 0;
 }
 
@@ -20,114 +55,180 @@ body {
   padding: 24px 16px 64px;
 }
 
-#game { display: flex; gap: 24px; align-items: flex-start; }
+#game {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  background: var(--surface);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
 
-canvas { border: 2px solid #333; display: block; }
+canvas {
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  display: block;
+}
 
-#info { width: 130px; padding-top: 4px; }
-#info h2 { margin: 0 0 4px; font-size: 12px; color: #888; letter-spacing: 1px; }
-#info p  { margin: 0 0 18px; font-size: 28px; font-weight: bold; }
+#info { width: 140px; padding-top: 2px; }
+#info h2 {
+  margin: 0 0 2px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+#info p { margin: 0 0 16px; font-size: 26px; font-weight: 800; }
+
+.next-block h2 { margin-bottom: 6px; }
+.next-block canvas { margin-bottom: 16px; }
 
 /* ── buttons ──────────────────────────────────────────────── */
 
 button {
-  padding: 8px 20px;
-  background: #333;
-  color: #fff;
-  border: 1px solid #666;
-  border-radius: 4px;
+  padding: 9px 20px;
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
   cursor: pointer;
-  font-family: monospace;
+  font-family: var(--font);
   font-size: 14px;
+  font-weight: 700;
 }
-button:hover { background: #444; }
+button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 
-.btn-block { width: 100%; margin-bottom: 18px; }
+.btn-block { width: 100%; margin-bottom: 14px; }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: #fff;
+  font-size: 15px;
+  padding: 11px 30px;
+}
+.btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
 
 .btn-support {
   display: block;
-  background: #FFDD00;
-  color: #000;
+  background: var(--gold);
+  color: #4A3708;
   text-align: center;
-  padding: 8px;
-  font-weight: bold;
+  padding: 9px;
+  font-weight: 800;
   font-size: 13px;
   text-decoration: none;
-  border-radius: 4px;
-  margin-bottom: 18px;
+  border-radius: 999px;
+  margin-bottom: 14px;
 }
-.btn-support:hover { background: #f0ce00; }
+.btn-support:hover { background: #E9A92C; }
 
 /* ── on-screen d-pad ──────────────────────────────────────── */
 
-#dpad { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 8px; }
-.dpad-row { display: flex; gap: 4px; }
+#dpad { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 6px; }
+.dpad-row { display: flex; gap: 5px; }
 
 .ctrl-btn {
-  width: 36px; height: 36px;
-  background: #2a2a2a;
-  color: #fff;
-  border: 1px solid #555;
-  border-radius: 4px;
+  width: 40px; height: 40px;
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 16px;
-  font-family: monospace;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: var(--font);
   display: flex; align-items: center; justify-content: center;
   padding: 0;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
 }
-.ctrl-btn.wide { width: 116px; font-size: 12px; }
-.ctrl-btn:hover  { background: #3a3a3a; }
-.ctrl-btn:active { background: #555; transform: scale(0.95); }
+.ctrl-btn.wide { width: 130px; font-size: 12px; }
+.ctrl-btn:hover  { background: #E8EEFA; }
+.ctrl-btn:active { background: var(--accent); color: #fff; transform: scale(0.94); }
+
+/* ── "for parents" note ───────────────────────────────────── */
+
+/* Stacks the board and the parent note; .game-page centres this as one unit. */
+.game-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+.parent-note {
+  max-width: 500px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 15px 19px;
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.parent-note strong {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 3px;
+}
+
+/* Flatter inside a card, which already has its own surface and shadow. */
+.game-card .parent-note {
+  background: var(--surface-2);
+  box-shadow: none;
+  padding: 11px 14px;
+  margin-bottom: 12px;
+  font-size: 12.5px;
+  max-width: none;
+}
 
 /* ── learning tags ────────────────────────────────────────── */
 
 /* Colour-coded by subject so a parent can tell the category at a glance. */
 .tag {
   display: inline-block;
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 6px 12px;
   border-radius: 999px;
-  margin-bottom: 18px;
-  border: 1px solid;
+  margin-bottom: 16px;
 }
-.tag-math     { color: #7cc4ff; border-color: #2b5f8a; background: #12283a; }
-.tag-logic    { color: #c9a6ff; border-color: #5a3f8a; background: #22183a; }
-.tag-language { color: #8ce0a8; border-color: #2f6b45; background: #14301f; }
+.tag-math   { color: #2C5AA8; background: #DCE9FF; }
+.tag-nature { color: #226B47; background: #D6F2E3; }
+.tag-logic  { color: #6A3FA0; background: #EADDFB; }
+.tag-words  { color: #9A5216; background: #FDE7CE; }
 
 .tag-soft {
   display: inline-block;
   font-size: 11px;
-  color: #777;
-  border: 1px solid #333;
+  color: var(--muted);
+  background: var(--surface-2);
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 5px 11px;
 }
 
-/* ── maths toggle ─────────────────────────────────────────── */
+/* ── learning toggle ──────────────────────────────────────── */
 
 .toggle {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #999;
-  margin-bottom: 18px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 14px;
   cursor: pointer;
   user-select: none;
 }
-.toggle input { accent-color: #7cc4ff; cursor: pointer; }
-.toggle:hover { color: #ccc; }
+.toggle input { accent-color: var(--accent); cursor: pointer; width: 15px; height: 15px; }
+.toggle:hover { color: var(--ink); }
 
 /* ── quiz panel (built by quiz.js) ────────────────────────── */
 
 /*
- * Anchored to the top of the viewport rather than the centre: landings happen
- * low on the board, so this keeps the two glowing cells visible while answering.
+ * Anchored to the top of the viewport rather than the centre: the action that
+ * triggers a question happens on the board, so this keeps it visible.
  */
 #quiz-panel {
   position: fixed;
@@ -135,79 +236,80 @@ button:hover { background: #444; }
   transform: translateX(-50%);
   z-index: 20;
   display: none;
-  background: #1a1a1a;
-  border: 2px solid #7cc4ff;
-  border-radius: 10px;
+  background: var(--surface);
+  border: 3px solid var(--accent);
+  border-radius: 20px;
   padding: 18px 26px;
   text-align: center;
-  box-shadow: 0 6px 28px rgba(0,0,0,0.7);
+  box-shadow: var(--shadow-lg);
 }
-#quiz-panel.is-correct { border-color: #4ad07a; }
-#quiz-panel.is-wrong   { border-color: #d0a24a; }
+#quiz-panel.is-correct { border-color: var(--success); }
+#quiz-panel.is-wrong   { border-color: var(--warm); }
 
-.quiz-question { font-size: 30px; font-weight: bold; letter-spacing: 3px; margin-bottom: 14px; }
-.quiz-choices  { display: flex; gap: 10px; justify-content: center; }
-.quiz-choice   { min-width: 56px; font-size: 20px; font-weight: bold; padding: 10px 0; }
-.quiz-choice:hover { background: #2b5f8a; border-color: #7cc4ff; }
+.quiz-prompt   { font-size: 13px; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+.quiz-question { font-size: 28px; font-weight: 800; margin-bottom: 14px; }
+.quiz-choices  { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.quiz-choice   { min-width: 58px; font-size: 17px; font-weight: 800; padding: 11px 16px; }
+.quiz-choice:hover { background: var(--accent); border-color: var(--accent-dark); color: #fff; }
 
-.quiz-result { font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.quiz-note   { font-size: 13px; color: #aaa; }
+.quiz-result { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
+.quiz-note   { font-size: 13px; color: var(--muted); }
 
 /* ── start / game-over overlay (built by shell.js) ────────── */
 
 #overlay {
   position: fixed; inset: 0;
   display: flex; justify-content: center; align-items: center;
-  background: rgba(0,0,0,0.75);
+  background: rgba(45,49,66,0.45);
   z-index: 10;
 }
 #overlay-box {
-  background: #1a1a1a;
-  border: 2px solid #444;
-  padding: 28px 36px;
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 32px 40px;
   text-align: center;
+  box-shadow: var(--shadow-lg);
 }
-#overlay-box h2 { margin: 0 0 12px; font-size: 22px; letter-spacing: 3px; }
-#overlay-box p  { margin: 0 0 16px; color: #aaa; }
-#overlay-box .best { color: #FFDD00; }
+#overlay-box h2 { margin: 0 0 10px; font-size: 24px; font-weight: 800; }
+#overlay-box p  { margin: 0 0 14px; color: var(--muted); }
+#overlay-box .best { color: var(--gold); font-weight: 800; }
 
 /* ── footer (built by shell.js) ───────────────────────────── */
 
 #site-footer {
   position: fixed; bottom: 12px; left: 0; right: 0;
-  text-align: center; font-size: 12px; color: #555;
+  text-align: center; font-size: 12px; color: var(--muted);
 }
-#site-footer a { color: #777; text-decoration: none; margin: 0 8px; }
-#site-footer a:hover { color: #aaa; text-decoration: underline; }
+#site-footer a { color: var(--muted); text-decoration: none; margin: 0 8px; font-weight: 600; }
+#site-footer a:hover { color: var(--accent); text-decoration: underline; }
 
 /* ── hub page ─────────────────────────────────────────────── */
 
-.hub {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 64px 24px 80px;
-}
-.hub h1 { font-size: 28px; letter-spacing: 3px; margin: 0 0 10px; }
-.hub .tagline { color: #888; margin: 0 0 40px; line-height: 1.7; }
+.hub { max-width: 760px; margin: 0 auto; padding: 56px 24px 80px; }
+.hub h1 { font-size: 32px; font-weight: 800; margin: 0 0 12px; }
+.hub .tagline { color: var(--muted); margin: 0 0 36px; line-height: 1.7; font-size: 15px; }
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
 }
 .game-card {
   display: block;
-  background: #1a1a1a;
-  border: 1px solid #2e2e2e;
-  border-radius: 8px;
-  padding: 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 22px;
   text-decoration: none;
   color: inherit;
+  box-shadow: var(--shadow);
+  border-top: 5px solid var(--accent);
 }
-.game-card:hover { background: #222; border-color: #555; }
-.game-card h2 { margin: 0 0 10px; font-size: 17px; letter-spacing: 1px; }
+.game-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.game-card.is-nature { border-top-color: var(--success); }
+.game-card .emoji { font-size: 30px; display: block; margin-bottom: 8px; }
+.game-card h2 { margin: 0 0 10px; font-size: 18px; font-weight: 800; }
 .game-card .tag { margin-bottom: 12px; }
-.game-card p  { margin: 0 0 12px; font-size: 13px; color: #888; line-height: 1.6; }
+.game-card p { margin: 0 0 12px; font-size: 13.5px; color: var(--muted); line-height: 1.6; }
 
 /* ── content pages (about / privacy) ──────────────────────── */
 
@@ -215,16 +317,72 @@ button:hover { background: #444; }
   max-width: 680px;
   margin: 0 auto;
   padding: 48px 24px 80px;
-  line-height: 1.7;
-  color: #ddd;
+  line-height: 1.75;
 }
-.content h1 { font-size: 24px; letter-spacing: 2px; margin: 0 0 32px; color: #fff; }
-.content h2 { font-size: 15px; letter-spacing: 1px; color: #888; margin: 40px 0 10px; }
+.content h1 { font-size: 26px; font-weight: 800; margin: 0 0 28px; }
+.content h2 { font-size: 14px; color: var(--muted); margin: 36px 0 10px; text-transform: uppercase; letter-spacing: 0.6px; }
 .content p  { margin: 0 0 16px; }
 .content ul { margin: 0 0 16px; padding-left: 22px; }
 .content li { margin-bottom: 8px; }
-.content a  { color: #6cf; }
-.content hr { border: none; border-top: 1px solid #2a2a2a; margin: 48px 0; }
-.content .back { display: inline-block; margin-bottom: 32px; color: #777; text-decoration: none; }
-.content .back:hover { color: #aaa; }
-.content .updated { color: #555; font-size: 12px; }
+.content a  { color: var(--accent-dark); }
+.content hr { border: none; border-top: 1px solid var(--line); margin: 44px 0; }
+.content .back { display: inline-block; margin-bottom: 28px; color: var(--muted); text-decoration: none; font-weight: 700; }
+.content .back:hover { color: var(--accent); }
+.content .updated { color: var(--muted); font-size: 12px; }
+
+/* ── phones and small tablets ─────────────────────────────── */
+
+/*
+ * Side-by-side board and sidebar need ~490px for Tetris and ~590px for Snake,
+ * so below 700px everything stacks: board on top, scaled to fit, controls under
+ * it where a thumb can reach them.
+ */
+@media (max-width: 700px) {
+  .game-page { align-items: flex-start; padding: 10px 8px 72px; }
+
+  #game {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+  }
+
+  /*
+   * Scales the rendered bitmap only — drawing coordinates are untouched.
+   * Capped by height as well as width: Tetris is 300x600, and without the
+   * height cap the board alone would be taller than a phone screen.
+   */
+  canvas { max-width: 100%; max-height: 55vh; width: auto; height: auto; }
+
+  #info { width: 100%; max-width: 340px; padding-top: 0; text-align: center; }
+
+  /* Stats read as a compact row rather than a tall stack. */
+  .stats { display: flex; justify-content: center; gap: 24px; }
+  #info .stats h2 { font-size: 10px; }
+  #info .stats p  { font-size: 20px; margin-bottom: 8px; }
+
+  /*
+   * Everything the board and the controls don't strictly need gives up its
+   * vertical space. The tag still leads every card on the hub, and the footer
+   * still carries a Support link, so nothing here is lost — only relocated.
+   */
+  .next-block,
+  #info > h2,
+  #info > .tag,
+  .btn-support { display: none; }
+
+  .toggle { justify-content: center; margin-bottom: 10px; }
+  .btn-block { margin-bottom: 10px; padding: 7px 20px; }
+
+  /* Bigger targets for thumbs. */
+  .ctrl-btn { width: 46px; height: 46px; font-size: 20px; }
+  .ctrl-btn.wide { width: 144px; font-size: 13px; }
+
+  #quiz-panel { top: 8px; padding: 14px 16px; width: calc(100% - 24px); max-width: 340px; }
+  .quiz-question { font-size: 22px; }
+  .quiz-choice { min-width: 60px; padding: 12px 14px; font-size: 15px; }
+
+  .hub { padding: 36px 18px 72px; }
+  .hub h1 { font-size: 25px; }
+}
