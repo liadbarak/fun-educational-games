@@ -46,6 +46,25 @@ const HighScore = {
   },
 };
 
+/* Player settings, same best-effort storage rules as the high score. */
+const Prefs = {
+  read(key, fallback) {
+    try {
+      const stored = localStorage.getItem('pref:' + key);
+      return stored === null ? fallback : JSON.parse(stored);
+    } catch {
+      return fallback;
+    }
+  },
+  write(key, value) {
+    try {
+      localStorage.setItem('pref:' + key, JSON.stringify(value));
+    } catch {
+      /* ignore — the setting just won't survive a reload */
+    }
+  },
+};
+
 /* ── footer ────────────────────────────────────────────────── */
 
 /* `base` is the relative path back to the site root: '' from the hub, '../' from a game. */
@@ -75,7 +94,8 @@ function renderFooter(base) {
  * @param {function} config.onDraw    Renders the current state.
  */
 function createGameShell(config) {
-  let paused = false;
+  let paused = false;    // the player pressed pause
+  let suspended = false; // the game paused itself, e.g. to ask a question
   let over = true;
   let stepMs = config.stepMs;
   let accum = 0;
@@ -95,7 +115,7 @@ function createGameShell(config) {
 
   function loop(timestamp) {
     frameId = requestAnimationFrame(loop);
-    if (paused || over) return;
+    if (paused || over || suspended) return;
 
     accum += timestamp - (lastTime ?? timestamp);
     lastTime = timestamp;
@@ -108,8 +128,20 @@ function createGameShell(config) {
   }
 
   const shell = {
-    /* True while input should be ignored — paused, or sitting on an overlay. */
-    isBlocked() { return paused || over; },
+    /* True while input should be ignored — paused, suspended, or on an overlay. */
+    isBlocked() { return paused || over || suspended; },
+
+    /*
+     * Freeze the game for something the game itself raised (a quiz, a cutscene).
+     * Kept separate from the player's own pause so resuming from a question
+     * can never un-pause a game the player deliberately paused.
+     */
+    suspend() { suspended = true; },
+    resume() {
+      suspended = false;
+      lastTime = null;
+      accum = 0;
+    },
 
     /* Speed the game up (or slow it down) as difficulty changes. */
     setStepMs(ms) { stepMs = ms; },
@@ -119,6 +151,7 @@ function createGameShell(config) {
     start() {
       config.onReset();
       paused = false;
+      suspended = false;
       over = false;
       accum = 0;
       lastTime = null;

@@ -82,6 +82,77 @@ button:hover { background: #444; }
 .ctrl-btn:hover  { background: #3a3a3a; }
 .ctrl-btn:active { background: #555; transform: scale(0.95); }
 
+/* ── learning tags ────────────────────────────────────────── */
+
+/* Colour-coded by subject so a parent can tell the category at a glance. */
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+  border: 1px solid;
+}
+.tag-math     { color: #7cc4ff; border-color: #2b5f8a; background: #12283a; }
+.tag-logic    { color: #c9a6ff; border-color: #5a3f8a; background: #22183a; }
+.tag-language { color: #8ce0a8; border-color: #2f6b45; background: #14301f; }
+
+.tag-soft {
+  display: inline-block;
+  font-size: 11px;
+  color: #777;
+  border: 1px solid #333;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+/* ── maths toggle ─────────────────────────────────────────── */
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 18px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle input { accent-color: #7cc4ff; cursor: pointer; }
+.toggle:hover { color: #ccc; }
+
+/* ── quiz panel (built by quiz.js) ────────────────────────── */
+
+/*
+ * Anchored to the top of the viewport rather than the centre: landings happen
+ * low on the board, so this keeps the two glowing cells visible while answering.
+ */
+#quiz-panel {
+  position: fixed;
+  top: 24px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: none;
+  background: #1a1a1a;
+  border: 2px solid #7cc4ff;
+  border-radius: 10px;
+  padding: 18px 26px;
+  text-align: center;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.7);
+}
+#quiz-panel.is-correct { border-color: #4ad07a; }
+#quiz-panel.is-wrong   { border-color: #d0a24a; }
+
+.quiz-question { font-size: 30px; font-weight: bold; letter-spacing: 3px; margin-bottom: 14px; }
+.quiz-choices  { display: flex; gap: 10px; justify-content: center; }
+.quiz-choice   { min-width: 56px; font-size: 20px; font-weight: bold; padding: 10px 0; }
+.quiz-choice:hover { background: #2b5f8a; border-color: #7cc4ff; }
+
+.quiz-result { font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.quiz-note   { font-size: 13px; color: #aaa; }
+
 /* ── start / game-over overlay (built by shell.js) ────────── */
 
 #overlay {
@@ -134,9 +205,9 @@ button:hover { background: #444; }
   color: inherit;
 }
 .game-card:hover { background: #222; border-color: #555; }
-.game-card h2 { margin: 0 0 6px; font-size: 17px; letter-spacing: 1px; }
-.game-card p  { margin: 0; font-size: 13px; color: #888; line-height: 1.6; }
-.game-card .skill { display: block; margin-top: 10px; font-size: 11px; color: #6cf; }
+.game-card h2 { margin: 0 0 10px; font-size: 17px; letter-spacing: 1px; }
+.game-card .tag { margin-bottom: 12px; }
+.game-card p  { margin: 0 0 12px; font-size: 13px; color: #888; line-height: 1.6; }
 
 /* ── content pages (about / privacy) ──────────────────────── */
 
