@@ -47,6 +47,37 @@ const THEME = {
 };
 const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
 
+const HOW_TO = `
+  <div class="howto">
+    <div class="howto-step">
+      <span class="howto-num">1</span>
+      <div class="howto-text">
+        Steer the snake onto the <b>litter</b> to pick it up. It grows a
+        little each time.
+      </div>
+      <div class="howto-demo" style="font-size:20px">🐍 <span class="howto-arrow">→</span> 🍌</div>
+    </div>
+
+    <div class="howto-step">
+      <span class="howto-num">2</span>
+      <div class="howto-text">
+        Don't hit the <b>walls</b> or your own <b>tail</b> — and it speeds up
+        as you go.
+      </div>
+      <div class="howto-demo" style="font-size:20px">🧱</div>
+    </div>
+
+    <div class="howto-step">
+      <span class="howto-num">3</span>
+      <div class="howto-text">
+        Every few pickups you'll be asked <b>which bin</b> it belongs in.
+        Getting it right is worth bonus points.
+      </div>
+      <div class="howto-demo" style="font-size:20px">♻️</div>
+    </div>
+  </div>
+`;
+
 const DIRECTIONS = {
   up:    { x:  0, y: -1 },
   down:  { x:  0, y:  1 },
@@ -222,6 +253,7 @@ const shell = createGameShell({
   name: 'snake',
   title: 'CLEAN-UP SNAKE',
   subtitle: 'Collect the litter — and know which bin it goes in',
+  howTo: HOW_TO,
   stepMs: START_STEP_MS,
 
   onReset() {
@@ -248,6 +280,7 @@ const shell = createGameShell({
 });
 
 document.getElementById('pause-btn').addEventListener('click', () => shell.togglePause());
+document.getElementById('howto-btn').addEventListener('click', () => shell.showHowTo());
 
 const sortingToggle = document.getElementById('sorting-toggle');
 sortingToggle.checked = sortingMode;

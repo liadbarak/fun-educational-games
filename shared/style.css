@@ -26,6 +26,15 @@
   --board-bg:   #EEF2FA;
   --board-line: #DCE3F0;
 
+  /*
+   * One colour per digit, read by both the canvas tiles and the how-to-play
+   * demo tiles. Deliberately unrelated to which digits pair up — the pairing
+   * has to come from the arithmetic, not from matching colours.
+   */
+  --d1: #F9A8A8; --d2: #FBC98B; --d3: #F7E07E;
+  --d4: #BFE39A; --d5: #8FDCC4; --d6: #8FCFEA;
+  --d7: #A9B8F0; --d8: #C9A8ED; --d9: #F2A8D8;
+
   --radius: 16px;
   --shadow: 0 2px 10px rgba(45,49,66,0.08);
   --shadow-lg: 0 8px 30px rgba(45,49,66,0.16);
@@ -83,6 +92,19 @@ canvas {
 
 .next-block h2 { margin-bottom: 6px; }
 .next-block canvas { margin-bottom: 16px; }
+
+/* Reference strip of the number pairs, for anyone still learning them. */
+.bonds { margin-bottom: 16px; }
+.bonds span {
+  display: inline-block;
+  background: var(--surface-2);
+  color: var(--accent-dark);
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 4px 7px;
+  border-radius: 6px;
+  margin: 0 3px 4px 0;
+}
 
 /* ── buttons ──────────────────────────────────────────────── */
 
@@ -255,6 +277,64 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 .quiz-result { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
 .quiz-note   { font-size: 13px; color: var(--muted); }
 
+/* ── how to play (shown on the start overlay) ─────────────── */
+
+.howto { text-align: left; max-width: 350px; margin: 6px auto 18px; }
+
+.howto-step {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+.howto-step:first-child { border-top: none; padding-top: 4px; }
+
+.howto-num {
+  flex: none;
+  width: 21px; height: 21px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11.5px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.howto-text { flex: 1; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.howto-text b { color: var(--ink); }
+.howto-demo { flex: none; display: flex; align-items: center; gap: 3px; }
+.howto-arrow { color: var(--muted); font-size: 12px; margin: 0 1px; }
+
+/* Demo tiles, matching the real ones on the board. */
+.t {
+  width: 25px; height: 25px;
+  border-radius: 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px;
+  color: rgba(40,40,55,0.82);
+}
+.t1 { background: var(--d1); } .t2 { background: var(--d2); } .t3 { background: var(--d3); }
+.t4 { background: var(--d4); } .t5 { background: var(--d5); } .t6 { background: var(--d6); }
+.t7 { background: var(--d7); } .t8 { background: var(--d8); } .t9 { background: var(--d9); }
+
+.t-stack { display: flex; flex-direction: column; gap: 3px; }
+
+.chain-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px; font-weight: 800;
+  border-radius: 6px;
+  padding: 4px 7px;
+}
+
+/* Loops so it reads as "these vanish" without needing a caption. */
+.vanish { animation: vanish-loop 2.8s ease-in-out infinite; }
+@keyframes vanish-loop {
+  0%, 38%   { opacity: 1; transform: scale(1); }
+  52%       { opacity: 0; transform: scale(1.3); }
+  68%       { opacity: 0; transform: scale(0.75); }
+  82%, 100% { opacity: 1; transform: scale(1); }
+}
+
 /* ── start / game-over overlay (built by shell.js) ────────── */
 
 #overlay {
@@ -333,7 +413,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 /* ── phones and small tablets ─────────────────────────────── */
 
 /*
- * Side-by-side board and sidebar need ~490px for Tetris and ~590px for Snake,
+ * Side-by-side board and sidebar need ~490px for Make Ten and ~590px for Snake,
  * so below 700px everything stacks: board on top, scaled to fit, controls under
  * it where a thumb can reach them.
  */
@@ -350,7 +430,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 
   /*
    * Scales the rendered bitmap only — drawing coordinates are untouched.
-   * Capped by height as well as width: Tetris is 300x600, and without the
+   * Capped by height as well as width: Make Ten is 294x588, and without the
    * height cap the board alone would be taller than a phone screen.
    */
   canvas { max-width: 100%; max-height: 55vh; width: auto; height: auto; }
@@ -378,6 +458,12 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
   /* Bigger targets for thumbs. */
   .ctrl-btn { width: 46px; height: 46px; font-size: 20px; }
   .ctrl-btn.wide { width: 144px; font-size: 13px; }
+
+  /* The how-to-play list is 350px wide, so the overlay's desktop padding
+     would push it past the edge of a phone screen. */
+  #overlay-box { padding: 22px 18px; max-width: calc(100vw - 24px); }
+  .howto { max-width: 100%; }
+  .howto-text { font-size: 12px; }
 
   #quiz-panel { top: 8px; padding: 14px 16px; width: calc(100% - 24px); max-width: 340px; }
   .quiz-question { font-size: 22px; }

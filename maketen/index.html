@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Make Ten — Free Number Bonds Game for Kids</title>
+  <meta name="description" content="A free number bonds game: pairs of numbered tiles fall, and any two touching tiles that add up to 10 disappear. Practise making ten — no download, no signup.">
+  <link rel="canonical" href="https://liadbarak.github.io/fun-educational-games/maketen/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Make Ten — Free Number Bonds Game for Kids">
+  <meta property="og:description" content="Tiles that add up to 10 disappear. A free number bonds game in your browser.">
+  <meta property="og:url" content="https://liadbarak.github.io/fun-educational-games/maketen/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="stylesheet" href="../shared/style.css">
+</head>
+<body class="game-page">
+
+<div class="game-wrap">
+<div id="game">
+  <canvas id="board" width="294" height="588"></canvas>
+
+  <div id="info">
+    <span class="tag tag-math">➕ Number Bonds to 10</span>
+
+    <div class="stats">
+      <div><h2>Score</h2>      <p id="score">0</p></div>
+      <div><h2>Cleared</h2>    <p id="cleared">0</p></div>
+      <div><h2>Best chain</h2> <p id="chain">×0</p></div>
+    </div>
+
+    <div class="next-block">
+      <h2>Next</h2>
+      <canvas id="next-canvas" width="120" height="52"></canvas>
+    </div>
+
+    <div class="bonds">
+      <h2>Pairs that make 10</h2>
+      <span>1+9</span><span>2+8</span><span>3+7</span><span>4+6</span><span>5+5</span>
+    </div>
+
+    <button id="howto-btn" class="btn-block">❓ How to play</button>
+    <button id="pause-btn" class="btn-block">⏸ Pause</button>
+    <a class="btn-support" href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+
+    <h2>Controls</h2>
+    <div id="dpad">
+      <div class="dpad-row">
+        <button class="ctrl-btn" data-control="rotate" title="Swap the pair around">⟳</button>
+      </div>
+      <div class="dpad-row">
+        <button class="ctrl-btn" data-control="left"  title="Move left">←</button>
+        <button class="ctrl-btn" data-control="down"  title="Down">↓</button>
+        <button class="ctrl-btn" data-control="right" title="Move right">→</button>
+      </div>
+      <div class="dpad-row">
+        <button class="ctrl-btn wide" data-control="drop" title="Drop">⬇ DROP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<aside class="parent-note">
+  <strong>For parents</strong>
+  This game exercises <b>number bonds to 10</b> — the pairs of numbers that add
+  up to ten, which is one of the first things children are asked to recall
+  instantly rather than count out. Here they aren't tested on it; spotting the
+  pairs is the only way to play, so the recall gets practised naturally. The
+  five pairs stay listed beside the board as a prompt for anyone still learning
+  them.
+</aside>
+</div>
+
+<script src="../shared/shell.js"></script>
+<script src="maketen.js"></script>
+<script>renderFooter('../');</script>
+</body>
+</html>

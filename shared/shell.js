@@ -173,6 +173,20 @@ function createGameShell(config) {
       syncPauseButton();
     },
 
+    /*
+     * Reopen the rules mid-game. Before the first round it just re-renders the
+     * start screen; during a round it freezes play and offers a way back in.
+     */
+    showHowTo() {
+      if (over) { showStartScreen(); return; }
+      suspended = true;
+      showOverlay(`
+        <h2>HOW TO PLAY</h2>
+        ${config.howTo || ''}
+        <button class="btn-primary" data-action="resume">BACK TO GAME</button>
+      `);
+    },
+
     /* @param {string} [detail] Extra line shown above the score, e.g. "Level 4". */
     gameOver(score, detail) {
       over = true;
@@ -195,18 +209,26 @@ function createGameShell(config) {
     if (btn) btn.textContent = paused ? '▶ Resume' : '⏸ Pause';
   }
 
-  /* Start screen. */
-  const best = HighScore.read(config.name);
-  showOverlay(`
-    <h2>${config.title}</h2>
-    <p>${config.subtitle}</p>
-    ${best ? `<p class="best">Best: ${best}</p>` : ''}
-    <button class="btn-primary" data-action="start">START</button>
-  `);
+  function showStartScreen() {
+    const best = HighScore.read(config.name);
+    showOverlay(`
+      <h2>${config.title}</h2>
+      <p>${config.subtitle}</p>
+      ${config.howTo || ''}
+      ${best ? `<p class="best">Best: ${best}</p>` : ''}
+      <button class="btn-primary" data-action="start">
+        ${config.howTo ? 'GOT IT — PLAY' : 'START'}
+      </button>
+    `);
+  }
 
-  /* One listener for both overlay buttons, so games never wire up onclick by hand. */
+  showStartScreen();
+
+  /* One listener for every overlay button, so games never wire up onclick by hand. */
   overlay.addEventListener('click', (e) => {
-    if (e.target.dataset.action === 'start') shell.start();
+    const action = e.target.dataset.action;
+    if (action === 'start') shell.start();
+    if (action === 'resume') { overlay.style.display = 'none'; shell.resume(); }
   });
 
   /* P pauses in every game. */
