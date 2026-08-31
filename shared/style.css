@@ -1,0 +1,159 @@
+/* Shared theme for every game on the site. Game-specific rules live in the game's own page. */
+
+* { box-sizing: border-box; }
+
+body {
+  background: #111;
+  color: #fff;
+  font-family: monospace;
+  margin: 0;
+}
+
+/* ── game pages ───────────────────────────────────────────── */
+
+/* Fixed footer sits at the bottom, so leave room for it rather than overlapping. */
+.game-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px 16px 64px;
+}
+
+#game { display: flex; gap: 24px; align-items: flex-start; }
+
+canvas { border: 2px solid #333; display: block; }
+
+#info { width: 130px; padding-top: 4px; }
+#info h2 { margin: 0 0 4px; font-size: 12px; color: #888; letter-spacing: 1px; }
+#info p  { margin: 0 0 18px; font-size: 28px; font-weight: bold; }
+
+/* ── buttons ──────────────────────────────────────────────── */
+
+button {
+  padding: 8px 20px;
+  background: #333;
+  color: #fff;
+  border: 1px solid #666;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 14px;
+}
+button:hover { background: #444; }
+
+.btn-block { width: 100%; margin-bottom: 18px; }
+
+.btn-support {
+  display: block;
+  background: #FFDD00;
+  color: #000;
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  font-size: 13px;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-bottom: 18px;
+}
+.btn-support:hover { background: #f0ce00; }
+
+/* ── on-screen d-pad ──────────────────────────────────────── */
+
+#dpad { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 8px; }
+.dpad-row { display: flex; gap: 4px; }
+
+.ctrl-btn {
+  width: 36px; height: 36px;
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: monospace;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.ctrl-btn.wide { width: 116px; font-size: 12px; }
+.ctrl-btn:hover  { background: #3a3a3a; }
+.ctrl-btn:active { background: #555; transform: scale(0.95); }
+
+/* ── start / game-over overlay (built by shell.js) ────────── */
+
+#overlay {
+  position: fixed; inset: 0;
+  display: flex; justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.75);
+  z-index: 10;
+}
+#overlay-box {
+  background: #1a1a1a;
+  border: 2px solid #444;
+  padding: 28px 36px;
+  text-align: center;
+}
+#overlay-box h2 { margin: 0 0 12px; font-size: 22px; letter-spacing: 3px; }
+#overlay-box p  { margin: 0 0 16px; color: #aaa; }
+#overlay-box .best { color: #FFDD00; }
+
+/* ── footer (built by shell.js) ───────────────────────────── */
+
+#site-footer {
+  position: fixed; bottom: 12px; left: 0; right: 0;
+  text-align: center; font-size: 12px; color: #555;
+}
+#site-footer a { color: #777; text-decoration: none; margin: 0 8px; }
+#site-footer a:hover { color: #aaa; text-decoration: underline; }
+
+/* ── hub page ─────────────────────────────────────────────── */
+
+.hub {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 24px 80px;
+}
+.hub h1 { font-size: 28px; letter-spacing: 3px; margin: 0 0 10px; }
+.hub .tagline { color: #888; margin: 0 0 40px; line-height: 1.7; }
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.game-card {
+  display: block;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+.game-card:hover { background: #222; border-color: #555; }
+.game-card h2 { margin: 0 0 6px; font-size: 17px; letter-spacing: 1px; }
+.game-card p  { margin: 0; font-size: 13px; color: #888; line-height: 1.6; }
+.game-card .skill { display: block; margin-top: 10px; font-size: 11px; color: #6cf; }
+
+/* ── content pages (about / privacy) ──────────────────────── */
+
+.content {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  line-height: 1.7;
+  color: #ddd;
+}
+.content h1 { font-size: 24px; letter-spacing: 2px; margin: 0 0 32px; color: #fff; }
+.content h2 { font-size: 15px; letter-spacing: 1px; color: #888; margin: 40px 0 10px; }
+.content p  { margin: 0 0 16px; }
+.content ul { margin: 0 0 16px; padding-left: 22px; }
+.content li { margin-bottom: 8px; }
+.content a  { color: #6cf; }
+.content hr { border: none; border-top: 1px solid #2a2a2a; margin: 48px 0; }
+.content .back { display: inline-block; margin-bottom: 32px; color: #777; text-decoration: none; }
+.content .back:hover { color: #aaa; }
+.content .updated { color: #555; font-size: 12px; }

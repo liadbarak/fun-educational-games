@@ -5,37 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About &amp; Privacy — Fun Educational Games</title>
   <meta name="description" content="About Fun Educational Games and our privacy policy — what data we collect and how it is used.">
+  <link rel="canonical" href="https://liadbarak.github.io/fun-educational-games/about.html">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DT4R40PW7C"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-DT4R40PW7C');
-  </script>
-
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      background: #111; color: #ddd;
-      font-family: monospace; line-height: 1.7;
-      max-width: 680px; margin: 0 auto; padding: 48px 24px 80px;
-    }
-    h1 { font-size: 24px; letter-spacing: 2px; margin: 0 0 32px; color: #fff; }
-    h2 { font-size: 15px; letter-spacing: 1px; color: #888; margin: 40px 0 10px; }
-    p  { margin: 0 0 16px; }
-    ul { margin: 0 0 16px; padding-left: 22px; }
-    li { margin-bottom: 8px; }
-    a  { color: #6cf; }
-    hr { border: none; border-top: 1px solid #2a2a2a; margin: 48px 0; }
-    .back { display: inline-block; margin-bottom: 32px; color: #777; text-decoration: none; }
-    .back:hover { color: #aaa; }
-    .updated { color: #555; font-size: 12px; }
-  </style>
+  <link rel="stylesheet" href="shared/style.css">
 </head>
 <body>
 
-<a class="back" href="index.html">← Back to the game</a>
+<main class="content">
+
+<a class="back" href="index.html">← Back to the games</a>
 
 <h1>ABOUT</h1>
 
@@ -80,8 +58,9 @@
 
 <h2>YOUR GAME DATA</h2>
 <p>
-  Scores and game progress are not stored on any server. Nothing about how you play
-  leaves your browser.
+  Your high scores are saved in your own browser's local storage and never leave your
+  device. Clearing your browser data will erase them. Nothing about how you play is
+  sent to any server.
 </p>
 
 <h2>THIRD PARTIES</h2>
@@ -111,5 +90,9 @@
   <a href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">support page</a>.
 </p>
 
+</main>
+
+<script src="shared/shell.js"></script>
+<script>renderFooter('');</script>
 </body>
 </html>

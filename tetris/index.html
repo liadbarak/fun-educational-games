@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Play Tetris Online — Free Classic Puzzle Game</title>
+  <meta name="description" content="Play the classic Tetris block puzzle free in your browser. No download, no signup — a timeless game that sharpens spatial thinking and planning.">
+  <link rel="canonical" href="https://liadbarak.github.io/fun-educational-games/tetris/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Play Tetris Online — Free Classic Puzzle Game">
+  <meta property="og:description" content="The timeless block-stacking puzzle, free in your browser. No download, no signup.">
+  <meta property="og:url" content="https://liadbarak.github.io/fun-educational-games/tetris/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="stylesheet" href="../shared/style.css">
+</head>
+<body class="game-page">
+
+<div id="game">
+  <canvas id="board" width="300" height="600"></canvas>
+
+  <div id="info">
+    <h2>SCORE</h2> <p id="score">0</p>
+    <h2>LEVEL</h2> <p id="level">1</p>
+    <h2>LINES</h2> <p id="lines">0</p>
+
+    <h2>NEXT</h2>
+    <canvas id="next-canvas" width="120" height="80" style="border:1px solid #333; margin-bottom:18px;"></canvas>
+
+    <button id="pause-btn" class="btn-block">⏸ Pause</button>
+    <a class="btn-support" href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+
+    <h2>CONTROLS</h2>
+    <div id="dpad">
+      <div class="dpad-row">
+        <button class="ctrl-btn" data-control="rotate" title="Rotate">↑</button>
+      </div>
+      <div class="dpad-row">
+        <button class="ctrl-btn" data-control="left"  title="Move left">←</button>
+        <button class="ctrl-btn" data-control="down"  title="Soft drop">↓</button>
+        <button class="ctrl-btn" data-control="right" title="Move right">→</button>
+      </div>
+      <div class="dpad-row">
+        <button class="ctrl-btn wide" data-control="drop" title="Hard drop">⬇ DROP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/shell.js"></script>
+<script src="tetris.js"></script>
+<script>renderFooter('../');</script>
+</body>
+</html>
