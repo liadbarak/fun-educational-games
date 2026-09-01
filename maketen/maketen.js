@@ -1,5 +1,5 @@
 /*
- * Make Ten.
+ * Make10.
  *
  * Pairs of numbered tiles fall. Wherever two tiles that touch add up to ten,
  * both disappear and everything above drops into the gap — which can set off
@@ -378,7 +378,7 @@ document.querySelectorAll('[data-control]').forEach(btn =>
 
 const shell = createGameShell({
   name: 'maketen',
-  title: 'MAKE TEN',
+  title: 'MAKE10',
   subtitle: 'Clear the board by making tens',
   howTo: HOW_TO,
   stepMs: START_STEP_MS,

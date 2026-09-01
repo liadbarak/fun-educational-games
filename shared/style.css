@@ -188,7 +188,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 /* Stacks the board and the parent note; .game-page centres this as one unit. */
 .game-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 
-.parent-note {
+.exercise-note {
   max-width: 500px;
   background: var(--surface);
   border-radius: var(--radius);
@@ -198,7 +198,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
   color: var(--muted);
   line-height: 1.65;
 }
-.parent-note strong {
+.exercise-note strong {
   display: block;
   font-size: 10.5px;
   letter-spacing: 0.7px;
@@ -208,7 +208,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 }
 
 /* Flatter inside a card, which already has its own surface and shadow. */
-.game-card .parent-note {
+.game-card .exercise-note {
   background: var(--surface-2);
   box-shadow: none;
   padding: 11px 14px;
@@ -425,7 +425,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 /* ── phones and small tablets ─────────────────────────────── */
 
 /*
- * Side-by-side board and sidebar need ~490px for Make Ten and ~590px for Snake,
+ * Side-by-side board and sidebar need ~490px for Make10 and ~590px for Snake,
  * so below 700px everything stacks: board on top, scaled to fit, controls under
  * it where a thumb can reach them.
  */
