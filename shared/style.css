@@ -430,46 +430,80 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
  * it where a thumb can reach them.
  */
 @media (max-width: 700px) {
-  .game-page { align-items: flex-start; padding: 10px 8px 72px; }
+  /*
+   * One screen: board on top, D-pad pinned to the bottom where a thumb rests.
+   *
+   * Height is dvh, not vh. On Android Chrome 100vh includes the strip behind
+   * the collapsing URL bar, so a vh-sized layout pushes its own controls off
+   * the bottom of the screen. dvh measures what's actually visible.
+   */
+  .game-page { align-items: flex-start; padding: 0; }
+  .game-wrap { width: 100%; gap: 0; }
 
   #game {
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     width: 100%;
-    padding: 12px;
+    padding: 8px 8px 12px;
+    border-radius: 0;
+    justify-content: space-between;   /* floats the D-pad to the bottom */
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
-  /*
-   * Scales the rendered bitmap only — drawing coordinates are untouched.
-   * Capped by height as well as width: Make Ten is 294x588, and without the
-   * height cap the board alone would be taller than a phone screen.
-   */
-  canvas { max-width: 100%; max-height: 55vh; width: auto; height: auto; }
+  /* Scales the rendered bitmap only — drawing coordinates are untouched. */
+  canvas { max-width: 100%; max-height: 52dvh; width: auto; height: auto; }
 
-  #info { width: 100%; max-width: 340px; padding-top: 0; text-align: center; }
+  #info {
+    width: 100%;
+    padding-top: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  /* Only the D-pad is pushed down; the rest stays tucked under the board. */
+  #dpad { margin-top: auto; }
 
   /* Stats read as a compact row rather than a tall stack. */
-  .stats { display: flex; justify-content: center; gap: 24px; }
-  #info .stats h2 { font-size: 10px; }
-  #info .stats p  { font-size: 20px; margin-bottom: 8px; }
+  .stats { display: flex; justify-content: center; gap: 20px; }
+  #info .stats h2 { font-size: 9.5px; }
+  #info .stats p  { font-size: 18px; margin-bottom: 6px; }
+
+  /* Pause and How to play share one short row instead of two full-width bars. */
+  .game-actions { display: flex; gap: 8px; justify-content: center; }
+  .btn-block { width: auto; margin: 0 0 6px; padding: 6px 12px; font-size: 12px; }
 
   /*
    * Everything the board and the controls don't strictly need gives up its
-   * vertical space. The tag still leads every card on the hub, and the footer
-   * still carries a Support link, so nothing here is lost — only relocated.
+   * vertical space. The tag still leads every card on the hub, the footer
+   * still carries a Support link, and the number pairs are on the how-to
+   * screen — nothing here is lost, only relocated.
    */
   .next-block,
+  .bonds,
   #info > h2,
   #info > .tag,
   .btn-support { display: none; }
 
-  .toggle { justify-content: center; margin-bottom: 10px; }
-  .btn-block { margin-bottom: 10px; padding: 7px 20px; }
+  /*
+   * Fixed, the footer would sit on top of the D-pad. Put it back in normal
+   * flow so it lands below the game — still reachable by scrolling, and the
+   * "All games" link stays available.
+   */
+  #site-footer { position: static; padding: 14px 0 20px; }
+
+  .carry-hud { margin-bottom: 6px; }
+  .carry-hud h2 { display: none; }
+  #carrying { padding: 5px 8px; font-size: 11.5px; }
+
+  .toggle { justify-content: center; margin-bottom: 6px; }
 
   /* Bigger targets for thumbs. */
-  .ctrl-btn { width: 46px; height: 46px; font-size: 20px; }
-  .ctrl-btn.wide { width: 144px; font-size: 13px; }
+  #dpad { margin-top: 0; gap: 6px; }
+  .ctrl-btn { width: 54px; height: 54px; font-size: 22px; border-radius: 14px; }
+  .ctrl-btn.wide { width: 168px; height: 46px; font-size: 13px; }
 
   /* The how-to-play list is 350px wide, so the overlay's desktop padding
      would push it past the edge of a phone screen. */
