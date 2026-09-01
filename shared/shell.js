@@ -121,7 +121,14 @@ function createGameShell(config) {
 
   function loop(timestamp) {
     frameId = requestAnimationFrame(loop);
-    if (paused || over || suspended) return;
+    if (paused || over) return;
+
+    /*
+     * Suspended freezes the simulation but not the renderer — a game that
+     * pauses itself to show something happening still needs its animations
+     * to run while it's stopped.
+     */
+    if (suspended) { config.onDraw(); return; }
 
     accum += timestamp - (lastTime ?? timestamp);
     lastTime = timestamp;

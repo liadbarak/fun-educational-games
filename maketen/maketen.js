@@ -21,6 +21,7 @@ const POP_MS    = 320;   // tile bursting where it was cleared
 const FLOAT_MS  = 850;   // score number drifting upward
 const BANNER_MS = 900;   // "CHAIN xN" across the board
 const SHAKE_MS  = 260;
+const CHAIN_STEP_MS = 300;   // pause between chain links, so each one is visible
 
 /* Read from :root so the board tiles and the how-to-play demo tiles can't drift. */
 const DIGIT_COLORS = Object.fromEntries(
@@ -97,6 +98,7 @@ let pops;          // [{ x, y, n, until }]  tiles bursting where they cleared
 let floats;        // [{ x, y, text, until }] score numbers drifting up
 let banner;        // { text, until } | null
 let shakeUntil;
+let resolveToken;  // bumped on reset, so a chain from a finished game stops
 
 /* ── state helpers ──────────────────────────────────────────── */
 
@@ -190,66 +192,80 @@ function applyGravity() {
   }
 }
 
-/* Clears matches, drops what's above, then looks again — that repeat is the chain. */
-function resolveMatches() {
-  let chain = 0;
+/*
+ * One link of a chain: clear what matches, drop what's above, then wait before
+ * looking again.
+ *
+ * The waiting is the point. Resolving a whole cascade in one frame shows the
+ * player the end state only, so a three-link chain reads as tiles vanishing
+ * for no reason. Stepping it makes the cause visible.
+ */
+function resolveStep(chain, token) {
+  if (token !== resolveToken) return;      // a new game began mid-chain
 
-  for (;;) {
-    const doomed = findMatches();
-    if (!doomed.size) break;
-
-    chain++;
-    const now = Date.now();
-
-    let sumX = 0, sumY = 0;
-    doomed.forEach(k => {
-      const [x, y] = k.split(',').map(Number);
-      pops.push({ x, y, n: grid[y][x].n, until: now + POP_MS });
-      grid[y][x] = null;
-      sumX += x; sumY += y;
-    });
-
-    const gained = doomed.size * 10 * chain;   // later links in a chain are worth more
-    score += gained;
-    cleared += doomed.size;
-
-    /* Float the points from the middle of whatever just vanished. */
-    floats.push({
-      x: sumX / doomed.size,
-      y: sumY / doomed.size,
-      text: `+${gained}`,
-      until: now + FLOAT_MS,
-    });
-
-    if (chain > 1) banner = { text: `CHAIN ×${chain}`, until: now + BANNER_MS };
-    if (chain > 1 || doomed.size >= 4) shakeUntil = now + SHAKE_MS;
-    Sound.chain(chain);
-
-    stepMs = Math.max(MIN_STEP_MS, stepMs - doomed.size * SPEEDUP_PER_CLEAR);
-    shell.setStepMs(stepMs);
-    applyGravity();
+  const doomed = findMatches();
+  if (!doomed.size) {
+    finishTurn();
+    return;
   }
 
-  if (chain) {
-    bestChain = Math.max(bestChain, chain);
-    updateStats();
-  }
-  return chain;
+  chain++;
+  const now = Date.now();
+
+  let sumX = 0, sumY = 0;
+  doomed.forEach(k => {
+    const [x, y] = k.split(',').map(Number);
+    pops.push({ x, y, n: grid[y][x].n, until: now + POP_MS });
+    grid[y][x] = null;
+    sumX += x; sumY += y;
+  });
+
+  const gained = doomed.size * 10 * chain;   // later links in a chain are worth more
+  score += gained;
+  cleared += doomed.size;
+  bestChain = Math.max(bestChain, chain);
+
+  /* Float the points from the middle of whatever just vanished. */
+  floats.push({
+    x: sumX / doomed.size,
+    y: sumY / doomed.size,
+    text: `+${gained}`,
+    until: now + FLOAT_MS,
+  });
+
+  if (chain > 1) banner = { text: `CHAIN ×${chain}`, until: now + BANNER_MS };
+  if (chain > 1 || doomed.size >= 4) shakeUntil = now + SHAKE_MS;
+  Sound.chain(chain);
+
+  stepMs = Math.max(MIN_STEP_MS, stepMs - doomed.size * SPEEDUP_PER_CLEAR);
+  shell.setStepMs(stepMs);
+  updateStats();
+  applyGravity();
+
+  setTimeout(() => resolveStep(chain, token), CHAIN_STEP_MS);
 }
 
-function settle() {
-  Sound.place();
-  pieceCells(piece).forEach(({ x, y, tile }) => { grid[y][x] = tile; });
-  applyGravity();          // a pair can land straddling a gap
-  resolveMatches();
-
+/* Chain is done — bring in the next pair and hand control back. */
+function finishTurn() {
   piece = nextPiece;
   nextPiece = randomPiece();
 
   if (!fits(pieceCells(piece))) {
     Sound.gameOver();
     shell.gameOver(score, `${cleared} tiles · best chain ×${bestChain}`);
+    return;
   }
+  shell.resume();
+}
+
+function settle() {
+  Sound.place();
+  pieceCells(piece).forEach(({ x, y, tile }) => { grid[y][x] = tile; });
+  applyGravity();          // a pair can land straddling a gap
+
+  /* Freeze the fall while the chain plays out. The renderer keeps running. */
+  shell.suspend();
+  resolveStep(0, resolveToken);
 }
 
 function updateStats() {
@@ -493,6 +509,7 @@ const shell = createGameShell({
     floats = [];
     banner = null;
     shakeUntil = 0;
+    resolveToken = (resolveToken || 0) + 1;
     stepMs = START_STEP_MS;
     shell.setStepMs(stepMs);
     piece = randomPiece();
