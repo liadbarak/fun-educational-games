@@ -78,6 +78,7 @@ function renderFooter(base) {
   footer.id = 'site-footer';
   footer.innerHTML =
     `<a href="${base}index.html">All games</a>·` +
+    `<a href="${base}guides/make10-strategy.html">Guides</a>·` +
     `<a href="${base}about.html">About</a>·` +
     `<a href="${base}about.html#privacy">Privacy</a>·` +
     `<a href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">Support</a>`;

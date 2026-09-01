@@ -1,12 +1,12 @@
 /*
  * Make10.
  *
- * Pairs of numbered tiles fall. Wherever two tiles that touch add up to ten,
- * both disappear and everything above drops into the gap — which can set off
- * another match, and another.
+ * Pairs of numbered tiles fall. Any straight line of touching tiles that adds
+ * up to ten disappears — two of them or five — and everything above drops into
+ * the gap, which can set off another match, and another.
  *
- * The arithmetic isn't a quiz bolted onto a game; spotting number bonds to ten
- * is the only way to play. Loop, pause, overlay and high score come from
+ * The arithmetic isn't a quiz bolted onto a game; spotting the tens is the only
+ * way to play. Loop, pause, overlay and high score come from
  * shared/shell.js.
  */
 
@@ -14,8 +14,13 @@ const COLS = 7, ROWS = 14, SIZE = 42;
 const TARGET = 10;
 
 const START_STEP_MS = 700, MIN_STEP_MS = 220;
-const SPEEDUP_PER_CLEAR = 6;   // ms shaved off the fall for each tile removed
-const FLASH_MS = 260;          // how long the sparkle sits where tiles vanished
+/* Runs clear far more tiles than pairs did, so each one speeds things up less. */
+const SPEEDUP_PER_CLEAR = 3;   // ms shaved off the fall for each tile removed
+
+const POP_MS    = 320;   // tile bursting where it was cleared
+const FLOAT_MS  = 850;   // score number drifting upward
+const BANNER_MS = 900;   // "CHAIN xN" across the board
+const SHAKE_MS  = 260;
 
 /* Read from :root so the board tiles and the how-to-play demo tiles can't drift. */
 const DIGIT_COLORS = Object.fromEntries(
@@ -27,10 +32,11 @@ const HOW_TO = `
     <div class="howto-step">
       <span class="howto-num">1</span>
       <div class="howto-text">
-        Two tiles that <b>touch</b> and add up to <b>10</b> both disappear.
+        Tiles in a line that add up to <b>10</b> all disappear — two of them
+        or five.
       </div>
       <div class="howto-demo">
-        <span class="t t6 vanish">6</span><span class="t t4 vanish">4</span>
+        <span class="t t3 vanish">3</span><span class="t t2 vanish">2</span><span class="t t4 vanish">4</span><span class="t t1 vanish">1</span>
       </div>
     </div>
 
@@ -85,7 +91,12 @@ let piece;         // { x, y, rot, a: {n}, b: {n} }
 let nextPiece;
 let score, cleared, bestChain;
 let stepMs;
-let flashes;       // [{ x, y, until }] sparkles where tiles were removed
+
+/* Purely cosmetic, all time-based so they expire on their own. */
+let pops;          // [{ x, y, n, until }]  tiles bursting where they cleared
+let floats;        // [{ x, y, text, until }] score numbers drifting up
+let banner;        // { text, until } | null
+let shakeUntil;
 
 /* ── state helpers ──────────────────────────────────────────── */
 
@@ -98,7 +109,13 @@ function randomTile() {
 }
 
 function randomPiece() {
-  return { x: Math.floor(COLS / 2), y: 0, rot: 0, a: randomTile(), b: randomTile() };
+  /*
+   * Never hand out a pair that already sums to ten — it would clear itself
+   * wherever it landed, which is a turn the player has no say in.
+   */
+  let a, b;
+  do { a = randomTile(); b = randomTile(); } while (a.n + b.n === TARGET);
+  return { x: Math.floor(COLS / 2), y: 0, rot: 0, a, b };
 }
 
 /* Board positions of a piece's two tiles, in fall order. */
@@ -125,26 +142,37 @@ function canFall(p) {
 const key = (x, y) => `${x},${y}`;
 
 /*
- * Every tile in a touching pair that sums to ten. Each pair is tested once by
- * only looking right and down. A tile bridging two pairs is removed with both.
+ * Every tile in a straight run — across or down — that sums to exactly ten.
+ * Two tiles or twenty: 6+4 counts and so does 3+2+4+1.
+ *
+ * Only straight runs, never bent shapes. That keeps it unambiguous (a player
+ * can see every candidate) and cheap: tiles are 1-9, so any run reaches ten
+ * within ten steps and we stop the moment the total passes it.
+ *
+ * Runs may overlap. A tile in two of them is simply removed once.
  */
 function findMatches() {
   const doomed = new Set();
-  for (let y = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++) {
-      const cell = grid[y][x];
-      if (!cell) continue;
 
-      const right = x + 1 < COLS ? grid[y][x + 1] : null;
-      if (right && cell.n + right.n === TARGET) {
-        doomed.add(key(x, y)); doomed.add(key(x + 1, y));
-      }
-      const below = y + 1 < ROWS ? grid[y + 1][x] : null;
-      if (below && cell.n + below.n === TARGET) {
-        doomed.add(key(x, y)); doomed.add(key(x, y + 1));
+  const scan = (length, cellAt, markAt) => {
+    for (let start = 0; start < length; start++) {
+      let sum = 0;
+      for (let end = start; end < length; end++) {
+        const cell = cellAt(end);
+        if (!cell) break;              // a gap ends the run
+        sum += cell.n;
+        if (sum > TARGET) break;       // every tile is >= 1, so it only grows
+        if (sum === TARGET) {
+          for (let k = start; k <= end; k++) doomed.add(markAt(k));
+          break;                       // longer runs from here can only overshoot
+        }
       }
     }
-  }
+  };
+
+  for (let y = 0; y < ROWS; y++) scan(COLS, x => grid[y][x], x => key(x, y));
+  for (let x = 0; x < COLS; x++) scan(ROWS, y => grid[y][x], y => key(x, y));
+
   return doomed;
 }
 
@@ -172,14 +200,31 @@ function resolveMatches() {
 
     chain++;
     const now = Date.now();
+
+    let sumX = 0, sumY = 0;
     doomed.forEach(k => {
       const [x, y] = k.split(',').map(Number);
+      pops.push({ x, y, n: grid[y][x].n, until: now + POP_MS });
       grid[y][x] = null;
-      flashes.push({ x, y, until: now + FLASH_MS });
+      sumX += x; sumY += y;
     });
 
-    score += doomed.size * 10 * chain;   // later links in a chain are worth more
+    const gained = doomed.size * 10 * chain;   // later links in a chain are worth more
+    score += gained;
     cleared += doomed.size;
+
+    /* Float the points from the middle of whatever just vanished. */
+    floats.push({
+      x: sumX / doomed.size,
+      y: sumY / doomed.size,
+      text: `+${gained}`,
+      until: now + FLOAT_MS,
+    });
+
+    if (chain > 1) banner = { text: `CHAIN ×${chain}`, until: now + BANNER_MS };
+    if (chain > 1 || doomed.size >= 4) shakeUntil = now + SHAKE_MS;
+    Sound.chain(chain);
+
     stepMs = Math.max(MIN_STEP_MS, stepMs - doomed.size * SPEEDUP_PER_CLEAR);
     shell.setStepMs(stepMs);
     applyGravity();
@@ -193,6 +238,7 @@ function resolveMatches() {
 }
 
 function settle() {
+  Sound.place();
   pieceCells(piece).forEach(({ x, y, tile }) => { grid[y][x] = tile; });
   applyGravity();          // a pair can land straddling a gap
   resolveMatches();
@@ -201,6 +247,7 @@ function settle() {
   nextPiece = randomPiece();
 
   if (!fits(pieceCells(piece))) {
+    Sound.gameOver();
     shell.gameOver(score, `${cleared} tiles · best chain ×${bestChain}`);
   }
 }
@@ -249,30 +296,81 @@ function drawTile(context, x, y, n, size, alpha) {
   context.restore();
 }
 
-function drawFlashes() {
-  const now = Date.now();
-  flashes = flashes.filter(f => f.until > now);
+/* Each cleared tile swells and fades where it stood. */
+function drawPops(now) {
+  pops = pops.filter(p => p.until > now);
 
-  flashes.forEach(f => {
-    const life = (f.until - now) / FLASH_MS;      // 1 -> 0
+  pops.forEach(p => {
+    const life = (p.until - now) / POP_MS;        // 1 -> 0
+    const scale = 1 + (1 - life) * 0.55;
+    const cx = p.x * SIZE + SIZE / 2;
+    const cy = p.y * SIZE + SIZE / 2;
+
     ctx.save();
-    ctx.globalAlpha = life * 0.75;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.arc(
-      f.x * SIZE + SIZE / 2,
-      f.y * SIZE + SIZE / 2,
-      SIZE * (0.24 + (1 - life) * 0.3),
-      0, Math.PI * 2
-    );
-    ctx.fill();
+    ctx.globalAlpha = life;
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+    ctx.translate(-cx, -cy);
+    drawTile(ctx, p.x, p.y, p.n, SIZE);
     ctx.restore();
   });
 }
 
+function drawFloats(now) {
+  floats = floats.filter(f => f.until > now);
+
+  floats.forEach(f => {
+    const life = (f.until - now) / FLOAT_MS;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, life * 1.8);    // hold, then fade out at the end
+    ctx.fillStyle = cssVar('--accent-dark');
+    ctx.font = `800 ${Math.round(SIZE * 0.42)}px ${cssVar('--font')}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      f.text,
+      f.x * SIZE + SIZE / 2,
+      f.y * SIZE + SIZE / 2 - (1 - life) * SIZE * 1.4
+    );
+    ctx.restore();
+  });
+}
+
+function drawBanner(now) {
+  if (!banner) return;
+  if (banner.until <= now) { banner = null; return; }
+
+  const life = (banner.until - now) / BANNER_MS;
+  /* Snaps in oversized, settles, then fades. */
+  const scale = life > 0.85 ? 1 + (life - 0.85) * 6 : 1;
+
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, life * 2.2);
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.scale(scale, scale);
+  ctx.font = `800 ${Math.round(SIZE * 0.72)}px ${cssVar('--font')}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.strokeText(banner.text, 0, 0);
+  ctx.fillStyle = cssVar('--accent');
+  ctx.fillText(banner.text, 0, 0);
+  ctx.restore();
+}
+
 function draw() {
+  const now = Date.now();
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = THEME.board;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  /* Shake the whole board briefly after a big clear. Decays to nothing. */
+  if (shakeUntil > now) {
+    const power = ((shakeUntil - now) / SHAKE_MS) * 4;
+    ctx.translate((Math.random() - 0.5) * power, (Math.random() - 0.5) * power);
+  }
 
   ctx.strokeStyle = THEME.line;
   ctx.lineWidth = 1;
@@ -300,7 +398,10 @@ function draw() {
 
   pieceCells(piece).forEach(({ x, y, tile }) => drawTile(ctx, x, y, tile.n, SIZE));
 
-  drawFlashes();
+  drawPops(now);
+  drawFloats(now);
+  drawBanner(now);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 function drawNext() {
@@ -388,7 +489,10 @@ const shell = createGameShell({
     score = 0;
     cleared = 0;
     bestChain = 0;
-    flashes = [];
+    pops = [];
+    floats = [];
+    banner = null;
+    shakeUntil = 0;
     stepMs = START_STEP_MS;
     shell.setStepMs(stepMs);
     piece = randomPiece();
@@ -409,3 +513,13 @@ const shell = createGameShell({
 
 document.getElementById('pause-btn').addEventListener('click', () => shell.togglePause());
 document.getElementById('howto-btn').addEventListener('click', () => shell.showHowTo());
+
+const muteBtn = document.getElementById('mute-btn');
+function syncMuteButton() {
+  muteBtn.textContent = Sound.isMuted() ? '🔇 Sound off' : '🔊 Sound on';
+}
+muteBtn.addEventListener('click', () => {
+  Sound.setMuted(!Sound.isMuted());
+  syncMuteButton();
+});
+syncMuteButton();
