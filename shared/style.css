@@ -439,13 +439,26 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 .content h1 { font-size: 26px; font-weight: 800; margin: 0 0 28px; }
 .content h2 { font-size: 14px; color: var(--muted); margin: 36px 0 10px; text-transform: uppercase; letter-spacing: 0.6px; }
 .content p  { margin: 0 0 16px; }
-.content ul { margin: 0 0 16px; padding-left: 22px; }
+.content ul,
+.content ol { margin: 0 0 16px; padding-left: 22px; }
 .content li { margin-bottom: 8px; }
 .content a  { color: var(--accent-dark); }
 .content hr { border: none; border-top: 1px solid var(--line); margin: 44px 0; }
 .content .back { display: inline-block; margin-bottom: 28px; color: var(--muted); text-decoration: none; font-weight: 700; }
 .content .back:hover { color: var(--accent); }
 .content .updated { color: var(--muted); font-size: 12px; }
+
+/* ── ad slots ─────────────────────────────────────────────── */
+
+/*
+ * Empty until shell.js fills them, and invisible while empty — no reserved
+ * height, so a page with ads off is byte-for-byte the layout it always was.
+ */
+.ad-slot:empty { display: none; }
+.ad-slot {
+  margin: 32px 0;
+  min-height: 90px;
+}
 
 /* ── phones and small tablets ─────────────────────────────── */
 

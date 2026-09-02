@@ -70,6 +70,56 @@ const Prefs = {
   },
 };
 
+/* ── ads ───────────────────────────────────────────────────── */
+
+/*
+ * Dormant until PUB_ID is filled in.
+ *
+ * AdSense hands you a publisher id ("ca-pub-...") on signup, before the site is
+ * reviewed, and a numeric id per ad unit you create. Fill both in below and
+ * every matching <div class="ad-slot"> on the site starts serving. Leave PUB_ID
+ * empty and nothing loads at all — no script, no request, no layout shift.
+ * That is the entire switch, and it lives only here.
+ *
+ * Pages mark positions by name (data-slot="in-article") rather than by numeric
+ * id, so turning ads on never means editing the page files. A name with no id
+ * in SLOT_IDS is skipped, which makes a half-configured state degrade to blank
+ * space instead of a broken unit.
+ */
+const PUB_ID = '';           // e.g. 'ca-pub-0000000000000000'
+const SLOT_IDS = {
+  'in-article': '',          // e.g. '1234567890'
+  'end-of-article': '',
+};
+
+(function initAds() {
+  if (!PUB_ID) return;
+
+  const slots = [...document.querySelectorAll('.ad-slot')]
+    .filter(el => SLOT_IDS[el.dataset.slot]);
+  if (!slots.length) return;
+
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.crossOrigin = 'anonymous';
+  tag.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + PUB_ID;
+  document.head.appendChild(tag);
+
+  slots.forEach(slot => {
+    const ins = document.createElement('ins');
+    ins.className = 'adsbygoogle';
+    ins.style.display = 'block';
+    ins.dataset.adClient = PUB_ID;
+    ins.dataset.adSlot = SLOT_IDS[slot.dataset.slot];
+    ins.dataset.adFormat = 'auto';
+    ins.dataset.fullWidthResponsive = 'true';
+    slot.appendChild(ins);
+
+    window.adsbygoogle = window.adsbygoogle || [];
+    window.adsbygoogle.push({});
+  });
+})();
+
 /* ── footer ────────────────────────────────────────────────── */
 
 /* `base` is the relative path back to the site root: '' from the hub, '../' from a game. */
@@ -78,7 +128,7 @@ function renderFooter(base) {
   footer.id = 'site-footer';
   footer.innerHTML =
     `<a href="${base}index.html">All games</a>·` +
-    `<a href="${base}guides/make10-strategy.html">Guides</a>·` +
+    `<a href="${base}guides/">Guides</a>·` +
     `<a href="${base}about.html">About</a>·` +
     `<a href="${base}about.html#privacy">Privacy</a>·` +
     `<a href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">Support</a>`;
