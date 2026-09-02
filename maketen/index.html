@@ -78,6 +78,111 @@
 </aside>
 </div>
 
+<section class="content game-blurb">
+
+<h1>MAKE10 — A NUMBER PUZZLE WHERE LINES THAT ADD TO TEN DISAPPEAR</h1>
+
+<p>
+  Make10 is a free browser puzzle game. Pairs of numbered tiles fall onto a
+  7&nbsp;&times;&nbsp;14 grid, and any straight line of touching tiles that adds up
+  to exactly ten vanishes. Nothing to download, no signup, and it works on a phone
+  as well as a laptop.
+</p>
+
+<h2>HOW TO PLAY</h2>
+
+<ul>
+  <li>
+    <b>Any straight run summing to ten clears.</b> Two tiles or five — 6+4 works,
+    and so does 3+2+4+1. It has to be a straight line, across or down; bent shapes
+    don't count.
+  </li>
+  <li>
+    <b>Move with the arrow keys or the on-screen D-pad.</b> The rotate button swaps
+    the falling pair around, which is how you decide which of the two lands where.
+  </li>
+  <li>
+    <b>Cleared tiles drop whatever was above them</b> — and if that lands in a new
+    line adding to ten, it clears too. That's a chain.
+  </li>
+  <li>
+    <b>Chains multiply.</b> A clear scores 10 points per tile, multiplied by how
+    deep into the chain it happened. The same four tiles are worth four times as
+    much on the fourth link as on the first.
+  </li>
+  <li>
+    <b>The board speeds up as you clear.</b> Tiles start falling every 700ms and
+    bottom out at 220ms, losing a few milliseconds per tile removed.
+  </li>
+</ul>
+
+<h2>WHAT MAKES IT DIFFERENT FROM OTHER FALLING-BLOCK GAMES</h2>
+
+<p>
+  In most of them you're fitting shapes together. Here the shape is always the
+  same — two tiles — and the puzzle is arithmetic instead. You're not looking for
+  a gap that fits, you're looking for a number that completes a ten.
+</p>
+
+<p>
+  That changes how it plays. Clearing greedily is usually wrong: the first pair you
+  spot is rarely the one that sets off a chain, and a board arranged for chains
+  scores several times more than one cleared tidily.
+  <a href="../guides/make10-strategy.html">The strategy guide</a> goes into which
+  columns get dangerous and why.
+</p>
+
+<h2>THE ARITHMETIC IT PRACTISES</h2>
+
+<p>
+  There are only five pairs that make ten — 1+9, 2+8, 3+7, 4+6 and 5+5 — and
+  they're listed beside the board so you never have to guess. Spotting them is the
+  only way to play, so the recall gets rehearsed a few hundred times a session
+  without the game ever asking you a question.
+</p>
+
+<p>
+  That matters more than it sounds, because
+  <a href="../guides/number-bonds.html">those five pairs</a> are what most mental
+  addition shortcuts are built on. If you'd rather read about it than play, there's
+  <a href="../guides/mental-math-adding.html">a piece on the four moves</a> that
+  cover almost every sum you'll do in your head. We also keep an honest page on
+  <a href="../guides/do-brain-games-work.html">whether brain games actually work</a>,
+  which mostly argues that claims like this one should stay narrow.
+</p>
+
+<h2>QUESTIONS</h2>
+
+<p><b>Is Make10 free?</b><br>
+Yes, completely, and there's no signup. Your best score is saved in your own
+browser and never sent anywhere.</p>
+
+<p><b>Does it work on a phone?</b><br>
+Yes. On a small screen the board sits at the top and the D-pad is pinned to the
+bottom where your thumb already is.</p>
+
+<p><b>Do diagonal lines count?</b><br>
+No — across and down only. Straight runs keep it unambiguous about what's about to
+clear.</p>
+
+<p><b>What happens if a line has more than one way to make ten?</b><br>
+Overlapping runs merge and clear together as a single event. So 8&nbsp;2&nbsp;8
+takes all three tiles at once, scored once rather than twice.</p>
+
+<p><b>Can a falling pair already add to ten?</b><br>
+No, that's deliberately never dealt — it would clear itself the moment it landed
+and waste your turn.</p>
+
+<p><b>Is this Tetris?</b><br>
+No. No tetrominoes, no line-filling, different grid, different rule. The only thing
+the two share is that something falls.</p>
+
+<p style="margin-top:32px;">
+  <a href="../snake/">&rarr; Try the other game, Food Rescue</a>
+</p>
+
+</section>
+
 <script src="../shared/shell.js"></script>
 <script src="../shared/sound.js"></script>
 <script src="maketen.js"></script>

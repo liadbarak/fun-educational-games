@@ -58,10 +58,9 @@ body {
 /* Fixed footer sits at the bottom, so leave room for it rather than overlapping. */
 .game-page {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  padding: 24px 16px 64px;
+  padding: 0 16px 64px;
 }
 
 #game {
@@ -186,7 +185,16 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 /* ── "for parents" note ───────────────────────────────────── */
 
 /* Stacks the board and the parent note; .game-page centres this as one unit. */
-.game-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+/* The game owns the first screenful; .game-blurb scrolls up from underneath. */
+.game-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 100vh;
+  padding: 24px 0;
+}
 
 .exercise-note {
   max-width: 500px;
@@ -448,6 +456,18 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 .content .back:hover { color: var(--accent); }
 .content .updated { color: var(--muted); font-size: 12px; }
 
+/* ── game page prose ─────────────────────────────────────── */
+
+/*
+ * Sits below the fold on a game page and carries the h1, the rules and the
+ * FAQ — the game itself is a canvas, so without this a crawler sees an empty
+ * page. Typography comes from .content; this only sets the width and divider.
+ */
+.game-blurb {
+  width: 100%;
+  border-top: 1px solid var(--line);
+}
+
 /* ── ad slots ─────────────────────────────────────────────── */
 
 /*
@@ -476,7 +496,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
    * the bottom of the screen. dvh measures what's actually visible.
    */
   .game-page { align-items: flex-start; padding: 0; }
-  .game-wrap { width: 100%; gap: 0; }
+  .game-wrap { width: 100%; gap: 0; min-height: 0; padding: 0; }
 
   #game {
     flex-direction: column;
