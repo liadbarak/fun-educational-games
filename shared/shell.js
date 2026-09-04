@@ -23,6 +23,24 @@
   gtag('config', ID);
 })();
 
+/* ── event tracking ────────────────────────────────────────── */
+
+/*
+ * A page_view on its own cannot tell a real player from a crawler that ran
+ * the JavaScript — in Analytics the two are identical. These events can:
+ * nothing automated clicks through the how-to screen and finishes a round.
+ *
+ * Best-effort, like the high scores. If gtag is blocked by an extension or
+ * still loading, the call is dropped rather than throwing mid-game.
+ */
+function track(name, params) {
+  try {
+    if (typeof gtag === 'function') gtag('event', name, params || {});
+  } catch (e) {
+    /* analytics is never worth breaking a game over */
+  }
+}
+
 /* ── high scores ───────────────────────────────────────────── */
 
 /*
@@ -157,6 +175,7 @@ function createGameShell(config) {
   let accum = 0;
   let lastTime = null;
   let frameId = null;
+  let startedAt = null;   // when the current round began, for seconds_played
 
   const overlay = document.createElement('div');
   overlay.id = 'overlay';
@@ -212,6 +231,8 @@ function createGameShell(config) {
     redraw() { config.onDraw(); },
 
     start() {
+      track('game_start', { game_name: config.name });
+      startedAt = Date.now();
       config.onReset();
       paused = false;
       suspended = false;
@@ -236,6 +257,7 @@ function createGameShell(config) {
      * start screen; during a round it freezes play and offers a way back in.
      */
     showHowTo() {
+      track('howto_opened', { game_name: config.name });
       if (over) { showStartScreen(); return; }
       suspended = true;
       showOverlay(`
@@ -251,6 +273,13 @@ function createGameShell(config) {
       const best = HighScore.read(config.name);
       const isRecord = score > best;
       if (isRecord) HighScore.write(config.name, score);
+
+      track('game_over', {
+        game_name: config.name,
+        score: score,
+        seconds_played: startedAt ? Math.round((Date.now() - startedAt) / 1000) : 0,
+        is_record: isRecord,
+      });
 
       showOverlay(`
         <h2>GAME OVER</h2>
