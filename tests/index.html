@@ -98,8 +98,13 @@ async function run() {
       get mode()  { return mode },  set mode(v)  { mode = v },
       get theme() { return theme }, set theme(v) { theme = v },
 
+      get Sound()     { return Sound },
+      get HighScore() { return HighScore },
+
       generate: () => generate(),
     })`);
+    /* Layout tests resize the frame; it belongs to this page, not the game's. */
+    w.frame = frame;
   } catch (err) {
     summaryEl.className = 'fail';
     summaryEl.innerHTML =

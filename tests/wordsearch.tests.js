@@ -366,9 +366,253 @@ const TESTS = [
       if (after !== before + 1) return `game_start went ${before} -> ${after}`;
     },
   },
+  /* ── resilience ─────────────────────────────────────────── */
+
+  {
+    name: 'a game still plays when storage is unavailable',
+    why: 'private browsing throws on localStorage; a missing best score must '
+       + 'never stop somebody playing',
+    run(w) {
+      const view = w.document.defaultView;
+      let restore;
+      try {
+        const real = Object.getOwnPropertyDescriptor(view, 'localStorage')
+                  || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(view), 'localStorage');
+        if (!real || !real.configurable) return 'SKIPPED — localStorage is not redefinable here';
+        Object.defineProperty(view, 'localStorage', {
+          configurable: true,
+          get() { throw new Error('denied'); },
+        });
+        restore = () => Object.defineProperty(view, 'localStorage', real);
+
+        w.mode = 'learner';
+        w.shell.start();
+        const word = w.words[0];
+        tap(w, word.cells[0]);
+        tap(w, word.cells[word.cells.length - 1]);
+        if (!word.found) return 'a word could not be found with storage blocked';
+        solveAll(w);
+        if (w.document.querySelector('#overlay-box h2').textContent !== 'SOLVED!') {
+          return 'the puzzle did not complete with storage blocked';
+        }
+      } finally {
+        if (restore) restore();
+      }
+    },
+  },
+
+  {
+    name: 'a throwing sound effect does not swallow a find',
+    why: 'Sound.place() runs before the score update, so an audio failure '
+       + 'would silently stop the word registering',
+    run(w) {
+      const real = w.Sound.place;
+      w.Sound.place = () => { throw new Error('no audio device'); };
+      try {
+        w.mode = 'learner';
+        w.shell.start();
+        const word = w.words[0];
+        tap(w, word.cells[0]);
+        tap(w, word.cells[word.cells.length - 1]);
+        if (!word.found) return `${word.word} did not register when audio threw`;
+      } finally {
+        w.Sound.place = real;
+      }
+    },
+  },
+
+  {
+    name: 'a word already found cannot be found again',
+    why: 'double scoring, and the counter could pass the total',
+    run(w) {
+      w.mode = 'learner';
+      w.shell.start();
+      const word = w.words[0];
+      tap(w, word.cells[0]);
+      tap(w, word.cells[word.cells.length - 1]);
+      const scoreAfterFirst = w.score;
+      tap(w, word.cells[0]);
+      tap(w, word.cells[word.cells.length - 1]);
+      if (w.score !== scoreAfterFirst) return `score went ${scoreAfterFirst} -> ${w.score}`;
+      const found = Number(w.document.getElementById('found').textContent);
+      if (found !== w.words.filter(x => x.found).length) return `counter says ${found}`;
+    },
+  },
+
+  /* ── puzzle quality ─────────────────────────────────────── */
+
+  {
+    name: 'every letter on the board comes from a word that is on the board',
+    why: 'filler is drawn from the placed words on purpose — uniform random '
+       + 'filler leaves the planted words as the only place common letters '
+       + 'cluster, which gives them away',
+    run(w) {
+      for (let i = 0; i < 40; i++) {
+        w.mode = i % 2 ? 'native' : 'learner';
+        w.theme = w.THEMES[i % w.THEMES.length];
+        w.generate();
+        const allowed = new Set(w.words.flatMap(x => x.word.split('')));
+        for (const row of w.grid) {
+          for (const letter of row) {
+            if (!allowed.has(letter)) return `"${letter}" appears but is in no word`;
+          }
+        }
+      }
+    },
+  },
+
+  {
+    name: 'all four directions get used',
+    why: 'losing one would make every puzzle feel the same, with no error',
+    run(w) {
+      const seen = new Set();
+      for (let i = 0; i < 60; i++) {
+        w.mode = 'native';
+        w.theme = w.THEMES[i % w.THEMES.length];
+        w.generate();
+        w.words.forEach(word => {
+          const a = word.cells[0], b = word.cells[1];
+          seen.add(`${Math.sign(b.x - a.x)},${Math.sign(b.y - a.y)}`);
+        });
+      }
+      if (seen.size !== w.DIRECTIONS.length) {
+        return `only saw ${[...seen].join(' ')} of ${w.DIRECTIONS.length} directions`;
+      }
+    },
+  },
+
+  {
+    name: 'words share letters often enough to feel dense',
+    why: 'overlaps are accepted deliberately; if that check broke, grids would '
+       + 'go sparse and easy without anything failing',
+    run(w) {
+      let withOverlap = 0;
+      const RUNS = 40;
+      for (let i = 0; i < RUNS; i++) {
+        w.mode = 'native';
+        w.theme = w.THEMES[i % w.THEMES.length];
+        w.generate();
+        const used = new Map();
+        let overlapped = false;
+        w.words.forEach(word => word.cells.forEach(c => {
+          const k = `${c.x},${c.y}`;
+          if (used.has(k)) overlapped = true;
+          used.set(k, true);
+        }));
+        if (overlapped) withOverlap++;
+      }
+      if (withOverlap < RUNS / 2) {
+        return `only ${withOverlap}/${RUNS} puzzles had any overlapping words`;
+      }
+    },
+  },
+
+  /* ── deep links, which the theme pages will rely on ─────── */
+
+  {
+    name: '?theme=food opens that theme',
+    why: 'every Phase 2 theme page links in this way',
+    async run(w) {
+      const other = await loadFrame('../wordsearch/index.html?theme=food');
+      const key = other.theme.key;
+      other.cleanup();
+      if (key !== 'food') return `loaded "${key}" instead`;
+    },
+  },
+
+  {
+    name: 'an unknown ?theme falls back instead of breaking',
+    async run(w) {
+      const other = await loadFrame('../wordsearch/index.html?theme=not-a-theme');
+      const key = other.theme.key;
+      /* The grid is only built on start — before that an empty board is correct. */
+      other.shell.start();
+      const cells = other.document.querySelectorAll('.ws-cell').length;
+      other.cleanup();
+      if (!key) return 'no theme was selected at all';
+      if (cells === 0) return `fell back to "${key}" but built no grid`;
+    },
+  },
+
+  /* ── layout ─────────────────────────────────────────────── */
+
+  {
+    name: 'nothing overflows sideways at any common screen width',
+    why: 'FIXED BUG (in the other games): a phone held sideways got the desktop '
+       + 'layout and put the controls 468px below the fold',
+    async run(w) {
+      const widths = [320, 360, 390, 412, 430, 744, 1024, 1280];
+      const before = w.frame.style.width;
+      try {
+        for (const mode of ['learner', 'native']) {
+          w.mode = mode;
+          for (const width of widths) {
+            w.frame.style.width = `${width}px`;
+            await settle();
+            w.shell.start();
+            await settle();
+            const doc = w.document.documentElement;
+            if (doc.scrollWidth > width + 1) {
+              return `${mode} at ${width}px overflows to ${doc.scrollWidth}px`;
+            }
+          }
+        }
+      } finally {
+        w.frame.style.width = before;
+        await settle();
+      }
+    },
+  },
+
+  {
+    name: 'cells stay big enough to tap on a phone',
+    why: 'quantifies the 13x13-on-a-phone worry so a bigger grid fails loudly. '
+       + '24px is not a usability standard — it is a regression floor, set just '
+       + 'under what the current layout achieves at the narrowest common width.',
+    async run(w) {
+      const MIN = 24;
+      const before = w.frame.style.width;
+      try {
+        w.frame.style.width = '360px';
+        w.mode = 'native';
+        await settle();
+        w.shell.start();
+        await settle();
+        const box = w.document.querySelector('.ws-cell').getBoundingClientRect();
+        if (box.width < MIN) return `native cells are ${box.width.toFixed(1)}px at 360px wide`;
+      } finally {
+        w.frame.style.width = before;
+        await settle();
+      }
+    },
+  },
 ];
 
 /* ── helpers ──────────────────────────────────────────────── */
+
+const settle = () => new Promise(r => setTimeout(r, 120));
+
+/*
+ * A second frame, for tests that need the game to boot differently — a query
+ * string, say. Cleaned up by the caller so one test cannot affect the next.
+ */
+async function loadFrame(src) {
+  const frame = document.createElement('iframe');
+  frame.style.cssText = 'position:fixed;left:-3000px;top:0;width:1100px;height:900px;border:0';
+  document.body.appendChild(frame);
+  await new Promise(resolve => {
+    frame.addEventListener('load', resolve, { once: true });
+    frame.src = src;
+  });
+  const api = frame.contentWindow.eval(`({
+    document,
+    get theme() { return theme },
+    get words() { return words },
+    get shell() { return shell },
+  })`);
+  api.cleanup = () => frame.remove();
+  return api;
+}
 
 const key = (cells) => [...cells]
   .sort((a, b) => a.y - b.y || a.x - b.x)

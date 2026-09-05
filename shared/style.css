@@ -414,6 +414,7 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 }
 .game-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
 .game-card.is-nature { border-top-color: var(--success); }
+.game-card.is-words  { border-top-color: var(--warm); }
 .game-card .emoji { font-size: 30px; display: block; margin-bottom: 8px; }
 .game-card h2 { margin: 0 0 10px; font-size: 18px; font-weight: 800; }
 .game-card .tag { margin-bottom: 12px; }
@@ -688,7 +689,12 @@ body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
   /* Scales the rendered bitmap only — drawing coordinates are untouched. */
   canvas { max-width: 100%; max-height: 52dvh; width: auto; height: auto; }
 
-  .ws-grid { width: min(52dvh, 100%); }
+  /*
+   * At 360px wide, 13 columns with the desktop gap and padding left cells at
+   * 23.4px. Tightening both buys back roughly 1.5px per cell, which is the
+   * difference between comfortably and marginally tappable.
+   */
+  .ws-grid { width: min(52dvh, 100%); gap: 1px; padding: 4px; }
 
   /*
    * On a 568px-tall screen (iPhone SE and older) 52dvh of board plus the
