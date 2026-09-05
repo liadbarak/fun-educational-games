@@ -81,10 +81,6 @@ let anchor = null;      // first tapped cell, or null
 let seconds = 0;
 let score = 0;
 
-const gridEl  = document.getElementById('ws-grid');
-const listEl  = document.getElementById('ws-words');
-const noteEl  = document.getElementById('ws-note');
-
 /* ── generation ─────────────────────────────────────────────── */
 
 const shuffled = (arr) => arr.map(v => [Math.random(), v])
@@ -178,6 +174,85 @@ function generateOnce() {
   }
 }
 
+/* ── the game's markup ──────────────────────────────────────── */
+
+/*
+ * Built here rather than written into each page. There is one hub page and a
+ * page per theme, and copying this block into all of them would mean ten
+ * places to update. Each page supplies only <div id="ws-app" data-theme="...">
+ * plus its own prose, which is the part that differs and the part search
+ * engines care about.
+ */
+function buildGameUI(host) {
+  host.innerHTML = `
+    <div class="game-wrap">
+      <div id="game">
+        <div id="ws-grid" class="ws-grid"></div>
+
+        <div id="info">
+          <span class="tag tag-words">🔤 Vocabulary</span>
+
+          <div class="stats">
+            <div><h2>Found</h2> <p><span id="found">0</span>/<span id="total">0</span></p></div>
+            <div><h2>Time</h2>  <p id="timer">—</p></div>
+          </div>
+
+          <div class="ws-picker">
+            <h2>Level</h2>
+            <select id="mode-select">
+              <option value="learner">English learner</option>
+              <option value="native">Native speaker</option>
+            </select>
+          </div>
+
+          <p id="ws-note" class="ws-note"></p>
+
+          <h2>Words to find</h2>
+          <ul id="ws-words" class="ws-words"></ul>
+
+          <div class="game-actions">
+            <button id="howto-btn" class="btn-block">❓ How to play</button>
+            <button id="pause-btn" class="btn-block">⏸ Pause</button>
+            <button id="mute-btn" class="btn-block">🔊 Sound on</button>
+            <button id="print-btn" class="btn-block">🖨 Print this puzzle</button>
+          </div>
+          <a class="btn-support" href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+        </div>
+      </div>
+
+      <nav class="ws-themes">
+        <h2>Other themes</h2>
+        <span id="ws-theme-links"></span>
+      </nav>
+    </div>
+  `;
+
+  /*
+   * The worksheet is appended to <body>, not to the host. The print stylesheet
+   * hides every child of body except .ws-print, so nesting it inside the game
+   * meant hiding its own parent and printing a blank sheet.
+   */
+  const sheet = document.createElement('div');
+  sheet.id = 'ws-print';
+  sheet.className = 'ws-print';
+  sheet.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(sheet);
+}
+
+const host = document.getElementById('ws-app');
+buildGameUI(host);
+
+/*
+ * Theme comes from the page itself first — each theme page declares its own —
+ * then ?theme= for links, then the first theme. The hub passes nothing.
+ */
+const asked = host.dataset.theme || new URLSearchParams(location.search).get('theme');
+theme = THEMES.find(t => t.key === asked) || THEMES[0];
+
+const gridEl = document.getElementById('ws-grid');
+const listEl = document.getElementById('ws-words');
+const noteEl = document.getElementById('ws-note');
+
 /* ── rendering ──────────────────────────────────────────────── */
 
 function renderGrid() {
@@ -211,6 +286,19 @@ function renderWords() {
   });
 }
 
+/* Real links, not a dropdown — a crawler can follow these to every theme. */
+function renderThemeLinks() {
+  const nav = document.getElementById('ws-theme-links');
+  nav.innerHTML = '';
+  THEMES.forEach(t => {
+    if (t.key === theme.key) return;
+    const a = document.createElement('a');
+    a.href = `${host.dataset.base || ''}${t.key}.html`;
+    a.textContent = t.name;
+    nav.appendChild(a);
+  });
+}
+
 function updateStats() {
   document.getElementById('found').textContent = words.filter(w => w.found).length;
   document.getElementById('total').textContent = words.length;
@@ -225,6 +313,59 @@ function say(text) {
   noteEl.textContent = text;
   noteEl.classList.toggle('is-active', Boolean(text));
 }
+
+/* ── printing ───────────────────────────────────────────────── */
+
+/*
+ * Prints the puzzle currently on screen, so a teacher can regenerate until
+ * they like one and then print that exact grid. Built on beforeprint rather
+ * than kept in sync, so Ctrl+P works as well as the button does.
+ *
+ * The answer key repeats the grid with the solution letters picked out, on a
+ * second sheet.
+ */
+function renderPrintable() {
+  const solution = new Set(words.flatMap(w => w.cells.map(c => `${c.x},${c.y}`)));
+
+  const asTable = (markSolution) => {
+    const rows = grid.map((row, y) => {
+      const cells = row.map((letter, x) => {
+        const isAnswer = markSolution && solution.has(`${x},${y}`);
+        return `<td class="${isAnswer ? 'is-answer' : ''}">${letter}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+    return `<table class="ws-print-grid">${rows}</table>`;
+  };
+
+  const wordList = words.map(w => `<li>${w.word}</li>`).join('');
+  const level = mode === 'learner' ? 'English learner' : 'Native speaker';
+
+  document.getElementById('ws-print').innerHTML = `
+    <section class="ws-sheet">
+      <h2>${theme.name} word search</h2>
+      <p class="ws-sheet-sub">${level} · find all ${words.length} words ·
+         across, down or diagonally, never backwards</p>
+      ${asTable(false)}
+      <ul class="ws-print-words">${wordList}</ul>
+      <p class="ws-sheet-foot">puzzleten.com</p>
+    </section>
+
+    <section class="ws-sheet ws-sheet-answers">
+      <h2>${theme.name} word search — answers</h2>
+      ${asTable(true)}
+      <p class="ws-sheet-foot">puzzleten.com</p>
+    </section>
+  `;
+}
+
+/*
+ * beforeprint is not universally fired — headless Chrome's printToPDF skips
+ * it, and older Safari never had it — and a print stylesheet with an empty
+ * sheet prints a blank page. So build it whenever the puzzle changes and
+ * treat beforeprint as a refresh rather than the only trigger.
+ */
+window.addEventListener('beforeprint', renderPrintable);
 
 /* ── selection ──────────────────────────────────────────────── */
 
@@ -317,34 +458,14 @@ gridEl.addEventListener('click', (e) => {
   if (cell) handleTap(Number(cell.dataset.x), Number(cell.dataset.y));
 });
 
-/* ── theme and mode pickers ─────────────────────────────────── */
-
-const themeSelect = document.getElementById('theme-select');
-const modeSelect = document.getElementById('mode-select');
-
-THEMES.forEach(t => {
-  const opt = document.createElement('option');
-  opt.value = t.key;
-  opt.textContent = t.name;
-  themeSelect.appendChild(opt);
-});
-
-/* A theme can be linked to directly, which is what the theme pages will do. */
-const requested = new URLSearchParams(location.search).get('theme');
-const match = THEMES.find(t => t.key === requested);
-if (match) theme = match;
-themeSelect.value = theme.key;
-
-function restart() {
-  theme = THEMES.find(t => t.key === themeSelect.value) || THEMES[0];
-  mode = modeSelect.value;
-  shell.start();
-}
-
-themeSelect.addEventListener('change', restart);
-modeSelect.addEventListener('change', restart);
-
 /* ── wiring ─────────────────────────────────────────────────── */
+
+const modeSelect = document.getElementById('mode-select');
+if (host.dataset.mode) modeSelect.value = host.dataset.mode;
+mode = modeSelect.value;
+modeSelect.addEventListener('change', () => { mode = modeSelect.value; shell.start(); });
+
+renderThemeLinks();
 
 const shell = createGameShell({
   /*
@@ -365,6 +486,7 @@ const shell = createGameShell({
     generate();
     renderGrid();
     renderWords();
+    renderPrintable();
     updateStats();
   },
 
@@ -381,6 +503,7 @@ const shell = createGameShell({
 
 document.getElementById('pause-btn').addEventListener('click', () => shell.togglePause());
 document.getElementById('howto-btn').addEventListener('click', () => shell.showHowTo());
+document.getElementById('print-btn').addEventListener('click', () => window.print());
 
 const muteBtn = document.getElementById('mute-btn');
 function syncMuteButton() {

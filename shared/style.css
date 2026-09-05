@@ -622,6 +622,77 @@ body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
 .ws-demo-cell.is-anchor { background: var(--accent); color: #fff; }
 .ws-demo-cell.is-found  { background: #D6F2E3; color: #226B47; }
 
+/* ── theme links under the game ───────────────────────────── */
+
+.ws-themes { text-align: center; }
+.ws-themes h2 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--muted); margin: 0 0 8px;
+}
+.ws-themes a {
+  display: inline-block;
+  margin: 0 4px 6px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  color: var(--accent-dark);
+  font-size: 12.5px; font-weight: 700;
+  text-decoration: none;
+}
+.ws-themes a:hover { box-shadow: var(--shadow-lg); }
+
+/* Word lists shown as text on a theme page, for people and for crawlers. */
+.ws-wordlist { list-style: none; padding: 0; }
+.ws-wordlist li { margin-bottom: 6px; font-size: 14px; }
+.ws-wordlist-flat { color: var(--muted); font-weight: 700; letter-spacing: 0.3px; }
+
+/* ── printable worksheet ──────────────────────────────────── */
+
+/*
+ * Built on beforeprint from whatever puzzle is on screen, so Ctrl+P and the
+ * button produce the same thing. Hidden entirely until the page is printed.
+ */
+.ws-print { display: none; }
+
+@media print {
+  /* Only the worksheet survives — no game, no chrome, no navigation. */
+  body > *:not(.ws-print) { display: none !important; }
+  body { background: #fff; }
+
+  .ws-print { display: block; }
+
+  .ws-sheet { page-break-after: always; text-align: center; padding-top: 8mm; }
+  .ws-sheet:last-child { page-break-after: auto; }
+  .ws-sheet h2 { font-size: 20pt; margin: 0 0 4pt; }
+  .ws-sheet-sub { font-size: 10pt; color: #444; margin: 0 0 10pt; }
+  .ws-sheet-foot { margin-top: 10pt; font-size: 8pt; color: #888; }
+
+  .ws-print-grid {
+    border-collapse: collapse;
+    margin: 0 auto 10pt;
+  }
+  .ws-print-grid td {
+    width: 8mm; height: 8mm;
+    text-align: center; vertical-align: middle;
+    font-size: 12pt; font-weight: 600;
+    border: 0.4pt solid #ccc;
+  }
+  /* The answer key: solution letters stand out, the filler recedes. */
+  .ws-print-grid td.is-answer {
+    font-weight: 800;
+    background: #e6e6e6;
+    border-color: #999;
+  }
+
+  .ws-print-words {
+    list-style: none; padding: 0; margin: 0 auto;
+    max-width: 150mm;
+    font-size: 11pt; font-weight: 700; letter-spacing: 0.5pt;
+  }
+  .ws-print-words li { display: inline-block; margin: 0 6pt 4pt; }
+}
+
 /* ── landscape phones and short windows ───────────────────── */
 
 /*

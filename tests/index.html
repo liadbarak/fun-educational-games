@@ -98,6 +98,10 @@ async function run() {
       get mode()  { return mode },  set mode(v)  { mode = v },
       get theme() { return theme }, set theme(v) { theme = v },
 
+      Event: window.Event,
+      dispatchEvent: (e) => window.dispatchEvent(e),
+      fetch: (...a) => fetch(...a),
+
       get Sound()     { return Sound },
       get HighScore() { return HighScore },
 

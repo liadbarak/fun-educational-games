@@ -7,13 +7,13 @@
   <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#5B8DEF">
-  <title>Free Word Search — Play Online, No Download</title>
-  <meta name="description" content="A free word search puzzle you can play in your browser. Two difficulty levels, themed word lists, and a gentler mode for English learners. No download and no signup.">
+  <title>Free Word Search — Play Online or Print, No Download</title>
+  <meta name="description" content="A free word search you can play in your browser or print as a worksheet with an answer key. Two levels, themed word lists, and a gentler mode for English learners.">
   <link rel="canonical" href="https://puzzleten.com/wordsearch/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Free Word Search — Play Online">
-  <meta property="og:description" content="A free themed word search puzzle in your browser. Two levels, including a mode for English learners.">
+  <meta property="og:title" content="Free Word Search — Play Online or Print">
+  <meta property="og:description" content="Themed word search puzzles, free to play and free to print. Two levels, including one for English learners.">
   <meta property="og:url" content="https://puzzleten.com/wordsearch/">
   <meta name="twitter:card" content="summary_large_image">
 
@@ -21,60 +21,45 @@
 </head>
 <body class="game-page">
 
-<div class="game-wrap">
-<div id="game">
-  <div id="ws-grid" class="ws-grid"></div>
-
-  <div id="info">
-    <span class="tag tag-words">🔤 Vocabulary</span>
-
-    <div class="stats">
-      <div><h2>Found</h2> <p><span id="found">0</span>/<span id="total">0</span></p></div>
-      <div><h2>Time</h2>  <p id="timer">—</p></div>
-    </div>
-
-    <div class="ws-picker">
-      <h2>Theme</h2>
-      <select id="theme-select"></select>
-
-      <h2>Level</h2>
-      <select id="mode-select">
-        <option value="learner">English learner</option>
-        <option value="native">Native speaker</option>
-      </select>
-    </div>
-
-    <p id="ws-note" class="ws-note"></p>
-
-    <h2>Words to find</h2>
-    <ul id="ws-words" class="ws-words"></ul>
-
-    <div class="game-actions">
-      <button id="howto-btn" class="btn-block">❓ How to play</button>
-      <button id="pause-btn" class="btn-block">⏸ Pause</button>
-      <button id="mute-btn" class="btn-block">🔊 Sound on</button>
-    </div>
-    <a class="btn-support" href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">☕ Buy me a coffee</a>
-  </div>
-</div>
-
-<aside class="exercise-note">
-  <strong>What this exercises</strong>
-  <b>Recognising a word from its shape</b> rather than reading it letter by
-  letter — the thing fluent readers do without noticing. The English learner
-  level uses short everyday words and tells you what each one means when you
-  find it; the native level uses longer and less familiar ones, against a clock.
-</aside>
-</div>
+<div id="ws-app"></div>
 
 <section class="content game-blurb">
 
-<h1>FREE WORD SEARCH — PLAY ONLINE, NO DOWNLOAD</h1>
+<h1>FREE WORD SEARCH — PLAY ONLINE OR PRINT</h1>
 
 <p>
-  A word search puzzle you play in your browser. Pick a theme, then find every
-  word hidden in the grid. Nothing to download, no signup, and a new puzzle is
-  generated every time — so a theme never runs out.
+  A word search you play in your browser, or print as a worksheet with an
+  answer key. Every grid is generated fresh, so a theme never runs out, and
+  there is nothing to download or sign up for.
+</p>
+
+<h2 class="section-head">Choose a theme</h2>
+<div class="guide-list">
+  <a href="animals.html">
+    <b>Animal word search</b>
+    <span>Pets and farm animals at the easy level; porcupines and albatrosses at the hard one.</span>
+  </a>
+  <a href="food.html">
+    <b>Food word search</b>
+    <span>Everyday food for learners, and words most people can eat but can't spell for everyone else.</span>
+  </a>
+  <a href="colours.html">
+    <b>Colours word search</b>
+    <span>The basic dozen, plus the shades English has that nobody actually uses.</span>
+  </a>
+</div>
+
+<h2>TWO LEVELS</h2>
+
+<p>
+  <b>English learner</b> uses a 10&times;10 grid and eight short everyday words,
+  with no timer. When you find a word it tells you what that word means — so the
+  vocabulary is the reward for finding it rather than a test you have to sit.
+</p>
+
+<p>
+  <b>Native speaker</b> uses a 13&times;13 grid and fourteen longer, less familiar
+  words, against a clock. Same themes, much less generous.
 </p>
 
 <h2>HOW TO PLAY</h2>
@@ -86,44 +71,37 @@
     is fiddly and inaccurate.
   </li>
   <li>
-    <b>Words run across, down, or diagonally — never backwards.</b> That's true
-    at both levels, so you never have to read a grid in reverse.
+    <b>Words run across, down, or diagonally — never backwards.</b> That holds at
+    both levels, so you never have to read a grid in reverse.
   </li>
   <li>
     <b>Tapping the last letter first is fine too.</b> The line is what matters,
     not the direction you read it in.
   </li>
-  <li>
-    <b>Find every word to finish the puzzle.</b> The list beside the grid crosses
-    them off as you go.
-  </li>
 </ul>
 
-<h2>TWO LEVELS</h2>
+<h2>PRINTING</h2>
 
 <p>
-  <b>English learner</b> uses a 10&times;10 grid and eight short everyday words,
-  with no timer. When you find a word, it tells you what the word means — so the
-  vocabulary is the reward for finding it rather than a test you have to sit.
-</p>
-
-<p>
-  <b>Native speaker</b> uses a 13&times;13 grid and fourteen longer, less
-  familiar words, against a clock. Same themes, much less generous.
+  Press <b>Print this puzzle</b>, or Ctrl&#8209;P. You get the grid exactly as it
+  stands on screen, the word list underneath, and a complete answer key on a
+  second sheet. Generate a new grid first if you want a different one — whatever
+  is showing is what prints.
 </p>
 
 <h2>QUESTIONS</h2>
 
 <p><b>Is it free?</b><br>
-Yes, and there's no signup. Your best score stays in your own browser.</p>
+Yes, to play and to print, and there's no signup. Your best score stays in your
+own browser.</p>
 
 <p><b>Does it work on a phone?</b><br>
 Yes. Tapping two letters is far more accurate on a small screen than dragging
 across them, which is why the game works that way.</p>
 
 <p><b>Are the puzzles always the same?</b><br>
-No — each one is generated fresh, so the same theme gives you a different grid
-every time.</p>
+No — each one is generated fresh, so the same theme gives a different grid every
+time.</p>
 
 <p><b>Do words ever run backwards?</b><br>
 Never, at either level.</p>

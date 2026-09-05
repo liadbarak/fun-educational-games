@@ -586,6 +586,153 @@ const TESTS = [
       }
     },
   },
+  /* ── theme pages and printing (phase 2) ─────────────────── */
+
+  {
+    name: 'each theme page loads its own theme',
+    why: 'the whole point of separate pages — one that loads the wrong theme '
+       + 'is a duplicate of another',
+    async run(w) {
+      for (const key of w.THEMES.map(t => t.key)) {
+        const page = await loadFrame(`../wordsearch/${key}.html`);
+        const loaded = page.theme.key;
+        page.cleanup();
+        if (loaded !== key) return `${key}.html loaded "${loaded}"`;
+      }
+    },
+  },
+
+  {
+    name: 'each theme page declares itself canonical',
+    why: 'pointing them all at /wordsearch/ is what made the themes invisible '
+       + 'to search in the first place',
+    async run(w) {
+      for (const key of w.THEMES.map(t => t.key)) {
+        const page = await loadFrame(`../wordsearch/${key}.html`);
+        const href = page.document.querySelector('link[rel=canonical]').href;
+        page.cleanup();
+        if (!href.endsWith(`/wordsearch/${key}.html`)) return `${key}.html canonicals to ${href}`;
+      }
+    },
+  },
+
+  {
+    name: 'the printed word lists match the ones the game uses',
+    why: 'the lists are written into each page as text for search engines, so '
+       + 'they can drift from themes.js without anything breaking on screen',
+    async run(w) {
+      for (const t of w.THEMES) {
+        const page = await loadFrame(`../wordsearch/${t.key}.html`);
+        const doc = page.document;
+
+        const shownLearner = [...doc.querySelectorAll('.ws-wordlist[data-level=learner] li b')]
+          .map(el => el.textContent.trim());
+        const shownNative = doc.querySelector('.ws-wordlist-flat[data-level=native]')
+          .textContent.split('·').map(x => x.trim()).filter(Boolean);
+        page.cleanup();
+
+        const realLearner = t.learner.map(e => e.word);
+        if (shownLearner.join() !== realLearner.join()) {
+          return `${t.key} learner list on the page is ${shownLearner} but themes.js has ${realLearner}`;
+        }
+        if (shownNative.join() !== t.native.join()) {
+          return `${t.key} native list on the page is out of step with themes.js`;
+        }
+      }
+    },
+  },
+
+  {
+    name: 'every theme link points at a page that exists',
+    async run(w) {
+      w.shell.start();
+      const links = [...w.document.querySelectorAll('.ws-themes a')].map(a => a.getAttribute('href'));
+      if (!links.length) return 'no theme links were rendered';
+      for (const href of links) {
+        const res = await fetch(`../wordsearch/${href}`);
+        if (!res.ok) return `${href} returns ${res.status}`;
+      }
+    },
+  },
+
+  {
+    name: 'printing produces a grid, a word list and an answer key',
+    why: 'the print view is built on beforeprint, so nothing on screen reveals '
+       + 'it being broken',
+    run(w) {
+      w.mode = 'learner';
+      w.shell.start();
+      w.dispatchEvent(new w.Event('beforeprint'));
+
+      const sheets = w.document.querySelectorAll('.ws-print .ws-sheet');
+      if (sheets.length !== 2) return `expected 2 sheets, got ${sheets.length}`;
+
+      const cells = w.document.querySelectorAll('.ws-print .ws-sheet:first-child td');
+      const size = w.MODES[w.mode].size;
+      if (cells.length !== size * size) return `puzzle sheet has ${cells.length} cells, expected ${size * size}`;
+
+      const listed = [...w.document.querySelectorAll('.ws-print-words li')].map(li => li.textContent);
+      if (listed.sort().join() !== w.words.map(x => x.word).sort().join()) {
+        return `word list on the sheet is ${listed}`;
+      }
+
+      const answers = w.document.querySelectorAll('.ws-print .ws-sheet-answers td.is-answer');
+      const expected = new Set(w.words.flatMap(x => x.cells.map(c => `${c.x},${c.y}`))).size;
+      if (answers.length !== expected) return `answer key marks ${answers.length} cells, expected ${expected}`;
+    },
+  },
+
+  {
+    name: 'the answer key marks exactly the letters of the hidden words',
+    run(w) {
+      w.mode = 'native';
+      w.shell.start();
+      w.dispatchEvent(new w.Event('beforeprint'));
+
+      const size = w.MODES.native.size;
+      const rows = [...w.document.querySelectorAll('.ws-print .ws-sheet-answers tr')];
+      const marked = new Set();
+      rows.forEach((tr, y) => [...tr.children].forEach((td, x) => {
+        if (td.classList.contains('is-answer')) marked.add(`${x},${y}`);
+      }));
+
+      for (const word of w.words) {
+        for (const c of word.cells) {
+          if (!marked.has(`${c.x},${c.y}`)) return `${word.word} cell ${c.x},${c.y} is not marked`;
+        }
+      }
+      if (rows.length !== size) return `answer grid has ${rows.length} rows`;
+    },
+  },
+  {
+    name: 'the worksheet sits directly under <body>',
+    why: 'FIXED BUG: the print stylesheet hides every child of body except '
+       + '.ws-print. With the sheet nested inside the game it hid its own '
+       + 'parent, and printing produced a blank page.',
+    run(w) {
+      const sheet = w.document.getElementById('ws-print');
+      if (!sheet) return 'no print container at all';
+      if (sheet.parentElement !== w.document.body) {
+        return `it is inside <${sheet.parentElement.tagName.toLowerCase()}>, not <body>`;
+      }
+    },
+  },
+
+  {
+    name: 'the worksheet is ready without beforeprint ever firing',
+    why: "FIXED BUG: beforeprint is not fired by Chrome's printToPDF, nor by "
+       + 'Safari before 13. Building the sheet only on that event printed a '
+       + 'blank page. It is now rebuilt whenever the puzzle changes.',
+    run(w) {
+      w.mode = 'learner';
+      w.shell.start();          // deliberately no beforeprint dispatched
+      const sheets = w.document.querySelectorAll('.ws-print .ws-sheet');
+      if (sheets.length !== 2) return `${sheets.length} sheets were ready`;
+      const cells = w.document.querySelectorAll('.ws-print .ws-sheet:first-child td').length;
+      const size = w.MODES.learner.size;
+      if (cells !== size * size) return `${cells} cells, expected ${size * size}`;
+    },
+  },
 ];
 
 /* ── helpers ──────────────────────────────────────────────── */

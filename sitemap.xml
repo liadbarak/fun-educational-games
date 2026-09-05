@@ -21,6 +21,21 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://puzzleten.com/wordsearch/animals.html</loc>
+    <lastmod>2026-09-05</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://puzzleten.com/wordsearch/food.html</loc>
+    <lastmod>2026-09-05</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://puzzleten.com/wordsearch/colours.html</loc>
+    <lastmod>2026-09-05</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://puzzleten.com/guides/</loc>
     <lastmod>2026-09-02</lastmod>
     <priority>0.7</priority>
