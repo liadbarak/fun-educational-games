@@ -1,0 +1,4 @@
+# Generated Pinterest images — rebuild with tools/build-pins.py.
+# Kept out of the repo because they are ~5MB of output that would be served
+# publicly for no reason, and they change every time a puzzle is regenerated.
+tools/pins/

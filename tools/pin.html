@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Pin image builder</title>
+
+  <!--
+    Builds a 1000x1500 (2:3) Pinterest image for one theme.
+
+    It loads the real game invisibly and reads its grid, so a pin can never
+    show a puzzle the site would not actually produce. Screenshot this page at
+    1000x1500 — tools/build-pins.py does that for every theme at once.
+
+        tools/pin.html?theme=halloween&mode=learner
+  -->
+  <link rel="stylesheet" href="../shared/style.css">
+  <style>
+    html, body { margin: 0; padding: 0; }
+    /* The game runs for real, off-screen; only the pin is visible. */
+    #ws-app { position: fixed; left: -4000px; top: 0; width: 900px; }
+    #overlay { display: none !important; }
+    #site-footer { display: none; }
+
+    .pin {
+      width: 1000px; height: 1500px;
+      box-sizing: border-box;
+      padding: 54px 56px 46px;
+      display: flex; flex-direction: column;
+      background: linear-gradient(165deg, #EAF4FF 0%, #FFF6EC 100%);
+      font-family: var(--font);
+      color: var(--ink);
+    }
+
+    .pin-kicker {
+      font-size: 22px; font-weight: 800; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--warm);
+      margin-bottom: 10px;
+    }
+    .pin-title { font-size: 74px; font-weight: 800; line-height: 1.02; margin: 0 0 14px; }
+    .pin-sub   { font-size: 27px; color: var(--muted); line-height: 1.35; margin: 0 0 26px; font-weight: 600; }
+
+    .pin-card {
+      background: #fff; border-radius: 26px; padding: 26px;
+      box-shadow: 0 10px 40px rgba(45,49,66,0.14);
+    }
+    .pin-grid { border-collapse: collapse; margin: 0 auto; }
+    .pin-grid td {
+      width: 60px; height: 60px;
+      text-align: center; vertical-align: middle;
+      font-size: 27px; font-weight: 700;
+      color: #2D3142;
+    }
+    .pin-grid.is-big td { width: 47px; height: 47px; font-size: 21px; }
+
+    .pin-words {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 9px;
+      margin: 24px 0 0; padding: 0; list-style: none;
+    }
+    .pin-words li {
+      background: #F4F7FD; border-radius: 9px;
+      padding: 8px 13px; font-size: 20px; font-weight: 800; letter-spacing: 0.6px;
+    }
+
+    /* Fills the gap under the card, and carries the theme keywords with it. */
+    .pin-more {
+      margin: 30px 0 0; text-align: center;
+      font-size: 23px; line-height: 1.5; color: var(--muted); font-weight: 600;
+    }
+    .pin-more b { color: var(--ink); }
+
+    .pin-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; }
+    .pin-badges span {
+      display: inline-block; background: #fff; border-radius: 999px;
+      padding: 11px 20px; margin-right: 10px;
+      font-size: 21px; font-weight: 800; color: var(--accent-dark);
+      box-shadow: 0 3px 14px rgba(45,49,66,0.10);
+    }
+    .pin-url { font-size: 30px; font-weight: 800; color: var(--ink); }
+  </style>
+</head>
+<body>
+
+<div id="ws-app" data-theme=""></div>
+
+<div class="pin" id="pin"></div>
+
+<script>
+  /* Set before the game script runs, so it boots on the requested theme. */
+  const params = new URLSearchParams(location.search);
+  document.getElementById('ws-app').dataset.theme = params.get('theme') || 'animals';
+</script>
+<script src="../wordsearch/themes.js"></script>
+<script src="../shared/shell.js"></script>
+<script src="../shared/sound.js"></script>
+<script src="../wordsearch/wordsearch.js"></script>
+<script>
+  /* Generate a real puzzle, then draw the pin from it. */
+  mode = params.get('mode') || 'learner';
+  document.getElementById('mode-select').value = mode;
+  shell.start();
+
+  const big = MODES[mode].size > 10;
+  const rows = grid.map(row =>
+    `<tr>${row.map(letter => `<td>${letter}</td>`).join('')}</tr>`).join('');
+
+  document.getElementById('pin').innerHTML = `
+    <div class="pin-kicker">Free printable</div>
+    <h1 class="pin-title">${theme.name}<br>Word Search</h1>
+    <p class="pin-sub">Play it online or print it &mdash; with a full answer key.<br>No signup, nothing to download.</p>
+
+    <div class="pin-card">
+      <table class="pin-grid ${big ? 'is-big' : ''}">${rows}</table>
+      <ul class="pin-words">${words.map(w => `<li>${w.word}</li>`).join('')}</ul>
+    </div>
+
+    <p class="pin-more">
+      <b>${THEMES.length} free themes</b><br>
+      ${THEMES.filter(t => t.key !== theme.key).slice(0, 5).map(t => t.name).join(' &middot; ')} and more
+    </p>
+
+    <div class="pin-foot">
+      <div class="pin-badges"><span>Answer key</span><span>Two levels</span></div>
+      <div class="pin-url">puzzleten.com</div>
+    </div>
+  `;
+
+  /* Tells the screenshot script the pin is drawn and safe to capture. */
+  window.PIN_READY = true;
+</script>
+</body>
+</html>
