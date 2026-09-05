@@ -445,6 +445,38 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 .guide-list b    { display: block; font-size: 14.5px; margin-bottom: 3px; }
 .guide-list span { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
 
+/* ── theme picker ─────────────────────────────────────────── */
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+}
+.theme-card {
+  display: block;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow);
+  border-top: 4px solid var(--warm);
+}
+.theme-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.theme-card .emoji { font-size: 26px; display: block; margin-bottom: 6px; }
+.theme-card h2 { margin: 0 0 6px; font-size: 16px; font-weight: 800; }
+.theme-card p  { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+.plain-list { color: var(--muted); font-size: 14px; line-height: 1.7; padding-left: 20px; margin: 0; }
+.plain-list li { margin-bottom: 10px; }
+.plain-list b { color: var(--ink); }
+
+.qa p { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0 0 14px; }
+.qa b { color: var(--ink); }
+
+.hub .back { display: inline-block; margin-bottom: 20px; color: var(--muted); text-decoration: none; font-weight: 700; font-size: 13px; }
+.hub .back:hover { color: var(--accent); }
+
 /* ── content pages (about / privacy) ──────────────────────── */
 
 .content {
@@ -624,42 +656,64 @@ body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
 .ws-demo-cell.is-anchor { background: var(--accent); color: #fff; }
 .ws-demo-cell.is-found  { background: #D6F2E3; color: #226B47; }
 
-/* ── theme links under the game ───────────────────────────── */
+/* ── theme navigation above the game ──────────────────────── */
 
-.ws-themes { text-align: center; }
-.ws-themes h2 {
-  font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
-  color: var(--muted); margin: 0 0 8px;
+/*
+ * Previous / current / next, wrapping at both ends. Above the game because
+ * that is where you look before starting a puzzle, not after finishing one.
+ */
+/*
+ * The nav sits above the game, so the pair of them share the first screen —
+ * otherwise .game-wrap claims a full viewport of its own below the nav and
+ * pushes the board off-centre. Scoped to #ws-app so the other two games,
+ * which have no nav, keep their existing centring.
+ */
+#ws-app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px 0;
 }
-.ws-themes a {
-  display: inline-block;
-  margin: 0 4px 6px;
-  padding: 6px 12px;
+#ws-app .game-wrap { min-height: 0; padding: 0; }
+
+.ws-theme-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  max-width: 620px;
+  margin: 0 auto 14px;
+  padding: 0 8px;
+}
+
+.ws-nav-side {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 13px;
   background: var(--surface);
   border-radius: 999px;
   box-shadow: var(--shadow);
   color: var(--accent-dark);
-  font-size: 12.5px; font-weight: 700;
+  font-size: 13px; font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
 }
-.ws-themes a:hover { box-shadow: var(--shadow-lg); }
+.ws-nav-side:hover { box-shadow: var(--shadow-lg); }
+.ws-nav-arrow { font-size: 17px; line-height: 1; }
 
-/* The theme being played is shown, not hidden — just not clickable. */
-.ws-themes .is-current {
-  display: inline-block;
-  margin: 0 4px 6px;
-  padding: 6px 12px;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 999px;
-  font-size: 12.5px; font-weight: 700;
+.ws-nav-here { text-align: center; line-height: 1.35; }
+.ws-nav-here b {
+  display: block;
+  font-size: 15px; font-weight: 800;
+  letter-spacing: 0.3px;
 }
-.ws-themes .is-back { background: var(--surface-2); color: var(--muted); box-shadow: none; }
-
-/* On the hub the strip is left-aligned with everything else on the page. */
-.ws-themes-hub { text-align: left; }
-.ws-themes-hub a:first-child { margin-left: 0; }
-.ws-themes .is-back:hover { color: var(--accent-dark); }
+.ws-nav-here a {
+  font-size: 11.5px; font-weight: 700;
+  color: var(--muted); text-decoration: none;
+}
+.ws-nav-here a:hover { color: var(--accent); }
 
 /* Word lists shown as text on a theme page, for people and for crawlers. */
 .ws-wordlist { list-style: none; padding: 0; }
@@ -785,6 +839,20 @@ body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
    * difference between comfortably and marginally tappable.
    */
   .ws-grid { width: min(52dvh, 100%); gap: 1px; padding: 4px; }
+
+  /*
+   * The word search has no D-pad to pin to the bottom, so its board does not
+   * need to claim the whole screen the way the other two games do — and with
+   * the nav above it, claiming it would overflow.
+   */
+  #ws-app { min-height: 100dvh; padding: 0; }
+  #ws-app #game { min-height: 0; }
+
+  /* Only the arrows survive; the theme names would wrap the bar onto two lines. */
+  .ws-theme-nav { margin-bottom: 8px; padding: 6px 8px 0; }
+  .ws-nav-name { display: none; }
+  .ws-nav-side { padding: 6px 12px; }
+  .ws-nav-here b { font-size: 13.5px; }
 
   /*
    * On a 568px-tall screen (iPhone SE and older) 52dvh of board plus the

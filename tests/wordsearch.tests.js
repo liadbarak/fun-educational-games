@@ -509,30 +509,7 @@ const TESTS = [
 
   /* ── deep links, which the theme pages will rely on ─────── */
 
-  {
-    name: '?theme=food opens that theme',
-    why: 'every Phase 2 theme page links in this way',
-    async run(w) {
-      const other = await loadFrame('../wordsearch/index.html?theme=food');
-      const key = other.theme.key;
-      other.cleanup();
-      if (key !== 'food') return `loaded "${key}" instead`;
-    },
-  },
 
-  {
-    name: 'an unknown ?theme falls back instead of breaking',
-    async run(w) {
-      const other = await loadFrame('../wordsearch/index.html?theme=not-a-theme');
-      const key = other.theme.key;
-      /* The grid is only built on start — before that an empty board is correct. */
-      other.shell.start();
-      const cells = other.document.querySelectorAll('.ws-cell').length;
-      other.cleanup();
-      if (!key) return 'no theme was selected at all';
-      if (cells === 0) return `fell back to "${key}" but built no grid`;
-    },
-  },
 
   /* ── layout ─────────────────────────────────────────────── */
 
@@ -646,7 +623,7 @@ const TESTS = [
     name: 'every theme link points at a page that exists',
     async run(w) {
       w.shell.start();
-      const links = [...w.document.querySelectorAll('.ws-themes a')].map(a => a.getAttribute('href'));
+      const links = [...w.document.querySelectorAll('.ws-theme-nav a')].map(a => a.getAttribute('href'));
       if (!links.length) return 'no theme links were rendered';
       for (const href of links) {
         const res = await fetch(`../wordsearch/${href}`);
@@ -734,37 +711,89 @@ const TESTS = [
     },
   },
   {
-    name: 'the home page links straight to every theme page',
-    why: 'the home page carries the most authority on the site, so the theme '
-       + 'pages want a link from it — and this strip is written by hand, so it '
-       + 'will drift as themes are added',
+    name: 'the theme picker links to every theme page',
+    why: 'the picker is the only route from the home page to a theme, and its '
+       + 'cards are written by hand, so they will drift as themes are added',
     async run(w) {
-      const res = await w.fetch('../index.html');
+      const res = await w.fetch('../wordsearch/index.html');
       const html = await res.text();
       for (const t of w.THEMES) {
-        if (!html.includes(`wordsearch/${t.key}.html`)) {
-          return `the home page has no link to ${t.key}.html`;
+        if (!html.includes(`href="${t.key}.html"`)) {
+          return `the picker has no card linking to ${t.key}.html`;
         }
       }
     },
   },
 
   {
-    name: 'the theme strip always shows every theme, marking the current one',
-    why: 'FIXED BUG: the current theme was left out of its own list, so the '
-       + 'hub — which plays the first theme — never listed that theme at all',
+    name: 'the picker page does not try to run the game',
+    why: 'it has no #ws-app, so loading the game script there would throw',
+    async run(w) {
+      const res = await w.fetch('../wordsearch/index.html');
+      const html = await res.text();
+      if (html.includes('wordsearch.js')) return 'the picker still loads wordsearch.js';
+      if (html.includes('ws-app')) return 'the picker still has a game mount point';
+    },
+  },
+
+  {
+    name: 'the home page reaches the themes through the picker',
+    why: 'the site is home -> picker -> game; a broken first hop hides all of it',
+    async run(w) {
+      const res = await w.fetch('../index.html');
+      const html = await res.text();
+      if (!html.includes('href="wordsearch/"')) return 'the home page does not link to the picker';
+    },
+  },
+
+  {
+    name: 'prev and next point at the neighbouring themes',
     run(w) {
-      w.shell.start();
-      const shown = [...w.document.querySelectorAll('.ws-themes a, .ws-themes .is-current')]
-        .filter(el => !el.classList.contains('is-back'))
-        .map(el => el.textContent);
-      const expected = w.THEMES.map(t => t.name);
-      if (shown.sort().join() !== expected.sort().join()) {
-        return `strip shows ${shown} but there are ${expected}`;
+      const nav = w.document.getElementById('ws-theme-nav');
+      const at = w.THEMES.findIndex(t => t.key === w.theme.key);
+      const prev = w.THEMES[(at - 1 + w.THEMES.length) % w.THEMES.length];
+      const next = w.THEMES[(at + 1) % w.THEMES.length];
+
+      const links = nav.querySelectorAll('.ws-nav-side');
+      if (links.length !== 2) return `${links.length} arrow links`;
+      if (links[0].getAttribute('href') !== `${prev.key}.html`) return `prev goes to ${links[0].getAttribute('href')}`;
+      if (links[1].getAttribute('href') !== `${next.key}.html`) return `next goes to ${links[1].getAttribute('href')}`;
+    },
+  },
+
+  {
+    name: 'holding next cycles every theme and comes back',
+    why: 'wrapping is the point — the first theme must not be a dead end '
+       + 'backwards, nor the last one forwards',
+    async run(w) {
+      const keys = w.THEMES.map(t => t.key);
+      let at = keys[0];
+      const visited = [at];
+
+      for (let step = 0; step < keys.length; step++) {
+        const page = await loadFrame(`../wordsearch/${at}.html`);
+        const href = page.document
+          .querySelector('.ws-theme-nav .ws-nav-side.is-next')
+          .getAttribute('href');
+        page.cleanup();
+        at = href.replace('.html', '');
+        if (visited.length < keys.length) visited.push(at);
       }
-      if (!w.document.querySelector('.ws-themes .is-current')) {
-        return 'no theme is marked as the current one';
+
+      if (visited.sort().join() !== keys.slice().sort().join()) {
+        return `walking next reached ${visited} of ${keys}`;
       }
+      if (at !== keys[0]) return `after a full loop it landed on ${at}, not ${keys[0]}`;
+    },
+  },
+
+  {
+    name: 'every theme page offers a way back to the picker',
+    run(w) {
+      const back = w.document.querySelector('.ws-nav-here a');
+      if (!back) return 'no link back to the picker';
+      const href = back.getAttribute('href');
+      if (href !== './') return `it points at ${href}`;
     },
   },
 ];

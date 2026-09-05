@@ -220,12 +220,18 @@ function buildGameUI(host) {
         </div>
       </div>
 
-      <nav class="ws-themes">
-        <h2>Themes</h2>
-        <span id="ws-theme-links"></span>
-      </nav>
     </div>
   `;
+
+  /*
+   * Prev / next sit above the game because that is where you look before you
+   * start, not after. They wrap around, so holding one direction cycles every
+   * theme and comes back — no dead end at either end of the list.
+   */
+  const nav = document.createElement('nav');
+  nav.className = 'ws-theme-nav';
+  nav.id = 'ws-theme-nav';
+  host.prepend(nav);
 
   /*
    * The worksheet is appended to <body>, not to the host. The print stylesheet
@@ -243,11 +249,11 @@ const host = document.getElementById('ws-app');
 buildGameUI(host);
 
 /*
- * Theme comes from the page itself first — each theme page declares its own —
- * then ?theme= for links, then the first theme. The hub passes nothing.
+ * Each page declares its own theme. There used to be a ?theme= fallback, from
+ * when every theme shared one URL; separate pages replaced it and nothing
+ * links that way any more.
  */
-const asked = host.dataset.theme || new URLSearchParams(location.search).get('theme');
-theme = THEMES.find(t => t.key === asked) || THEMES[0];
+theme = THEMES.find(t => t.key === host.dataset.theme) || THEMES[0];
 
 const gridEl = document.getElementById('ws-grid');
 const listEl = document.getElementById('ws-words');
@@ -287,33 +293,32 @@ function renderWords() {
 }
 
 /*
- * Real links, not a dropdown, so a crawler can follow them to every theme.
- *
- * Every theme is always listed, including the one being played — it is marked
- * rather than dropped. Hiding it meant the hub, which plays the first theme by
- * default, silently left that theme out of its own list.
+ * Prev / current / next, as real links a crawler can follow. Wrapping means
+ * every theme is two clicks from every other one at worst, and there is no
+ * end of the list to get stuck at.
  */
-function renderThemeLinks() {
-  const nav = document.getElementById('ws-theme-links');
+function renderThemeNav() {
   const base = host.dataset.base || '';
-  nav.innerHTML = '';
+  const at = THEMES.findIndex(t => t.key === theme.key);
+  const prev = THEMES[(at - 1 + THEMES.length) % THEMES.length];
+  const next = THEMES[(at + 1) % THEMES.length];
 
-  THEMES.forEach(t => {
-    const el = document.createElement(t.key === theme.key ? 'span' : 'a');
-    el.textContent = t.name;
-    if (t.key === theme.key) el.className = 'is-current';
-    else el.href = `${base}${t.key}.html`;
-    nav.appendChild(el);
-  });
+  document.getElementById('ws-theme-nav').innerHTML = `
+    <a class="ws-nav-side" href="${base}${prev.key}.html" rel="prev"
+       title="Previous theme: ${prev.name}">
+      <span class="ws-nav-arrow">&lsaquo;</span><span class="ws-nav-name">${prev.name}</span>
+    </a>
 
-  /* On a theme page, an obvious way back. The hub already is that page. */
-  if (host.dataset.theme) {
-    const back = document.createElement('a');
-    back.href = base || './';
-    back.className = 'is-back';
-    back.textContent = 'All themes';
-    nav.appendChild(back);
-  }
+    <span class="ws-nav-here">
+      <b>${theme.name}</b>
+      <a href="${base || './'}">All themes</a>
+    </span>
+
+    <a class="ws-nav-side is-next" href="${base}${next.key}.html" rel="next"
+       title="Next theme: ${next.name}">
+      <span class="ws-nav-name">${next.name}</span><span class="ws-nav-arrow">&rsaquo;</span>
+    </a>
+  `;
 }
 
 function updateStats() {
@@ -482,7 +487,7 @@ if (host.dataset.mode) modeSelect.value = host.dataset.mode;
 mode = modeSelect.value;
 modeSelect.addEventListener('change', () => { mode = modeSelect.value; shell.start(); });
 
-renderThemeLinks();
+renderThemeNav();
 
 const shell = createGameShell({
   /*
