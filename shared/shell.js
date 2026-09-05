@@ -267,8 +267,12 @@ function createGameShell(config) {
       `);
     },
 
-    /* @param {string} [detail] Extra line shown above the score, e.g. "Level 4". */
-    gameOver(score, detail) {
+    /*
+     * @param {string} [detail]  Extra line above the score, e.g. "Level 4".
+     * @param {string} [heading] Overrides "GAME OVER" — a puzzle that has been
+     *                           completed has been won, not lost.
+     */
+    gameOver(score, detail, heading) {
       over = true;
       const best = HighScore.read(config.name);
       const isRecord = score > best;
@@ -282,7 +286,7 @@ function createGameShell(config) {
       });
 
       showOverlay(`
-        <h2>GAME OVER</h2>
+        <h2>${heading || 'GAME OVER'}</h2>
         ${detail ? `<p>${detail}</p>` : ''}
         <p>Score: ${score}</p>
         <p class="best">${isRecord ? '★ NEW BEST!' : `Best: ${best}`}</p>
