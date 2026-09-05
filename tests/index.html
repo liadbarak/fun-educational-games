@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Tests — Puzzle Ten</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <style>
+    /*
+     * Deliberately plain. This page is a tool, not part of the site, and
+     * borrowing the site's game styles would only get in the way.
+     */
+    .runner { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+    .runner h1 { font-size: 22px; margin: 0 0 6px; }
+    .runner .sub { color: var(--muted); font-size: 13px; margin: 0 0 22px; line-height: 1.6; }
+
+    #summary { font-size: 15px; font-weight: 800; padding: 12px 16px; border-radius: 10px; margin-bottom: 18px; }
+    #summary.pass { background: #D6F2E3; color: #226B47; }
+    #summary.fail { background: #FBDAD7; color: #9B2C2C; }
+    #summary.busy { background: var(--surface-2); color: var(--muted); }
+
+    .case { background: var(--surface); border-radius: 10px; padding: 11px 14px; margin-bottom: 7px; font-size: 13px; }
+    .case .verdict { font-weight: 800; margin-right: 8px; }
+    .case.ok   .verdict { color: var(--success); }
+    .case.bad  .verdict { color: #C53030; }
+    .case.skip .verdict { color: var(--muted); }
+    .case .why { display: block; color: var(--muted); font-size: 11.5px; margin-top: 5px; line-height: 1.55; }
+    .case .detail { display: block; color: #C53030; font-size: 12px; margin-top: 5px; font-weight: 700; }
+
+    /* The game runs for real, just out of the way. */
+    #stage { position: fixed; left: -3000px; top: 0; width: 1100px; height: 900px; border: 0; }
+  </style>
+</head>
+<body>
+
+<main class="runner">
+  <h1>Word Search — tests</h1>
+  <p class="sub">
+    Runs the real game in a hidden frame and drives it the way a player would.
+    No framework and no build step, but it does need a local server rather than
+    a double-click — <code>python3 -m http.server 8000</code> in the project
+    root, then <code>localhost:8000/tests/</code>.
+    Several cases are regression guards for bugs that actually shipped; those
+    say so, and shouldn't be deleted without reading why they exist.
+  </p>
+
+  <div id="summary" class="busy">Running…</div>
+  <div id="results"></div>
+</main>
+
+<iframe id="stage" src="../wordsearch/index.html"></iframe>
+
+<script src="wordsearch.tests.js"></script>
+<script>
+const resultsEl = document.getElementById('results');
+const summaryEl = document.getElementById('summary');
+
+function show(test, verdict, detail) {
+  const cls = { PASS: 'ok', FAIL: 'bad', SKIP: 'skip' }[verdict];
+  const el = document.createElement('div');
+  el.className = `case ${cls}`;
+  el.innerHTML =
+    `<span class="verdict">${verdict}</span>${test.name}` +
+    (detail ? `<span class="detail">${detail}</span>` : '') +
+    (test.why ? `<span class="why">${test.why}</span>` : '');
+  resultsEl.appendChild(el);
+}
+
+async function run() {
+  const frame = document.getElementById('stage');
+  await new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
+  /*
+   * The game declares its state with const/let, which create global *lexical*
+   * bindings — those never become properties of window, so frame.contentWindow
+   * .words is undefined no matter how the game is written. eval() runs inside
+   * the frame's own scope and can see them, so one accessor object built there
+   * gives the tests ordinary property access without the game needing to
+   * expose anything for our benefit.
+   */
+  let w;
+  try {
+    w = frame.contentWindow.eval(`({
+      document, localStorage,
+      getComputedStyle: (...a) => getComputedStyle(...a),
+      get dataLayer() { return window.dataLayer },
+
+      get THEMES() { return THEMES },
+      get MODES() { return MODES },
+      get DIRECTIONS() { return DIRECTIONS },
+
+      get grid()    { return grid },
+      get words()   { return words },
+      get shell()   { return shell },
+      get seconds() { return seconds },
+      get score()   { return score },
+
+      get mode()  { return mode },  set mode(v)  { mode = v },
+      get theme() { return theme }, set theme(v) { theme = v },
+
+      generate: () => generate(),
+    })`);
+  } catch (err) {
+    summaryEl.className = 'fail';
+    summaryEl.innerHTML =
+      'Cannot reach the game frame — serve this over http rather than opening ' +
+      'the file directly.<br><code>python3 -m http.server 8000</code> in the ' +
+      'project root, then open <code>localhost:8000/tests/</code>.' +
+      `<br><small>${err.message}</small>`;
+    return;
+  }
+
+  let passed = 0, failed = 0, skipped = 0;
+
+  for (const test of TESTS) {
+    let detail;
+    try {
+      detail = await test.run(w);
+    } catch (err) {
+      detail = `threw: ${err && err.message ? err.message : err}`;
+    }
+
+    if (typeof detail === 'string' && detail.startsWith('SKIPPED')) {
+      skipped++; show(test, 'SKIP', detail);
+    } else if (detail) {
+      failed++; show(test, 'FAIL', detail);
+    } else {
+      passed++; show(test, 'PASS');
+    }
+  }
+
+  summaryEl.className = failed ? 'fail' : 'pass';
+  summaryEl.textContent = failed
+    ? `${failed} failed · ${passed} passed${skipped ? ` · ${skipped} skipped` : ''}`
+    : `All ${passed} passed${skipped ? ` · ${skipped} skipped` : ''}`;
+
+  /* So a headless runner can wait on one thing rather than poll the DOM. */
+  window.TEST_RESULT = { passed, failed, skipped };
+}
+
+run();
+</script>
+</body>
+</html>

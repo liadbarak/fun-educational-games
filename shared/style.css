@@ -548,6 +548,13 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
 }
 .ws-cell.is-found.is-anchor { background: var(--accent); color: #fff; }
 
+/*
+ * Pause has to hide the letters here. In the other two games pausing stops
+ * something moving; in a timed word search, leaving the grid on screen makes
+ * pause into free thinking time.
+ */
+body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
+
 .ws-picker { margin-bottom: 14px; }
 .ws-picker select {
   width: 100%;

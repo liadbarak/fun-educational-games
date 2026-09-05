@@ -26,7 +26,8 @@ const MODES = {
   native:  { size: 13, wordCount: 14, hasTimer: true,  showsMeaning: false },
 };
 
-const PLACE_ATTEMPTS = 200;   // per word, before giving up on it
+const PLACE_ATTEMPTS = 200;      // per word, before giving up on it
+const GENERATE_ATTEMPTS = 12;    // whole grids to try before accepting a short one
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const HOW_TO = `
@@ -131,7 +132,24 @@ function place(word, size) {
   return null;   // no room; the word is dropped rather than forcing it
 }
 
+/*
+ * Native's 14 words in a 13x13 grid don't always all fit — about 1 run in 11
+ * came up short when each word only got one shot. Regenerating the whole grid
+ * is cheap, so try a few times and keep the fullest result rather than
+ * quietly handing the player an easier puzzle.
+ */
 function generate() {
+  let best = null;
+  for (let attempt = 0; attempt < GENERATE_ATTEMPTS; attempt++) {
+    generateOnce();
+    if (!best || words.length > best.words.length) best = { grid, words };
+    if (words.length === MODES[mode].wordCount) return;
+  }
+  grid = best.grid;
+  words = best.words;
+}
+
+function generateOnce() {
   const cfg = MODES[mode];
   grid = Array.from({ length: cfg.size }, () => Array(cfg.size).fill(null));
 
@@ -262,7 +280,14 @@ function handleTap(x, y) {
   if (!hit) { say(''); return; }
 
   hit.found = true;
-  hit.cells.forEach(c => cellAt(c.x, c.y).classList.add('is-found'));
+  /*
+   * Highlight the line the player tapped, not where the word was planted.
+   * Filler letters regularly spell a listed word somewhere else by accident
+   * (~1 puzzle in 8), and highlighting the planted cells then lights up a
+   * different part of the grid from the one they just solved.
+   */
+  hit.foundCells = line;
+  line.forEach(c => cellAt(c.x, c.y).classList.add('is-found'));
   Sound.place();
 
   score += hit.word.length * 10;
@@ -322,7 +347,11 @@ modeSelect.addEventListener('change', restart);
 /* ── wiring ─────────────────────────────────────────────────── */
 
 const shell = createGameShell({
-  name: 'wordsearch',
+  /*
+   * Per mode: native scores carry a time bonus and use longer words, so a
+   * single key would mean a learner-level player could never set a best.
+   */
+  name: () => `wordsearch-${mode}`,
   title: 'WORD SEARCH',
   subtitle: 'Find every word in the grid',
   howTo: HOW_TO,

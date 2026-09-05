@@ -159,7 +159,9 @@ function renderFooter(base) {
  * Creates the loop-and-overlay shell around a game.
  *
  * @param {object}   config
- * @param {string}   config.name      Key used for the saved high score.
+ * @param {string|function} config.name  Key used for the saved high score. A
+ *                                   function is called each time, for games
+ *                                   whose modes should score separately.
  * @param {string}   config.title     Shown on the start overlay.
  * @param {string}   config.subtitle  Shown under the title on the start overlay.
  * @param {number}   config.stepMs    Milliseconds between game steps.
@@ -209,6 +211,10 @@ function createGameShell(config) {
     config.onDraw();
   }
 
+  /* config.name may be a function, for a game that scores its modes apart. */
+  const scoreKey = () =>
+    typeof config.name === 'function' ? config.name() : config.name;
+
   const shell = {
     /* True while input should be ignored — paused, suspended, or on an overlay. */
     isBlocked() { return paused || over || suspended; },
@@ -231,7 +237,7 @@ function createGameShell(config) {
     redraw() { config.onDraw(); },
 
     start() {
-      track('game_start', { game_name: config.name });
+      track('game_start', { game_name: scoreKey() });
       startedAt = Date.now();
       config.onReset();
       paused = false;
@@ -257,7 +263,7 @@ function createGameShell(config) {
      * start screen; during a round it freezes play and offers a way back in.
      */
     showHowTo() {
-      track('howto_opened', { game_name: config.name });
+      track('howto_opened', { game_name: scoreKey() });
       if (over) { showStartScreen(); return; }
       suspended = true;
       showOverlay(`
@@ -274,12 +280,12 @@ function createGameShell(config) {
      */
     gameOver(score, detail, heading) {
       over = true;
-      const best = HighScore.read(config.name);
+      const best = HighScore.read(scoreKey());
       const isRecord = score > best;
-      if (isRecord) HighScore.write(config.name, score);
+      if (isRecord) HighScore.write(scoreKey(), score);
 
       track('game_over', {
-        game_name: config.name,
+        game_name: scoreKey(),
         score: score,
         seconds_played: startedAt ? Math.round((Date.now() - startedAt) / 1000) : 0,
         is_record: isRecord,
@@ -298,10 +304,16 @@ function createGameShell(config) {
   function syncPauseButton() {
     const btn = document.getElementById('pause-btn');
     if (btn) btn.textContent = paused ? '▶ Resume' : '⏸ Pause';
+    /*
+     * Games where simply *looking* at the board is the challenge need to hide
+     * it while paused — otherwise pause is free thinking time against a clock.
+     * Exposed as a class so each game decides whether it cares.
+     */
+    document.body.classList.toggle('is-paused', paused);
   }
 
   function showStartScreen() {
-    const best = HighScore.read(config.name);
+    const best = HighScore.read(scoreKey());
     showOverlay(`
       <h2>${config.title}</h2>
       <p>${config.subtitle}</p>
