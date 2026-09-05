@@ -748,9 +748,13 @@ const TESTS = [
 
   {
     name: 'prev and next point at the neighbouring themes',
+    why: 'reads the theme off the nav itself, not the global — earlier tests '
+       + 'reassign it to exercise generation, and the nav is only rendered once',
     run(w) {
       const nav = w.document.getElementById('ws-theme-nav');
-      const at = w.THEMES.findIndex(t => t.key === w.theme.key);
+      const showing = nav.querySelector('.ws-nav-here b').textContent;
+      const at = w.THEMES.findIndex(t => t.name === showing);
+      if (at < 0) return `the nav shows "${showing}", which is not a theme`;
       const prev = w.THEMES[(at - 1 + w.THEMES.length) % w.THEMES.length];
       const next = w.THEMES[(at + 1) % w.THEMES.length];
 
