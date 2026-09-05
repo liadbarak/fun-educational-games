@@ -22,27 +22,50 @@
     #overlay { display: none !important; }
     #site-footer { display: none; }
 
+    /*
+     * Each theme gets its own colour and its own scattered emoji. A quiet pin
+     * loses in a Pinterest feed — the competition is loud, and a thumbnail
+     * either stops the scroll or it does not. The puzzle card stays white
+     * throughout, because the grid has to stay readable at thumbnail size.
+     */
     .pin {
+      position: relative; overflow: hidden;
       width: 1000px; height: 1500px;
       box-sizing: border-box;
       padding: 54px 56px 46px;
       display: flex; flex-direction: column;
-      background: linear-gradient(165deg, #EAF4FF 0%, #FFF6EC 100%);
+      background: linear-gradient(165deg, var(--pin-a) 0%, var(--pin-b) 100%);
       font-family: var(--font);
-      color: var(--ink);
+      color: var(--pin-ink);
     }
+
+    /* Decoration sits behind everything and never overlaps the card. */
+    .pin-deco { position: absolute; inset: 0; pointer-events: none; }
+    .pin-deco span { position: absolute; line-height: 1; opacity: 0.9; }
+    .pin > *:not(.pin-deco) { position: relative; z-index: 1; }
 
     .pin-kicker {
-      font-size: 22px; font-weight: 800; letter-spacing: 3px;
-      text-transform: uppercase; color: var(--warm);
-      margin-bottom: 10px;
+      display: inline-block;
+      /* .pin is a flex column, so without this it stretches into a full bar. */
+      align-self: flex-start;
+      font-size: 21px; font-weight: 800; letter-spacing: 2.5px;
+      text-transform: uppercase; color: #fff;
+      background: var(--pin-accent);
+      padding: 9px 18px; border-radius: 999px;
+      margin-bottom: 16px;
     }
-    .pin-title { font-size: 74px; font-weight: 800; line-height: 1.02; margin: 0 0 14px; }
-    .pin-sub   { font-size: 27px; color: var(--muted); line-height: 1.35; margin: 0 0 26px; font-weight: 600; }
+    .pin-title {
+      font-size: 78px; font-weight: 800; line-height: 1.0; margin: 0 0 14px;
+      text-shadow: 0 2px 0 rgba(255,255,255,0.45);
+    }
+    .pin-title em { font-style: normal; color: var(--pin-accent); }
+    .pin-sub { font-size: 26px; color: var(--pin-sub); line-height: 1.35; margin: 0 0 24px; font-weight: 700; }
 
+        /* Always white: the grid is the product and has to read at thumbnail size. */
     .pin-card {
       background: #fff; border-radius: 26px; padding: 26px;
-      box-shadow: 0 10px 40px rgba(45,49,66,0.14);
+      border: 5px solid var(--pin-accent);
+      box-shadow: 0 14px 44px rgba(0,0,0,0.16);
     }
     .pin-grid { border-collapse: collapse; margin: 0 auto; }
     .pin-grid td {
@@ -58,7 +81,8 @@
       margin: 24px 0 0; padding: 0; list-style: none;
     }
     .pin-words li {
-      background: #F4F7FD; border-radius: 9px;
+      background: var(--pin-chip); color: var(--pin-chip-ink);
+      border-radius: 9px;
       padding: 8px 13px; font-size: 20px; font-weight: 800; letter-spacing: 0.6px;
     }
 
@@ -67,16 +91,17 @@
       margin: 30px 0 0; text-align: center;
       font-size: 23px; line-height: 1.5; color: var(--muted); font-weight: 600;
     }
-    .pin-more b { color: var(--ink); }
+    .pin-more { color: var(--pin-sub); }
+    .pin-more b { color: var(--pin-ink); }
 
     .pin-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; }
     .pin-badges span {
       display: inline-block; background: #fff; border-radius: 999px;
       padding: 11px 20px; margin-right: 10px;
-      font-size: 21px; font-weight: 800; color: var(--accent-dark);
-      box-shadow: 0 3px 14px rgba(45,49,66,0.10);
+      font-size: 21px; font-weight: 800; color: var(--pin-accent);
+      box-shadow: 0 3px 14px rgba(0,0,0,0.12);
     }
-    .pin-url { font-size: 30px; font-weight: 800; color: var(--ink); }
+    .pin-url { font-size: 30px; font-weight: 800; color: var(--pin-ink); }
   </style>
 </head>
 <body>
@@ -95,18 +120,79 @@
 <script src="../shared/sound.js"></script>
 <script src="../wordsearch/wordsearch.js"></script>
 <script>
+  /*
+   * Colour and decoration per theme. Competing pins are loud and illustrated;
+   * a tasteful grey grid disappears in the feed. Emoji do the illustrating
+   * because they need no assets and render identically everywhere.
+   */
+  const STYLE = {
+    halloween: { a:'#2B1B47', b:'#FF8A3D', ink:'#FFFFFF', sub:'#F3D9C4', accent:'#FF6B1A',
+                 chip:'#FFE8D6', chipInk:'#8A3B00',
+                 deco:['🎃','👻','🦇','🕷️','🕸️','🌙','🍬','💀'] },
+    christmas: { a:'#0E3B2E', b:'#C0392B', ink:'#FFFFFF', sub:'#F6DCD6', accent:'#E74C3C',
+                 chip:'#FDE8E4', chipInk:'#9B2C1F',
+                 deco:['🎄','🎁','⭐','❄️','🔔','🕯️','🦌','🧦'] },
+    space:     { a:'#0B1437', b:'#4A2C7A', ink:'#FFFFFF', sub:'#D6D9F0', accent:'#7C5CE0',
+                 chip:'#E8E4FB', chipInk:'#3D2A75',
+                 deco:['🚀','🪐','⭐','🌙','☄️','🛸','🌌','👽'] },
+    ocean:     { a:'#06344F', b:'#1F9FBF', ink:'#FFFFFF', sub:'#D3EEF6', accent:'#0E8FB0',
+                 chip:'#DDF2F8', chipInk:'#0A5670',
+                 deco:['🐙','🐠','🐚','🌊','🦀','🐢','🐬','⚓'] },
+    dinosaurs: { a:'#1E3D1C', b:'#7FA83A', ink:'#FFFFFF', sub:'#E3EFCF', accent:'#5C8A22',
+                 chip:'#E9F3D8', chipInk:'#3A5A12',
+                 deco:['🦕','🦖','🌋','🦴','🥚','🌿','🪨','🐊'] },
+    animals:   { a:'#3A2A17', b:'#D9A441', ink:'#FFFFFF', sub:'#F4E5C9', accent:'#C4881F',
+                 chip:'#FBEED4', chipInk:'#7A5310',
+                 deco:['🐘','🦁','🐴','🐑','🐄','🦉','🐝','🦋'] },
+    food:      { a:'#5C1F1F', b:'#E8894A', ink:'#FFFFFF', sub:'#F8E2D2', accent:'#D4622A',
+                 chip:'#FCE7DA', chipInk:'#8A3A12',
+                 deco:['🍞','🧀','🍎','🥕','🍇','🥛','🍰','🍯'] },
+    sports:    { a:'#12304F', b:'#3F8FD1', ink:'#FFFFFF', sub:'#D9E9F7', accent:'#2E7CBF',
+                 chip:'#DEEDF9', chipInk:'#17496F',
+                 deco:['⚽','🏀','🏈','🎾','🏐','🥇','🏓','🏸'] },
+    body:      { a:'#4A1F35', b:'#D4708F', ink:'#FFFFFF', sub:'#F8DEE7', accent:'#C0526F',
+                 chip:'#FBE3EA', chipInk:'#7E2942',
+                 deco:['🦴','🫀','👣','✋','👁️','🦷','👂','🧠'] },
+    colours:   { a:'#2E1B52', b:'#E45B9A', ink:'#FFFFFF', sub:'#F7DCEB', accent:'#B14FD8',
+                 chip:'#F3E2FB', chipInk:'#5F2183',
+                 deco:['🎨','🌈','🖍️','🟥','🟩','🟦','🟨','🟪'] },
+  };
+
   /* Generate a real puzzle, then draw the pin from it. */
   mode = params.get('mode') || 'learner';
   document.getElementById('mode-select').value = mode;
   shell.start();
+
+  const st = STYLE[theme.key] || STYLE.animals;
+  const pinEl = document.getElementById('pin');
+  Object.entries({
+    '--pin-a': st.a, '--pin-b': st.b, '--pin-ink': st.ink, '--pin-sub': st.sub,
+    '--pin-accent': st.accent, '--pin-chip': st.chip, '--pin-chip-ink': st.chipInk,
+  }).forEach(([k, v]) => pinEl.style.setProperty(k, v));
+
+  /*
+   * Fixed positions rather than random ones, so a rebuild produces the same
+   * pin and the corners stay clear of the title and the card.
+   */
+  const SPOTS = [
+    [86,  2, 70],  [76,  4, 44],  [93, 20, 54],   // right of the title block
+    [ 3, 85, 78],  [24, 88, 50],  [46, 87, 44],   // the band under the card
+    [66, 88, 48],  [88, 83, 62],
+  ];
+  /* Built here, injected with the rest below — setting innerHTML later would
+     wipe it if it were inserted now. */
+  const deco = `<div class="pin-deco">${SPOTS.map(([x, y, size], i) =>
+      `<span style="left:${x}%;top:${y}%;font-size:${size}px">${st.deco[i % st.deco.length]}</span>`
+    ).join('')}</div>`;
 
   const big = MODES[mode].size > 10;
   const rows = grid.map(row =>
     `<tr>${row.map(letter => `<td>${letter}</td>`).join('')}</tr>`).join('');
 
   document.getElementById('pin').innerHTML = `
+    ${deco}
     <div class="pin-kicker">Free printable</div>
-    <h1 class="pin-title">${theme.name}<br>Word Search</h1>
+    <h1 class="pin-title">${theme.name}<br><em>Word Search</em></h1>
     <p class="pin-sub">Play it online or print it &mdash; with a full answer key.<br>No signup, nothing to download.</p>
 
     <div class="pin-card">
