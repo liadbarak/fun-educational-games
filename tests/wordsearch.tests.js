@@ -733,6 +733,40 @@ const TESTS = [
       if (cells !== size * size) return `${cells} cells, expected ${size * size}`;
     },
   },
+  {
+    name: 'the home page links straight to every theme page',
+    why: 'the home page carries the most authority on the site, so the theme '
+       + 'pages want a link from it — and this strip is written by hand, so it '
+       + 'will drift as themes are added',
+    async run(w) {
+      const res = await w.fetch('../index.html');
+      const html = await res.text();
+      for (const t of w.THEMES) {
+        if (!html.includes(`wordsearch/${t.key}.html`)) {
+          return `the home page has no link to ${t.key}.html`;
+        }
+      }
+    },
+  },
+
+  {
+    name: 'the theme strip always shows every theme, marking the current one',
+    why: 'FIXED BUG: the current theme was left out of its own list, so the '
+       + 'hub — which plays the first theme — never listed that theme at all',
+    run(w) {
+      w.shell.start();
+      const shown = [...w.document.querySelectorAll('.ws-themes a, .ws-themes .is-current')]
+        .filter(el => !el.classList.contains('is-back'))
+        .map(el => el.textContent);
+      const expected = w.THEMES.map(t => t.name);
+      if (shown.sort().join() !== expected.sort().join()) {
+        return `strip shows ${shown} but there are ${expected}`;
+      }
+      if (!w.document.querySelector('.ws-themes .is-current')) {
+        return 'no theme is marked as the current one';
+      }
+    },
+  },
 ];
 
 /* ── helpers ──────────────────────────────────────────────── */

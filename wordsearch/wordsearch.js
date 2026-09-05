@@ -221,7 +221,7 @@ function buildGameUI(host) {
       </div>
 
       <nav class="ws-themes">
-        <h2>Other themes</h2>
+        <h2>Themes</h2>
         <span id="ws-theme-links"></span>
       </nav>
     </div>
@@ -286,17 +286,34 @@ function renderWords() {
   });
 }
 
-/* Real links, not a dropdown — a crawler can follow these to every theme. */
+/*
+ * Real links, not a dropdown, so a crawler can follow them to every theme.
+ *
+ * Every theme is always listed, including the one being played — it is marked
+ * rather than dropped. Hiding it meant the hub, which plays the first theme by
+ * default, silently left that theme out of its own list.
+ */
 function renderThemeLinks() {
   const nav = document.getElementById('ws-theme-links');
+  const base = host.dataset.base || '';
   nav.innerHTML = '';
+
   THEMES.forEach(t => {
-    if (t.key === theme.key) return;
-    const a = document.createElement('a');
-    a.href = `${host.dataset.base || ''}${t.key}.html`;
-    a.textContent = t.name;
-    nav.appendChild(a);
+    const el = document.createElement(t.key === theme.key ? 'span' : 'a');
+    el.textContent = t.name;
+    if (t.key === theme.key) el.className = 'is-current';
+    else el.href = `${base}${t.key}.html`;
+    nav.appendChild(el);
   });
+
+  /* On a theme page, an obvious way back. The hub already is that page. */
+  if (host.dataset.theme) {
+    const back = document.createElement('a');
+    back.href = base || './';
+    back.className = 'is-back';
+    back.textContent = 'All themes';
+    nav.appendChild(back);
+  }
 }
 
 function updateStats() {

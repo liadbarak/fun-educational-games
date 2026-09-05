@@ -508,6 +508,8 @@ button:hover { background: #E8EEFA; border-color: #C9D6EE; }
   border: 2px solid var(--line);
   border-radius: 10px;
   padding: 6px;
+  /* The sidebar is taller than a 10x10 grid; centring stops a gap under it. */
+  align-self: center;
 }
 
 .ws-cell {
@@ -641,6 +643,23 @@ body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
   text-decoration: none;
 }
 .ws-themes a:hover { box-shadow: var(--shadow-lg); }
+
+/* The theme being played is shown, not hidden — just not clickable. */
+.ws-themes .is-current {
+  display: inline-block;
+  margin: 0 4px 6px;
+  padding: 6px 12px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 12.5px; font-weight: 700;
+}
+.ws-themes .is-back { background: var(--surface-2); color: var(--muted); box-shadow: none; }
+
+/* On the hub the strip is left-aligned with everything else on the page. */
+.ws-themes-hub { text-align: left; }
+.ws-themes-hub a:first-child { margin-left: 0; }
+.ws-themes .is-back:hover { color: var(--accent-dark); }
 
 /* Word lists shown as text on a theme page, for people and for crawlers. */
 .ws-wordlist { list-style: none; padding: 0; }
