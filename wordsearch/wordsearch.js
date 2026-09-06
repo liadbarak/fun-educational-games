@@ -45,6 +45,13 @@ const THEME_COLOR = {
   dinosaurs: { accent: '#5C8A22', tint: '#F0F7E4' },
   sports:    { accent: '#2E7CBF', tint: '#E9F3FB' },
   body:      { accent: '#B0455F', tint: '#FDECF1' },
+  thanksgiving: { accent: '#A8531B', tint: '#FBEFE2' },
+  winter:    { accent: '#2F7FA8', tint: '#E8F4FA' },
+  newyear:   { accent: '#9A7B1E', tint: '#FBF3DC' },
+  valentines: { accent: '#C4326B', tint: '#FDEBF2' },
+  easter:    { accent: '#7B5EA7', tint: '#F2ECFA' },
+  stpatricks: { accent: '#2E8B57', tint: '#E7F6EC' },
+  spring:    { accent: '#C77DB3', tint: '#FAEDF6' },
 };
 
 const PLACE_ATTEMPTS = 200;      // per word, before giving up on it
