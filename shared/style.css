@@ -715,6 +715,44 @@ body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
 }
 .ws-nav-here a:hover { color: var(--accent); }
 
+/* ── the print button, above the puzzle ──────────────────── */
+
+.ws-actions { text-align: center; margin: 0 auto 16px; }
+.btn-print {
+  background: var(--theme-accent, var(--accent));
+  border: none;
+  color: #fff;
+  font-size: 15px; font-weight: 800; letter-spacing: 0.3px;
+  padding: 13px 26px;
+  border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+}
+.btn-print:hover { filter: brightness(1.08); background: var(--theme-accent, var(--accent)); }
+.btn-print:active { transform: scale(0.97); }
+
+/* ── theme colour ────────────────────────────────────────── */
+
+/*
+ * Set from the page's own theme, so someone arriving from an orange Halloween
+ * pin does not land on a generic blue page. Applied to the frame only — the
+ * grid stays white, because the letters are what people came to read.
+ */
+body.is-themed {
+  background: linear-gradient(165deg, var(--theme-tint) 0%, #FFFDFA 100%);
+  background-attachment: fixed;
+}
+/* Near-white rather than the default blue-grey, which fought warm accents. */
+body.is-themed .ws-grid { border-color: var(--theme-accent); background: #FBFBFD; }
+body.is-themed .ws-cell:hover { background: var(--theme-tint); }
+body.is-themed .ws-nav-here b { color: var(--theme-accent); }
+body.is-themed .ws-nav-side { color: var(--theme-accent); }
+body.is-themed .game-blurb h1 { color: var(--theme-accent); }
+body.is-themed .tag-words { background: var(--theme-tint); color: var(--theme-accent); }
+body.is-themed .ws-cell.is-anchor { background: var(--theme-accent); }
+body.is-themed .ws-words li { background: var(--theme-tint); color: var(--theme-accent); }
+/* Found stays green everywhere: it means "correct", not "this theme". */
+body.is-themed .ws-words li.is-found { background: #D6F2E3; color: #226B47; }
+
 /* Word lists shown as text on a theme page, for people and for crawlers. */
 .ws-wordlist { list-style: none; padding: 0; }
 .ws-wordlist li { margin-bottom: 6px; font-size: 14px; }
@@ -850,6 +888,8 @@ body.is-paused .ws-grid { filter: blur(9px); pointer-events: none; }
 
   /* Only the arrows survive; the theme names would wrap the bar onto two lines. */
   .ws-theme-nav { margin-bottom: 8px; padding: 6px 8px 0; }
+  .ws-actions { margin-bottom: 10px; }
+  .btn-print { font-size: 13.5px; padding: 11px 20px; }
   .ws-nav-name { display: none; }
   .ws-nav-side { padding: 6px 12px; }
   .ws-nav-here b { font-size: 13.5px; }

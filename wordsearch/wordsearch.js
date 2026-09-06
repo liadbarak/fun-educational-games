@@ -26,6 +26,27 @@ const MODES = {
   native:  { size: 13, wordCount: 14, hasTimer: true,  showsMeaning: false },
 };
 
+/*
+ * A colour per theme, so a page looks like the pin that sent someone to it.
+ * Landing on a generic blue page after clicking an orange Halloween pin is a
+ * mismatch people bounce off.
+ *
+ * The tint is deliberately pale and the grid stays white: the letters are the
+ * product, and contrast there matters more than atmosphere.
+ */
+const THEME_COLOR = {
+  animals:   { accent: '#B8791A', tint: '#FDF3E0' },
+  food:      { accent: '#C9561F', tint: '#FEEFE6' },
+  colours:   { accent: '#9B45C4', tint: '#F7EAFC' },
+  halloween: { accent: '#E1620A', tint: '#FFF1E4' },
+  christmas: { accent: '#C0392B', tint: '#FFECE9' },
+  space:     { accent: '#6C4BD0', tint: '#F0ECFF' },
+  ocean:     { accent: '#0E8FB0', tint: '#E6F6FB' },
+  dinosaurs: { accent: '#5C8A22', tint: '#F0F7E4' },
+  sports:    { accent: '#2E7CBF', tint: '#E9F3FB' },
+  body:      { accent: '#B0455F', tint: '#FDECF1' },
+};
+
 const PLACE_ATTEMPTS = 200;      // per word, before giving up on it
 const GENERATE_ATTEMPTS = 12;    // whole grids to try before accepting a short one
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -214,7 +235,6 @@ function buildGameUI(host) {
             <button id="howto-btn" class="btn-block">❓ How to play</button>
             <button id="pause-btn" class="btn-block">⏸ Pause</button>
             <button id="mute-btn" class="btn-block">🔊 Sound on</button>
-            <button id="print-btn" class="btn-block">🖨 Print this puzzle</button>
           </div>
           <a class="btn-support" href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">☕ Buy me a coffee</a>
         </div>
@@ -232,6 +252,16 @@ function buildGameUI(host) {
   nav.className = 'ws-theme-nav';
   nav.id = 'ws-theme-nav';
   host.prepend(nav);
+
+  /*
+   * Printing is the reason a lot of people arrive, so the button belongs
+   * above the puzzle rather than buried in the sidebar under Pause and Sound.
+   */
+  const actions = document.createElement('div');
+  actions.className = 'ws-actions';
+  actions.innerHTML =
+    '<button id="print-btn" class="btn-print">🖨 Print this puzzle + answer key</button>';
+  nav.after(actions);
 
   /*
    * The worksheet is appended to <body>, not to the host. The print stylesheet
@@ -254,6 +284,13 @@ buildGameUI(host);
  * links that way any more.
  */
 theme = THEMES.find(t => t.key === host.dataset.theme) || THEMES[0];
+
+const palette = THEME_COLOR[theme.key];
+if (palette) {
+  document.body.classList.add('is-themed');
+  document.body.style.setProperty('--theme-accent', palette.accent);
+  document.body.style.setProperty('--theme-tint', palette.tint);
+}
 
 const gridEl = document.getElementById('ws-grid');
 const listEl = document.getElementById('ws-words');
