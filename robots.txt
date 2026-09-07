@@ -1,0 +1,9 @@
+# Everything is fine to crawl except the two tools, which are noindex anyway.
+# Disallowing them stops Search Console reporting them as excluded pages,
+# which reads like an error when it is deliberate.
+User-agent: *
+Allow: /
+Disallow: /tests/
+Disallow: /tools/
+
+Sitemap: https://puzzleten.com/sitemap.xml
