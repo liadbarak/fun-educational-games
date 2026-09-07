@@ -52,6 +52,11 @@ const THEME_COLOR = {
   easter:    { accent: '#7B5EA7', tint: '#F2ECFA' },
   stpatricks: { accent: '#2E8B57', tint: '#E7F6EC' },
   spring:    { accent: '#C77DB3', tint: '#FAEDF6' },
+  school:    { accent: '#3B57A8', tint: '#EDF1FB' },
+  farm:      { accent: '#6F8020', tint: '#F3F6E4' },
+  produce:   { accent: '#5D8F2A', tint: '#EFF7E4' },
+  transport: { accent: '#3A6E9B', tint: '#E9F2F9' },
+  weather:   { accent: '#3E7EA8', tint: '#EAF4FA' },
 };
 
 const PLACE_ATTEMPTS = 200;      // per word, before giving up on it
