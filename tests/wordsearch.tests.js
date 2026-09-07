@@ -800,6 +800,88 @@ const TESTS = [
       if (href !== './') return `it points at ${href}`;
     },
   },
+  /* ── every theme is wired up everywhere ─────────────────── */
+
+  {
+    name: 'no duplicate theme keys, and no holes in the list',
+    why: 'FIXED BUG: appending to themes.js left "},," which makes a hole, not '
+       + 'a syntax error. THEMES.length read 11 for 10 themes and forEach '
+       + 'skipped it silently. A separate session also added themes this one '
+       + 'did not know about, which nearly created five duplicates.',
+    run(w) {
+      const keys = [];
+      for (let i = 0; i < w.THEMES.length; i++) {
+        const t = w.THEMES[i];
+        if (!t) return `hole at index ${i}`;
+        if (keys.includes(t.key)) return `${t.key} appears twice`;
+        keys.push(t.key);
+      }
+    },
+  },
+
+  {
+    name: 'every theme has a page colour',
+    why: 'FIXED BUG: a theme with no THEME_COLOR entry silently falls back to '
+       + 'the default blue-and-cream, so the page stops matching the pin that '
+       + 'sent someone to it. Nothing errors — it just looks wrong.',
+    async run(w) {
+      const res = await w.fetch('../wordsearch/wordsearch.js');
+      const src = await res.text();
+      const block = src.match(/const THEME_COLOR = \{([\s\S]*?)\n\};/);
+      if (!block) return 'THEME_COLOR is gone';
+      for (const t of w.THEMES) {
+        if (!new RegExp(`\\b${t.key}\\s*:`).test(block[1])) {
+          return `${t.key} has no page colour`;
+        }
+      }
+    },
+  },
+
+  {
+    name: 'every theme has a pin colour',
+    why: 'FIXED BUG: five themes fell back to the Animals palette, which put '
+       + 'gold backgrounds and farm animals on a transport pin',
+    async run(w) {
+      const res = await w.fetch('../tools/pin.html');
+      const src = await res.text();
+      const block = src.match(/const STYLE = \{([\s\S]*?)\n  \};/);
+      if (!block) return 'the STYLE map is gone';
+      for (const t of w.THEMES) {
+        if (!new RegExp(`\\b${t.key}\\s*:`).test(block[1])) {
+          return `${t.key} has no pin colour`;
+        }
+      }
+    },
+  },
+
+  {
+    name: 'every theme page is in the sitemap',
+    why: 'a page missing from the sitemap is a page Google may never look for',
+    async run(w) {
+      const res = await w.fetch('../sitemap.xml');
+      const xml = await res.text();
+      for (const t of w.THEMES) {
+        if (!xml.includes(`/wordsearch/${t.key}.html`)) {
+          return `${t.key}.html is not in the sitemap`;
+        }
+      }
+    },
+  },
+
+  {
+    name: 'the tools and test pages are kept out of the index',
+    why: 'they are noindex, and robots.txt should stop them being crawled at '
+       + 'all so Search Console stops reporting them as excluded pages',
+    async run(w) {
+      const res = await w.fetch('../robots.txt');
+      if (!res.ok) return `robots.txt returns ${res.status}`;
+      const txt = await res.text();
+      for (const path of ['/tests/', '/tools/']) {
+        if (!txt.includes(`Disallow: ${path}`)) return `${path} is not disallowed`;
+      }
+      if (!txt.includes('Sitemap:')) return 'robots.txt does not point at the sitemap';
+    },
+  },
 ];
 
 /* ── helpers ──────────────────────────────────────────────── */
