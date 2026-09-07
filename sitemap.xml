@@ -106,6 +106,31 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://puzzleten.com/wordsearch/school.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://puzzleten.com/wordsearch/farm.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://puzzleten.com/wordsearch/produce.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://puzzleten.com/wordsearch/transport.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://puzzleten.com/wordsearch/weather.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://puzzleten.com/guides/</loc>
     <lastmod>2026-09-02</lastmod>
     <priority>0.7</priority>
