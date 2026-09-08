@@ -2,3 +2,6 @@
 # Kept out of the repo because they are ~5MB of output that would be served
 # publicly for no reason, and they change every time a puzzle is regenerated.
 tools/pins/
+
+# macOS Finder junk.
+.DS_Store
