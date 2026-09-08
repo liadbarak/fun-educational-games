@@ -1,0 +1,69 @@
+/*
+ * Prototype-only styles. Nothing here touches shared/style.css — if the idea
+ * dies, deleting the draw/ folder removes every trace of it.
+ */
+.draw-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin: 24px 0;
+}
+@media (max-width: 560px) { .draw-grid { grid-template-columns: 1fr; } }
+
+.draw-step { margin: 0; }
+
+.draw-box {
+  position: relative;
+  border: 2px solid #E3E7EC;
+  border-radius: 12px;
+  background: #FFFFFF;
+  aspect-ratio: 1;
+}
+
+.draw-num {
+  position: absolute;
+  top: 10px; left: 10px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  font: 700 15px/28px system-ui, sans-serif;
+  text-align: center;
+}
+
+.draw-svg { display: block; width: 100%; height: 100%; }
+
+/* Strokes only — a filled shape cannot be traced with a pencil. */
+.draw-svg g { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.draw-svg .prev { stroke: #C9D0D8; stroke-width: 4; color: #C9D0D8; }
+.draw-svg .new  { stroke: var(--accent); stroke-width: 5; color: var(--accent); }
+
+.draw-step figcaption {
+  margin-top: 10px;
+  font: 15px/1.45 system-ui, sans-serif;
+  color: #3C4650;
+}
+
+.draw-actions { margin: 24px 0 4px; }
+.draw-print {
+  background: var(--accent);
+  color: #FFFFFF;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 22px;
+  font: 700 16px system-ui, sans-serif;
+  cursor: pointer;
+}
+
+/*
+ * Printing: the steps go on paper in black, because a colour tutorial that
+ * prints as pale grey is useless in a classroom.
+ */
+@media print {
+  .draw-actions, #site-footer, .draw-prose { display: none; }
+  .draw-grid { gap: 12px; }
+  .draw-box { border-color: #000000; break-inside: avoid; }
+  .draw-num { background: #000000; }
+  .draw-svg .prev { stroke: #B4B4B4; }
+  .draw-svg .new  { stroke: #000000; color: #000000; }
+}
