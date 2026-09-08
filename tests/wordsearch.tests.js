@@ -882,6 +882,23 @@ const TESTS = [
       if (!txt.includes('Sitemap:')) return 'robots.txt does not point at the sitemap';
     },
   },
+  {
+    name: 'every theme has Pinterest copy written for it',
+    why: 'tools/post-pins.py skips a theme with no entry rather than posting a '
+       + 'placeholder, so a missing one is silent — the pin simply never goes up',
+    async run(w) {
+      const res = await w.fetch('../tools/pin-copy.json');
+      if (!res.ok) return `pin-copy.json returns ${res.status}`;
+      const copy = await res.json();
+      for (const t of w.THEMES) {
+        const entry = copy[t.key];
+        if (!entry) return `${t.key} has no pin copy`;
+        if (!entry.title || !entry.description) return `${t.key} is missing a title or description`;
+        if (entry.title.length > 100) return `${t.key} title is ${entry.title.length} chars, Pinterest truncates past 100`;
+        if (entry.description.length < 120) return `${t.key} description is only ${entry.description.length} chars`;
+      }
+    },
+  },
 ];
 
 /* ── helpers ──────────────────────────────────────────────── */

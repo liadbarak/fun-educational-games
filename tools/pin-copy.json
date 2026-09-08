@@ -1,0 +1,102 @@
+{
+  "_comment": [
+    "Pin title, description and destination for every theme. Read by",
+    "tools/post-pins.py, and safe to edit by hand.",
+    "",
+    "Titles stay under ~100 characters because Pinterest truncates beyond that.",
+    "Descriptions are written for a person but deliberately contain the words",
+    "people actually type — 'free', 'printable', 'answer key', the theme name.",
+    "",
+    "A theme with no entry here is skipped rather than posted with a placeholder.",
+    "tests/wordsearch.tests.js checks this file covers every theme in themes.js."
+  ],
+
+  "halloween": {
+    "title": "Free Halloween Word Search — Printable with Answer Key",
+    "description": "A free Halloween word search you can print or play online. Pumpkins, ghosts, witches and broomsticks at the easy level, plus a harder version with cauldrons, werewolves and tombstones. Comes with a full answer key on its own sheet, so it's ready to hand out. No signup and nothing to download — print as many as you need for a class or a party."
+  },
+  "christmas": {
+    "title": "Free Christmas Word Search — Printable with Answer Key",
+    "description": "A free printable Christmas word search with an answer key. The easy level uses words every child knows — tree, star, bell, sleigh, reindeer — and the harder one goes after mistletoe, yuletide and frankincense. Print as many copies as you like for a classroom in December, or play it online. No account needed."
+  },
+  "thanksgiving": {
+    "title": "Free Thanksgiving Word Search — Printable with Answer Key",
+    "description": "A free Thanksgiving word search to print or play online. Turkey, corn, harvest and family at the easy level, then cranberry, cornucopia and Mayflower for anyone who wants a fight. Full answer key on a second sheet, so it's ready for a classroom or the table before dinner. Free, no signup, print as many as you need."
+  },
+  "winter": {
+    "title": "Free Winter Word Search — Printable with Answer Key",
+    "description": "A free winter word search, printable with an answer key. Snow, ice, scarves and mittens at the easy level; blizzards, hoarfrost and permafrost at the hard one. Good for a cold afternoon indoors or a whole class at the end of term. Play online or print it — no account, nothing to download."
+  },
+  "newyear": {
+    "title": "Free New Year Word Search — Printable with Answer Key",
+    "description": "A free New Year word search you can print or play in the browser. Party words at the easy level and a harder set for grown-ups, with a full answer key on its own sheet. Works as a quiet activity for a family gathering or the first lesson back in January. Free, no signup."
+  },
+  "valentines": {
+    "title": "Free Valentine's Day Word Search — Printable, Two Levels",
+    "description": "A free Valentine's Day word search, printable with an answer key. Hearts, roses and cards at the easy level, then affection, devotion and courtship at the harder one. Print a class set in minutes, or play it online. No account and nothing to download."
+  },
+  "easter": {
+    "title": "Free Easter Word Search — Printable with Answer Key",
+    "description": "A free Easter word search to print or play online. Eggs, bunnies, chicks and baskets at the easy level; daffodils, hyacinths and simnel at the hard one. Answer key included on a second sheet. Free, no signup, and print as many copies as your class needs."
+  },
+  "stpatricks": {
+    "title": "Free St Patrick's Day Word Search — Printable, Two Levels",
+    "description": "A free St Patrick's Day word search with an answer key. Green, luck, clover and rainbows at the easy level, then shamrock, leprechaun, blarney and claddagh for everyone else. Print it for a class or play it in the browser. Free and no account required."
+  },
+  "spring": {
+    "title": "Free Spring Word Search — Printable with Answer Key",
+    "description": "A free spring word search, free to print with an answer key. Flowers, bees, rain and nests at the easy level, and a harder version for older children and adults. Good for a nature topic or the first warm week of term. Play online or print — no signup."
+  },
+  "school": {
+    "title": "Free Back to School Word Search — Printable Worksheet",
+    "description": "A free back to school word search with an answer key. The easy level is the vocabulary of the room itself — desk, chair, ruler, pencil, crayon — and the harder one goes after curriculum, protractor and stationery. Ideal for the first week of term or a settling activity. Print as many as you like, free, no account."
+  },
+  "dinosaurs": {
+    "title": "Free Dinosaur Word Search — Printable, Two Levels",
+    "description": "A free dinosaur word search to print or play online. The easy level covers claws, spikes, fossils and eggs; the hard level is the names themselves — Triceratops, Stegosaurus, Pterodactyl, Diplodocus. Answer key included on a second sheet. Free, no signup, print as many as you want."
+  },
+  "space": {
+    "title": "Free Space Word Search — Planets, Rockets and Stars",
+    "description": "A free printable space word search with an answer key. Sun, moon, orbit and planet at the easy level, and supernova, nebula and quasar at the hard one. Good for a science lesson or a rainy afternoon. Play online or print it — no signup, nothing to download."
+  },
+  "ocean": {
+    "title": "Free Ocean Word Search — Sea Creatures, Printable",
+    "description": "A free ocean and sea creatures word search, printable with an answer key. Crabs, waves, whales and shells at the easy level, then plankton, nautilus and the abyss for anyone who wants a fight. Print it for a class or play it in the browser. Free, no account."
+  },
+  "animals": {
+    "title": "Free Animal Word Search — Printable, Easy and Hard",
+    "description": "A free animal word search you can print or play online. Pets and farm animals at the easy level, with a plain meaning shown for every word you find — good for English learners. The hard level brings in porcupines, albatrosses and armadillos. Answer key on a second sheet."
+  },
+  "farm": {
+    "title": "Free Farm Word Search — Printable with Answer Key",
+    "description": "A free farm word search to print or play online. Cows, pigs, hens and tractors at the easy level, then the working vocabulary of actual farming — silage, paddock, granary, furrow. Answer key on its own sheet. Free, no signup, print a class set in minutes."
+  },
+  "produce": {
+    "title": "Free Fruit and Vegetables Word Search — Printable",
+    "description": "A free fruit and vegetables word search with an answer key. Everyday produce at the easy level — apple, pear, carrot, potato — each shown with a plain definition when you find it, which makes it a real vocabulary worksheet. The hard level goes after courgette, celeriac and kohlrabi."
+  },
+  "transport": {
+    "title": "Free Transport Word Search — Cars, Trains and Planes",
+    "description": "A free transport word search, printable with an answer key. Cars, buses, boats and bikes at the easy level — all short words, which keeps it readable for beginners — and locomotives, hovercraft and freighters at the hard one. Play online or print it. Free, no account."
+  },
+  "weather": {
+    "title": "Free Weather Word Search — Printable with Answer Key",
+    "description": "A free weather word search to print or play online. Rain, sun, wind and snow at the easy level, each with a plain meaning shown as you find it — useful for English learners. The harder level reads more like a forecast: barometer, isobar, windchill, monsoon. Answer key included."
+  },
+  "sports": {
+    "title": "Free Sports Word Search — Printable with Answer Key",
+    "description": "A free sports word search to print or play online. The easy level is built from action words — run, jump, throw, catch, kick — which makes it useful for English learners. The hard level is sports themselves, including lacrosse, rounders and decathlon. Answer key included."
+  },
+  "body": {
+    "title": "Free Body Parts Word Search — ESL Printable Worksheet",
+    "description": "A free body parts word search for English learners, printable with an answer key. The easy level covers the first words anybody learns — hand, foot, head, knee — and shows what each one means as you find it. The harder level goes to anatomy: collarbone, knuckle, tendon, pancreas. No signup."
+  },
+  "food": {
+    "title": "Free Food Word Search — ESL Vocabulary Printable",
+    "description": "A free food word search with an answer key. Everyday words at the easy level — bread, milk, rice, apple — each shown with a plain definition when you find it, which makes it a genuine vocabulary worksheet rather than just a puzzle. The hard level goes after asparagus, meringue and gnocchi."
+  },
+  "colours": {
+    "title": "Free Colors Word Search — Printable Vocabulary Sheet",
+    "description": "A free colors word search, printable with an answer key. The basic dozen at the easy level, each with a plain description of the colour, and the shades English barely uses at the hard one — vermilion, chartreuse, cerulean. Play online or print for a class."
+  }
+}
