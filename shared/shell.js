@@ -149,6 +149,7 @@ function renderFooter(base) {
     `<a href="${base}guides/">Guides</a>·` +
     `<a href="${base}about.html">About</a>·` +
     `<a href="${base}about.html#privacy">Privacy</a>·` +
+    `<a href="mailto:hello@puzzleten.com">Contact</a>·` +
     `<a href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">Support</a>`;
   document.body.appendChild(footer);
 }
