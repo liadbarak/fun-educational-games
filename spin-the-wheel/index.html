@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#6F5BD3">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999"
+          crossorigin="anonymous"></script>
+  <title>Spin the Wheel – Free Random Wheel Picker</title>
+  <meta name="description" content="Spin a free random wheel to pick a name, food, activity or decision. Edit the options, paste a list and get an instant random result. No signup.">
+  <link rel="canonical" href="https://puzzleten.com/spin-the-wheel/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Spin the Wheel – Free Random Wheel Picker">
+  <meta property="og:description" content="Add your choices, spin the colorful wheel and get a random result instantly. Free, fast and no signup.">
+  <meta property="og:url" content="https://puzzleten.com/spin-the-wheel/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Spin the Wheel",
+    "url": "https://puzzleten.com/spin-the-wheel/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "description": "A free random wheel picker for names, food, activities and everyday decisions.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="random-wheel.css">
+</head>
+<body class="wheel-page">
+
+<main>
+  <header class="wheel-hero">
+    <a class="wheel-back" href="../index.html">← PuzzleTen</a>
+    <h1>SPIN THE WHEEL</h1>
+    <p>Add your choices, press <b>SPIN</b>, and let the wheel make the pick.</p>
+  </header>
+
+  <section class="wheel-tool" aria-label="Random wheel picker">
+    <div id="random-wheel"></div>
+  </section>
+
+  <section class="content wheel-copy">
+    <h2>FREE RANDOM WHEEL PICKER</h2>
+    <p>
+      This simple wheel spinner makes a random choice from any list. Use it as
+      a random name picker for a classroom, choose what to eat, settle a group
+      decision, pick an activity, or turn a list of games into your next move.
+      Change the sample choices above or paste one option per line, then spin
+      the wheel as many times as you like.
+    </p>
+
+    <h2>HOW TO USE THE RANDOM WHEEL</h2>
+    <ol>
+      <li>Edit the sample options, remove the ones you do not need, or add more.</li>
+      <li>To add a whole list quickly, open <b>Paste a list</b> and put one choice on each line.</li>
+      <li>Press <b>SPIN</b>. The pointer shows the randomly selected result.</li>
+      <li>Spin again, or remove the winner before the next spin so it cannot be picked twice.</li>
+    </ol>
+
+    <h2>WHAT CAN I PUT ON THE WHEEL?</h2>
+    <p>
+      Anything you can type: names, numbers, foods, chores, exercises, movie
+      choices, team members, quiz topics or yes-or-no decisions. The random
+      picker runs in your browser and is ready immediately—there is no account,
+      login or setup screen.
+    </p>
+
+    <h2>MORE FROM PUZZLETEN</h2>
+    <div class="wheel-links">
+      <a data-game-link="maketen" href="../maketen/">
+        <span>🔟</span><b>Want a quick challenge?</b><small>Try Make10 →</small>
+      </a>
+      <a data-game-link="wordsearch" href="../wordsearch/">
+        <span>🔤</span><b>Find a fresh puzzle</b><small>Play Word Search →</small>
+      </a>
+      <a data-game-link="food-rescue" href="../snake/">
+        <span>🍎</span><b>Plan the best route</b><small>Play Food Rescue →</small>
+      </a>
+    </div>
+
+    <h2>QUESTIONS</h2>
+    <p><b>Is the wheel really random?</b><br>
+      Yes. A winner is selected randomly on every spin, then the wheel animates
+      to that result. Every option has the same chance of being selected.</p>
+    <p><b>Can I paste names from a spreadsheet?</b><br>
+      Yes. Copy a column, open <b>Paste a list</b>, and paste it. Blank lines are
+      ignored and each remaining line becomes one wheel segment.</p>
+    <p><b>Does the wheel save or send my list?</b><br>
+      No. Your choices stay on this page in your browser and disappear when you
+      leave or refresh it.</p>
+  </section>
+</main>
+
+<script src="../shared/shell.js"></script>
+<script src="random-wheel.js"></script>
+<script>
+  const wheel = new RandomWheel(document.getElementById('random-wheel'), {
+    options: ['Pizza', 'Sushi', 'Burger', 'Pasta', 'Tacos', 'Salad'],
+    analytics: track,
+    pageName: 'spin-the-wheel'
+  });
+
+  track('utility_view', { utility_name: 'spin-the-wheel' });
+  document.querySelectorAll('[data-game-link]').forEach(link => {
+    link.addEventListener('click', () => track('utility_to_game', {
+      utility_name: 'spin-the-wheel',
+      game_name: link.dataset.gameLink
+    }));
+  });
+  renderFooter('../');
+</script>
+</body>
+</html>
