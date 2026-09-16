@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dice Roller Tests — PuzzleTen</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="../dice-roller/dice-roller.css">
+  <style>
+    .runner { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+    .runner h1 { font-size: 22px; margin: 0 0 6px; }
+    .runner .sub { color: var(--muted); font-size: 13px; margin: 0 0 22px; line-height: 1.6; }
+    #summary { font-size: 15px; font-weight: 800; padding: 12px 16px; border-radius: 10px; margin-bottom: 18px; }
+    #summary.pass { background: #D6F2E3; color: #226B47; }
+    #summary.fail { background: #FBDAD7; color: #9B2C2C; }
+    #summary.busy { background: var(--surface-2); color: var(--muted); }
+    .case { background: var(--surface); border-radius: 10px; padding: 11px 14px; margin-bottom: 7px; font-size: 13px; }
+    .case.ok .verdict { color: var(--success); }
+    .case.bad .verdict { color: #C53030; }
+    .verdict { font-weight: 800; margin-right: 8px; }
+    .detail { display: block; color: #C53030; font-size: 12px; margin-top: 5px; font-weight: 700; }
+    #fixture { position: fixed; left: -3000px; top: 0; width: 800px; }
+  </style>
+</head>
+<body>
+<main class="runner">
+  <h1>Dice Roller — tests</h1>
+  <p class="sub">Exercises configuration, D6 pips, totals, presets, analytics and SEO wiring against the real component.</p>
+  <div id="summary" class="busy">Running…</div>
+  <div id="results"></div>
+</main>
+<div id="fixture"></div>
+
+<script src="../dice-roller/dice-roller.js"></script>
+<script src="dice-roller.tests.js"></script>
+</body>
+</html>

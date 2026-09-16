@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#4C91E6">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999"
+          crossorigin="anonymous"></script>
+  <title>Dice Roller – Roll Dice Online | PuzzleTen</title>
+  <meta name="description" content="Roll dice online instantly with this free dice roller. Choose 1–10 dice and switch between D4, D6, D8, D10, D12, D20 and D100.">
+  <link rel="canonical" href="https://puzzleten.com/dice-roller/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dice Roller – Roll Dice Online | PuzzleTen">
+  <meta property="og:description" content="Roll one or more virtual dice instantly. Includes D6, D20 and other common dice types.">
+  <meta property="og:url" content="https://puzzleten.com/dice-roller/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Online Dice Roller",
+    "url": "https://puzzleten.com/dice-roller/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "description": "A free online dice roller for D4, D6, D8, D10, D12, D20 and D100 dice.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="dice-roller.css">
+</head>
+<body class="dice-page">
+
+<main>
+  <header class="dice-hero">
+    <a class="dice-back" href="../index.html">← PuzzleTen</a>
+    <h1>ONLINE DICE ROLLER</h1>
+    <p>Roll dice online instantly. Choose how many dice to roll or switch between D6, D20 and other common dice types.</p>
+  </header>
+
+  <section class="dice-tool" aria-label="Online dice roller">
+    <div id="dice-roller"></div>
+  </section>
+
+  <section class="content dice-copy">
+    <h2>ONLINE DICE ROLLER</h2>
+    <p>
+      Use this free dice roller whenever you need a quick random roll without
+      finding physical dice. Choose a die type, select between one and ten dice,
+      and press <b>Roll Dice</b>. Every result appears separately, with the
+      combined total underneath.
+    </p>
+
+    <h2>ROLL 2 DICE</h2>
+    <p>
+      For a standard two-dice roll, use the <b>Roll 2 Dice</b> preset above. It
+      selects two D6 dice, rolls both at once and adds them together. You can
+      also choose 2 from the number-of-dice menu whenever you want to keep the
+      same setup for several rolls.
+    </p>
+
+    <h2>D20 ROLLER</h2>
+    <p>
+      A D20 is the twenty-sided die commonly used for checks and actions in
+      tabletop role-playing games. Select <b>D20</b> from the dice-type menu or
+      press the <b>D20 Roller</b> preset for an instant roll.
+    </p>
+
+    <h2>SUPPORTED DICE</h2>
+    <p>
+      The roller supports D4, D6, D8, D10, D12, D20 and D100. D6 results use
+      familiar pip faces; the other dice use clear numbered shapes so every
+      result stays easy to read on a phone or computer.
+    </p>
+
+    <h2>MORE RANDOM TOOLS</h2>
+    <div class="dice-links">
+      <a data-utility-link="spin-the-wheel" href="../spin-the-wheel/">
+        <span>🎡</span><b>Spin the Wheel</b><small>Pick from any list →</small>
+      </a>
+      <a data-game-link="maketen" href="../maketen/">
+        <span>🔟</span><b>Want a quick puzzle?</b><small>Play Make10 →</small>
+      </a>
+    </div>
+
+    <h2>QUESTIONS</h2>
+    <p><b>Are the dice rolls random?</b><br>
+      Yes. Each die is generated independently in your browser, with every face
+      having the same chance of being selected.</p>
+    <p><b>Can I roll different kinds of dice together?</b><br>
+      Not in this small first version. Every roll uses one selected die type,
+      but you can roll up to ten of that die at once.</p>
+    <p><b>Does the dice roller need an account?</b><br>
+      No. It works immediately with no login, download or saved configuration.</p>
+  </section>
+</main>
+
+<script src="../shared/shell.js"></script>
+<script src="dice-roller.js"></script>
+<script>
+  const diceRoller = new DiceRoller(document.getElementById('dice-roller'), {
+    analytics: track,
+    pageName: 'dice-roller'
+  });
+
+  track('utility_view', { utility_name: 'dice-roller' });
+  document.querySelectorAll('[data-game-link]').forEach(link => {
+    link.addEventListener('click', () => track('utility_to_game', {
+      utility_name: 'dice-roller',
+      game_name: link.dataset.gameLink
+    }));
+  });
+  document.querySelectorAll('[data-utility-link]').forEach(link => {
+    link.addEventListener('click', () => track('utility_to_utility', {
+      from_utility: 'dice-roller',
+      to_utility: link.dataset.utilityLink
+    }));
+  });
+  renderFooter('../');
+</script>
+</body>
+</html>
