@@ -34,6 +34,9 @@ const TESTS = [
       const die = root.querySelector('.dr-die.is-d6');
       if (!die) return 'D6 face was not rendered';
       if (die.querySelectorAll('.dr-pip').length !== 4) return 'four did not have four pips';
+      const hiddenPip = [...die.querySelectorAll('.dr-pip')]
+        .find(pip => pip.getBoundingClientRect().width === 0 || pip.getBoundingClientRect().height === 0);
+      if (hiddenPip) return 'a pip was rendered at zero size';
       if (root.querySelector('.dr-total').textContent.trim() !== 'Total: 4') return root.querySelector('.dr-total').textContent;
     },
   },

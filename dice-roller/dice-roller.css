@@ -87,7 +87,9 @@
 .dr-die.is-d6 {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  padding: 16%;
+  /* Percentage padding is based on the parent width, which can collapse the
+     die's grid tracks to zero on a wide stage. Keep it tied to the die size. */
+  padding: clamp(11px, 2.2vw, 18px);
   border: 4px solid #fff;
   border-radius: 19%;
   background: var(--dice-blue);
