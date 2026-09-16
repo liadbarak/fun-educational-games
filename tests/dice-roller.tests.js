@@ -54,6 +54,47 @@ const TESTS = [
     },
   },
   {
+    name: 'every supported type works with every dice count from 1 to 10',
+    async run({ roller, root }) {
+      const originalDuration = roller.animationDuration;
+      const originalRandomInt = roller.randomInt;
+      let failure;
+      roller.animationDuration = 1;
+
+      combinations:
+      for (const sides of roller.supportedSides) {
+        for (let count = 1; count <= 10; count++) {
+          roller.setConfiguration(sides, count);
+          roller.randomInt = () => sides;
+          roller.roll();
+          await until(() => !roller.isRolling);
+
+          const dice = [...root.querySelectorAll('.dr-die')];
+          if (dice.length !== count) {
+            failure = `D${sides} × ${count} rendered ${dice.length} dice`;
+            break combinations;
+          }
+          const invalidFace = dice.find(die => sides === 6
+            ? die.querySelectorAll('.dr-pip').length !== 6
+            : die.querySelector('.dr-number')?.textContent !== String(sides));
+          if (invalidFace) {
+            failure = `D${sides} × ${count} rendered an invalid face`;
+            break combinations;
+          }
+          const total = root.querySelector('.dr-total').textContent.trim();
+          if (total !== `Total: ${sides * count}`) {
+            failure = `D${sides} × ${count} produced ${total}`;
+            break combinations;
+          }
+        }
+      }
+
+      roller.animationDuration = originalDuration;
+      roller.randomInt = originalRandomInt;
+      return failure;
+    },
+  },
+  {
     name: 'the D20 preset configures and rolls the same component',
     async run({ roller, root }) {
       roller.randomInt = sides => sides === 20 ? 17 : 1;
@@ -77,8 +118,10 @@ const TESTS = [
     run({ events }) {
       const rolls = events.filter(event => event.name === 'dice_roll');
       if (rolls.length < 3) return `only ${rolls.length} rolls were tracked`;
-      const d20 = rolls.find(event => event.params.dice_type === 'D20');
-      if (!d20 || d20.params.dice_count !== 1 || d20.params.total !== 17) {
+      const d20 = rolls.find(event => event.params.dice_type === 'D20'
+        && event.params.dice_count === 1
+        && event.params.total === 17);
+      if (!d20) {
         return `D20 event was ${JSON.stringify(d20)}`;
       }
     },
