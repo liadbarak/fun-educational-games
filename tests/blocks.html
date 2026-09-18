@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Blocks tests — PuzzleTen</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="../blocks/blocks.css">
+  <style>
+    main { max-width: 850px; margin: 32px auto; padding: 20px; }
+    #summary { font-weight: bold; }
+    .pass { color: #226B47; } .fail { color: #9B2C2C; }
+    #fixture { position: absolute; left: -3000px; top: 0; width: 390px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Blocks — browser tests</h1>
+  <p>Placement, keyboard controls, restart, end-of-game feedback, storage failure, and narrow layouts.</p>
+  <p id="summary">Running…</p><ol id="results"></ol>
+  <p>Rules tests: <code>node --test tests/blocks-model.test.js</code></p>
+</main>
+<div id="fixture" class="blocks-page"></div>
+<script src="../blocks/model.js"></script>
+<script src="../blocks/blocks.js"></script>
+<script src="blocks.tests.js"></script>
+</body>
+</html>
