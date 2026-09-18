@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Number Generator – No Repeats Option | PuzzleTen</title>
+<meta name="description" content="Generate random numbers between any two whole numbers. Pick one or up to 100 numbers, allow or prevent repeats, and copy your results. Free, no signup.">
+<link rel="canonical" href="https://puzzleten.com/random-number-generator/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#5B8DEF">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Random Number Generator – No Repeats Option | PuzzleTen">
+<meta property="og:description" content="Generate random numbers between any two whole numbers. Pick one or up to 100 numbers, allow or prevent repeats, and copy your results. Free, no signup.">
+<meta property="og:url" content="https://puzzleten.com/random-number-generator/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Random Number Generator", "url": "https://puzzleten.com/random-number-generator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "description": "Generate random numbers between any two whole numbers. Pick one or up to 100 numbers, allow or prevent repeats, and copy your results. Free, no signup.", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}</script>
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/random-tools.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
+</head>
+<body class="utility-page" data-utility="random-number-generator">
+<main>
+<nav class="utility-nav" aria-label="Main navigation"><a href="../">← PuzzleTen</a><a href="../#random-tools">Random tools</a></nav>
+<header class="utility-hero"><h1>Random Number Generator</h1><p>Pick a number between any two whole numbers, or generate a list with no repeats. Free, instant, and ready for your next game.</p></header>
+<section class="utility-card" aria-label="Random Number Generator tool">
+<noscript><p>Enable JavaScript to use this tool. The instructions and examples below are still available.</p></noscript>
+<form id="utility-form">
+<div class="utility-fields">
+<label for="minimum">Minimum<input id="minimum" type="number" value="1" min="-1000000000" max="1000000000" step="1" required></label>
+<label for="maximum">Maximum<input id="maximum" type="number" value="100" min="-1000000000" max="1000000000" step="1" required></label>
+<label for="quantity">How many numbers?<input id="quantity" type="number" value="1" min="1" max="100" step="1" required></label></div>
+<label class="utility-check"><input id="unique" type="checkbox">No repeats within this draw</label>
+<div class="utility-presets"><span>Quick ranges:</span><button type="button" data-range="10">1–10</button><button type="button" data-range="100">1–100</button><button type="button" data-range="1000">1–1,000</button></div>
+<div class="utility-actions"><button type="submit" class="btn-primary">Generate numbers</button></div>
+<p id="error" class="utility-error" role="alert"></p>
+<div class="utility-stage"><div id="results" class="utility-result" aria-label="Latest results">Your numbers will appear here.</div></div>
+
+<div class="utility-actions"><button type="button" id="copy-results" disabled>Copy results</button><button type="button" id="clear-results">Clear results</button></div>
+<p id="status" class="utility-status" role="status" aria-live="polite" aria-atomic="true"></p>
+</form>
+<h2>Recent draws</h2><p id="history-empty" class="utility-hint">Your last ten draws will appear here. History clears on reload.</p><ol id="history" class="utility-history" aria-label="Recent draws, newest first"></ol>
+</section>
+<section class="utility-copy" aria-label="Instructions and examples">
+<h2>How to generate random numbers</h2>
+<ol><li>Enter a minimum and maximum. Both endpoints are included.</li><li>Choose how many numbers you need, from 1 to 100.</li><li>Turn on <strong>No repeats</strong> if every number in the draw must be different, then select <strong>Generate numbers</strong>.</li></ol>
+<p>Copy your latest results with one button. The last ten draws stay on this page until you clear them or reload; they are not saved between visits.</p>
+<h2>Pick a number between 1 and 100</h2>
+<p>The default settings pick one number from 1 through 100, including 1 and 100. Use the quick-range buttons for 1–10, 1–100, or 1–1,000. For a different range, such as 5–25, enter your own endpoints.</p>
+<h2>Random numbers without repeats</h2>
+<p>For five different numbers between 1 and 10, set the range to 1–10, quantity to 5, and enable No repeats. Each number can appear only once in that draw. Generate again to start a fresh draw; numbers from earlier draws can appear again.</p>
+<p>If you request 11 unique numbers from 1–10, there are not enough possible values. Reduce the quantity, widen the range, or allow repeats. With repeats allowed, every selection is independent, so the same number can appear more than once.</p>
+<h2>Three ways to use your number picker</h2>
+<ul><li><strong>Choose who starts:</strong> number your players from 1 to the group size and draw one number.</li><li><strong>Pick practice questions:</strong> choose a worksheet's question range and draw several numbers without repeats.</li><li><strong>Explore chance:</strong> draw 100 numbers from 1–10 with repeats and compare how often each appears. Equal chances do not mean equal totals in every batch.</li></ul>
+<h2>Questions about random numbers</h2>
+<details><summary>Are the minimum and maximum included?</summary><p>Yes. A range of 1–10 includes all ten whole numbers. If both endpoints are equal, that number is the only possible result.</p></details>
+<details><summary>Can I generate negative numbers or decimals?</summary><p>Negative whole numbers and zero are supported. Each endpoint must be between −1,000,000,000 and 1,000,000,000. Decimal results are not supported.</p></details>
+<details><summary>How are the numbers selected?</summary><p>The tool uses your browser's cryptographic random-number generator. It discards values that would favor some results when mapping them to your range. With No repeats enabled, it samples without replacement for that draw.</p></details>
+<h2>More tools for your next game</h2><div class="utility-links"><a data-utility-link="coin-flip" href="../coin-flip/">Coin Flip<small>Heads or tails, one coin or many.</small></a>
+<a data-utility-link="dice-roller" href="../dice-roller/">Dice Roller<small>Roll D6, D20, and more.</small></a>
+<a data-utility-link="spin-the-wheel" href="../spin-the-wheel/">Spin the Wheel<small>Pick from your own list.</small></a><a data-game-link="maketen" href="../maketen/">Play Make10<small>Turn number combinations into a puzzle.</small></a></div>
+<p class="utility-hint">Built by <a href="../about.html">Liad Barak</a> for PuzzleTen. Found a problem? <a href="mailto:hello@puzzleten.com">Send feedback</a>.</p>
+</section>
+</main>
+<script src="../shared/shell.js"></script>
+<script src="../shared/random-tools.js"></script>
+<script src="../shared/random-tools-ui.js"></script>
+<script>renderFooter('../');</script>
+</body>
+</html>
