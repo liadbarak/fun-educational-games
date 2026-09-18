@@ -26,7 +26,7 @@
   <meta property="og:url" content="https://puzzleten.com/">
   <meta name="twitter:card" content="summary_large_image">
 
-  <link rel="stylesheet" href="shared/style.css">
+  <link rel="stylesheet" href="shared/style.css?v=home-covers-2">
 </head>
 <body class="home-page">
 
@@ -43,43 +43,51 @@
     Free games with no signup or download.
   </p>
 
-  <div class="game-grid" id="games">
-    <a class="game-card" href="maketen/">
-      <span class="emoji" aria-hidden="true">🔟</span>
-      <h2>Make10</h2>
-      <span class="tag tag-math">Start here</span>
-      <p>Drop numbered tiles and clear lines that add up to ten.
-        Set up a chain to multiply your score.</p>
-      <span class="home-card-action">Play Make10 →</span>
+  <div class="home-section-heading">
+    <h2 class="section-head" id="recommended-title">Recommended</h2>
+    <span class="home-scroll-hint" aria-hidden="true">Scroll to explore →</span>
+  </div>
+  <div class="game-grid" id="games" role="region" aria-labelledby="recommended-title" tabindex="0">
+    <a class="game-card " href="maketen/">
+      <img class="game-cover" src="shared/covers/maketen.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Make10</h3>
+      <span class="home-card-type">Number puzzle</span>
     </a>
-
     <a class="game-card is-words" href="wordsearch/">
-      <span class="emoji" aria-hidden="true">🔤</span>
-      <h2>Word Search</h2>
-      <span class="tag tag-words">Play or print</span>
-      <p>Find hidden words across 22 themes. Choose a level, discover word meanings,
-        or print a puzzle with its answer key.</p>
-      <span class="home-card-action">Choose a theme →</span>
+      <img class="game-cover" src="shared/covers/wordsearch.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Word Search</h3>
+      <span class="home-card-type">Play or print</span>
     </a>
-
-    <a class="game-card" href="blocks/">
-      <span class="emoji" aria-hidden="true">🧩</span>
-      <h2>Blocks</h2>
-      <span class="tag tag-math">Take your time</span>
-      <p>Place three pieces on an 8×8 board. Clear full rows and columns,
-        and leave room for whatever comes next. No timer.</p>
-      <span class="home-card-action">Play Blocks →</span>
+    <a class="game-card is-blocks" href="blocks/">
+      <img class="game-cover" src="shared/covers/blocks.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Blocks</h3>
+      <span class="home-card-type">Block puzzle</span>
     </a>
-
     <a class="game-card is-nature" href="snake/">
-      <span class="emoji" aria-hidden="true">🍎</span>
-      <h2>Food Rescue</h2>
-      <span class="tag tag-nature">Plan your route</span>
-      <p>A Snake game with a delivery challenge. Pick up food, reach the right
-        destination, and keep your escape route open.</p>
-      <span class="home-card-action">Play Food Rescue →</span>
+      <img class="game-cover" src="shared/covers/snake.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Food Rescue</h3>
+      <span class="home-card-type">Snake game</span>
+    </a>
+    <a class="game-card is-blocks" href="spin-the-wheel/">
+      <img class="game-cover" src="shared/covers/wheel.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Spin the Wheel</h3>
+      <span class="home-card-type">Random picker</span>
+    </a>
+    <a class="game-card " href="dice-roller/">
+      <img class="game-cover" src="shared/covers/dice.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Dice Roller</h3>
+      <span class="home-card-type">Game tool</span>
     </a>
   </div>
+
+  <nav id="random-tools" class="home-extras" aria-label="More on PuzzleTen">
+    <span>More to explore</span>
+    <a href="draw/">Drawing printables</a>
+    <a href="dice-roller/">Dice Roller</a>
+    <a href="random-number-generator/">Random Number Generator</a>
+    <a href="coin-flip/">Coin Flip</a>
+    <a href="spin-the-wheel/">Spin the Wheel</a>
+  </nav>
 
   <h2 class="section-head">Get more out of your next game</h2>
   <div class="guide-list">
@@ -93,14 +101,7 @@
     </a>
   </div>
 
-  <nav id="random-tools" class="home-extras" aria-label="More on PuzzleTen">
-    <span>Also on PuzzleTen:</span>
-    <a href="draw/">Drawing printables</a>
-    <a href="dice-roller/">Dice Roller</a>
-    <a href="random-number-generator/">Random Number Generator</a>
-    <a href="coin-flip/">Coin Flip</a>
-    <a href="spin-the-wheel/">Spin the Wheel</a>
-  </nav>
+
 
   <p class="home-credit">
     Built and maintained by <a href="about.html">Liad Barak</a>.
