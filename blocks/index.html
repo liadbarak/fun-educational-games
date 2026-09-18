@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#5B8DEF">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
+  <title>Blocks — Free Block Puzzle Game | PuzzleTen</title>
+  <meta name="description" content="Place blocks on an 8×8 board and clear full rows and columns. Three pieces at a time, no timer, and no download. Play Blocks free on PuzzleTen.">
+  <link rel="canonical" href="https://puzzleten.com/blocks/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Blocks — Free Block Puzzle Game | PuzzleTen">
+  <meta property="og:description" content="Make room for your next move. Place three pieces, clear rows and columns, and beat your best score. No timer or signup.">
+  <meta property="og:url" content="https://puzzleten.com/blocks/">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="blocks.css">
+</head>
+<body class="blocks-page">
+<main class="blocks-main">
+  <header class="blocks-header">
+    <a href="../">← PuzzleTen</a>
+    <a href="#how-to-play">How to play</a>
+  </header>
+  <div class="blocks-heading">
+    <h1>Blocks</h1>
+    <p>Make room for your next move.</p>
+  </div>
+  <section id="blocks-game" aria-label="Blocks puzzle">
+    <noscript>Enable JavaScript to play Blocks. The rules are below.</noscript>
+  </section>
+
+  <section class="blocks-guide" id="how-to-play" aria-labelledby="rules-heading">
+    <h2 id="rules-heading">Three pieces. Plenty of possibilities.</h2>
+    <ol class="blocks-steps">
+      <li><span class="blocks-demo" aria-hidden="true">▣ ▣<br>▣ ▣</span><b>Choose a piece</b><span>Pick up any of the three shapes. The dot marks its top-left block.</span></li>
+      <li><span class="blocks-demo" aria-hidden="true">● → □</span><b>Find its place</b><span>Drag onto the board and release when it fits. Or tap the piece, then a cell for its dotted block.</span></li>
+      <li><span class="blocks-demo" aria-hidden="true">▰ ▰ ▰ → ✦</span><b>Clear a line</b><span>Fill a whole row or column to clear it. Use all three pieces to get a fresh hand.</span></li>
+    </ol>
+    <p>Pieces stay in the orientation shown: no rotating, falling blocks, or timer.
+      A move must fit entirely inside the board without overlapping another piece.
+      The run ends when none of your remaining pieces fits.</p>
+    <h2>Scoring</h2>
+    <p>Earn 1 point for each block you place, plus 10 for each full row or column.
+      Clear a row and a column together for 20 bonus points; both disappear at once.</p>
+    <h2>A little space goes a long way</h2>
+    <p>Check all three pieces before placing the first. Leave a broad opening for squares,
+      and avoid single-cell gaps that only a tiny piece can fill. Clearing one line now
+      can make room for the piece you could not place a moment ago.</p>
+    <details>
+      <summary>Keyboard controls and saved scores</summary>
+      <p>Tab to a piece and press Enter or Space to select it. Focus moves to the board; use arrow
+        keys to choose a cell, and press Enter or Space to place. Escape deselects the piece.
+        Your best score is saved in this browser when storage is available. The current
+        board resets when you reload; clearing browser data also clears your best.</p>
+    </details>
+    <p class="blocks-related">Try another puzzle: <a href="../maketen/">Make10</a> ·
+      <a href="../wordsearch/">Word Search</a></p>
+  </section>
+</main>
+<script src="../shared/shell.js"></script>
+<script src="model.js"></script>
+<script src="blocks.js"></script>
+<script>
+  new BlocksGame(document.getElementById('blocks-game'), { scores: HighScore, analytics: track });
+  renderFooter('../');
+</script>
+</body>
+</html>

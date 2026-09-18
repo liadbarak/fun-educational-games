@@ -1,0 +1,74 @@
+/* All selectors are local to Blocks; theme values come from shared/style.css. */
+.blocks-main { max-width: 720px; margin: auto; padding: 24px 18px; }
+.blocks-page a { color: var(--accent-dark); text-underline-offset: 3px; }
+.blocks-header { display: flex; justify-content: space-between; gap: 16px; font-size: 13px; font-weight: 700; }
+.blocks-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; margin: 22px 0 16px; }
+.blocks-heading h1 { font-size: 30px; margin: 0; }
+.blocks-heading p { margin: 0; color: var(--muted); font-size: 14px; }
+#blocks-game { width: 100%; max-width: clamp(280px, calc(100svh - 360px), 464px); margin: auto; }
+.blocks-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.blocks-stats { display: flex; gap: 24px; margin: 0; }
+.blocks-stats div { display: flex; flex-direction: column; }
+.blocks-stats dt { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+.blocks-stats dd { margin: 0; font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.blocks-button { font: inherit; font-weight: 700; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); padding: 10px 14px; cursor: pointer; min-height: 44px; }
+.blocks-primary { background: var(--accent-dark); border-color: var(--accent-dark); color: white; }
+.blocks-board { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 8px; background: var(--board-line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.blocks-cell { aspect-ratio: 1; border: 2px solid transparent; border-radius: 5px; padding: 0; background: var(--surface-2); cursor: pointer; touch-action: manipulation; position: relative; }
+.blocks-cell[data-color="1"], .blocks-piece[data-color="1"] .blocks-mini.is-block { background: var(--accent); }
+.blocks-cell[data-color="2"], .blocks-piece[data-color="2"] .blocks-mini.is-block { background: var(--warm); }
+.blocks-cell[data-color="3"], .blocks-piece[data-color="3"] .blocks-mini.is-block { background: var(--success); }
+.blocks-cell:not([data-color="0"]) { box-shadow: inset 0 2px 0 #ffffff55, inset 0 -2px 0 #00000012; }
+.blocks-cell.is-preview { background: var(--d7); border-color: var(--accent-dark); border-style: dashed; }
+.blocks-cell.is-invalid { border-color: #9B2C2C; background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, #9B2C2C33 4px, #9B2C2C33 6px); }
+.blocks-cell.is-anchor::after { content: ''; position: absolute; inset: 36%; border-radius: 50%; background: var(--ink); }
+.blocks-cell.is-cleared { animation: blocks-clear .45s ease-out; }
+@keyframes blocks-clear { from { background: var(--gold); } to { background: var(--surface-2); } }
+.blocks-status { color: var(--muted); font-size: 13px; line-height: 1.5; min-height: 3em; margin: 12px 0 8px; }
+.blocks-hand { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.blocks-piece { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; min-height: 112px; border: 2px solid var(--line); border-radius: 12px; padding: 10px 4px 7px; background: var(--surface); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; color: var(--ink); font-family: inherit; }
+.blocks-piece[aria-pressed="true"] { border-color: var(--accent-dark); background: var(--surface-2); box-shadow: var(--shadow); }
+.blocks-piece:disabled { cursor: default; opacity: .5; }
+.blocks-piece-label { font-size: 11px; line-height: 1.3; }
+.blocks-shape { display: grid; grid-template-columns: repeat(4, 16px); grid-template-rows: repeat(4, 16px); gap: 2px; }
+.blocks-mini { border-radius: 3px; position: relative; }
+.blocks-mini.is-anchor::after { content: ''; position: absolute; inset: 35%; background: white; border-radius: 50%; }
+.blocks-over { margin-top: 16px; padding: 18px; border-radius: var(--radius); background: var(--surface); text-align: center; box-shadow: var(--shadow); }
+.blocks-over h2 { margin: 0 0 6px; font-size: 20px; }
+.blocks-over p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+.blocks-dialog { color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); max-width: 340px; width: calc(100% - 36px); padding: 24px; font-family: inherit; }
+.blocks-dialog::backdrop { background: #2d314266; }
+.blocks-dialog h2 { margin-top: 0; }
+.blocks-dialog p { line-height: 1.5; }
+.blocks-dialog form { display: flex; flex-wrap: wrap; gap: 10px; }
+.blocks-guide { margin-top: 36px; font-size: 14px; line-height: 1.75; }
+.blocks-guide h2 { font-size: 18px; margin: 24px 0 10px; }
+.blocks-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; list-style: none; padding: 0; }
+.blocks-steps li { background: var(--surface); border-radius: 12px; padding: 14px; box-shadow: var(--shadow); }
+.blocks-steps b, .blocks-steps span { display: block; }
+.blocks-steps li > span:last-child { font-size: 12px; color: var(--muted); }
+.blocks-demo { color: var(--accent-dark); height: 54px; font-size: 20px; line-height: 1.15; margin-bottom: 10px; }
+.blocks-guide summary { cursor: pointer; font-weight: 700; padding: 10px 0; }
+.blocks-page :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; z-index: 1; }
+.blocks-page #site-footer { position: static; padding: 8px 18px 24px; line-height: 2; }
+@media (max-width: 480px) {
+  .blocks-main { padding: 16px 12px; }
+  .blocks-heading { margin-top: 16px; }
+  .blocks-board { gap: 3px; padding: 6px; }
+  .blocks-stats { gap: 18px; }
+  .blocks-steps { grid-template-columns: 1fr; }
+  .blocks-steps li { display: grid; grid-template-columns: 74px 1fr; column-gap: 12px; }
+  .blocks-steps .blocks-demo { grid-row: span 2; align-self: center; margin: 0; height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blocks-cell.is-cleared { animation: none; }
+}
+
+.blocks-piece.is-dragging { cursor: grabbing; }
+.blocks-piece.is-dragging .blocks-shape { opacity: .25; }
+.blocks-drag-ghost { position: fixed; z-index: 100; pointer-events: none; grid-template-columns: repeat(4, var(--drag-cell)); grid-template-rows: repeat(4, var(--drag-cell)); opacity: .85; filter: drop-shadow(0 5px 6px #2d314233); }
+.blocks-drag-ghost[data-color="1"] .is-block { background: var(--accent); }
+.blocks-drag-ghost[data-color="2"] .is-block { background: var(--warm); }
+.blocks-drag-ghost[data-color="3"] .is-block { background: var(--success); }
+.blocks-drag-ghost.is-over-board { opacity: .45; }
+.blocks-drag-ghost.is-invalid-drop .is-block { outline: 2px dashed #9B2C2C; }
