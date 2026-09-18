@@ -26,7 +26,7 @@
   <meta property="og:url" content="https://puzzleten.com/">
   <meta name="twitter:card" content="summary_large_image">
 
-  <link rel="stylesheet" href="shared/style.css">
+  <link rel="stylesheet" href="shared/style.css?v=home-covers-2">
 </head>
 <body class="home-page">
 
@@ -43,34 +43,40 @@
     Free games with no signup or download.
   </p>
 
-  <h2 class="section-head home-games-title">Pick a game</h2>
-  <div class="game-grid" id="games">
-    <a class="game-card" href="maketen/">
-      <span class="emoji" aria-hidden="true">🔟</span>
-      <h2>Make10</h2>
-      <p>Drop tiles. Make ten. Clear lines.</p>
-      <span class="home-card-action">Play Make10 →</span>
+  <div class="home-section-heading">
+    <h2 class="section-head" id="recommended-title">Recommended</h2>
+    <span class="home-scroll-hint" aria-hidden="true">Scroll to explore →</span>
+  </div>
+  <div class="game-grid" id="games" role="region" aria-labelledby="recommended-title" tabindex="0">
+    <a class="game-card " href="maketen/">
+      <img class="game-cover" src="shared/covers/maketen.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Make10</h3>
+      <span class="home-card-type">Number puzzle</span>
     </a>
-
     <a class="game-card is-words" href="wordsearch/">
-      <span class="emoji" aria-hidden="true">🔤</span>
-      <h2>Word Search</h2>
-      <p>Find hidden words in 22 themes. Play or print.</p>
-      <span class="home-card-action">Choose a theme →</span>
+      <img class="game-cover" src="shared/covers/wordsearch.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Word Search</h3>
+      <span class="home-card-type">Play or print</span>
     </a>
-
     <a class="game-card is-blocks" href="blocks/">
-      <span class="emoji" aria-hidden="true">🧩</span>
-      <h2>Blocks</h2>
-      <p>Fit the pieces. Clear lines. Take your time.</p>
-      <span class="home-card-action">Play Blocks →</span>
+      <img class="game-cover" src="shared/covers/blocks.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Blocks</h3>
+      <span class="home-card-type">Block puzzle</span>
     </a>
-
     <a class="game-card is-nature" href="snake/">
-      <span class="emoji" aria-hidden="true">🍎</span>
-      <h2>Food Rescue</h2>
-      <p>Collect food and plan your delivery route.</p>
-      <span class="home-card-action">Play Food Rescue →</span>
+      <img class="game-cover" src="shared/covers/snake.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Food Rescue</h3>
+      <span class="home-card-type">Snake game</span>
+    </a>
+    <a class="game-card is-blocks" href="spin-the-wheel/">
+      <img class="game-cover" src="shared/covers/wheel.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Spin the Wheel</h3>
+      <span class="home-card-type">Random picker</span>
+    </a>
+    <a class="game-card " href="dice-roller/">
+      <img class="game-cover" src="shared/covers/dice.svg" width="320" height="200" alt="" decoding="async">
+      <h3>Dice Roller</h3>
+      <span class="home-card-type">Game tool</span>
     </a>
   </div>
 
