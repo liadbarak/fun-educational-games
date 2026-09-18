@@ -29,9 +29,9 @@ class SudokuGame {
   say(text) { this.$('status').textContent = text; }
   build() {
     this.root.innerHTML = `
-      <div class="sdk-top"><label>Next puzzle <select data-sudoku="difficulty" aria-label="New game difficulty">
+      <div class="sdk-top"><label>Next puzzle <select data-sudoku="difficulty" aria-label="New puzzle difficulty">
       <option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option><option value="expert">Expert</option></select></label>
-      <button type="button" data-sudoku="new" class="sdk-button">New game</button></div>
+      <button type="button" data-sudoku="new" class="sdk-button">New puzzle</button></div>
       <div class="sdk-stats"><span data-sudoku="level"></span><span>Time <b data-sudoku="timer">00:00</b></span><span>Mistakes <b data-sudoku="mistakes">0</b></span><span>Hints <b data-sudoku="hints">0</b></span></div>
       <div class="sdk-layout"><div class="sdk-board" data-sudoku="board" role="grid" aria-label="Sudoku board" aria-rowcount="9" aria-colcount="9"></div>
       <div class="sdk-controls"><div class="sdk-actions">
@@ -44,7 +44,7 @@ class SudokuGame {
       <p class="sdk-status" data-sudoku="status" role="status" aria-live="polite"></p>
       <section class="sdk-complete" data-sudoku="complete" hidden tabindex="-1" aria-label="Puzzle complete"><h2>Puzzle complete!</h2><p data-sudoku="summary"></p><button type="button" class="sdk-button" data-sudoku="again">Play another</button></section>
       <p class="sdk-save" data-sudoku="save">Progress saves on this browser. The timer pauses when this tab is hidden.</p>
-      <dialog class="sdk-dialog" data-sudoku="dialog" aria-labelledby="sdk-dialog-title"><h2 id="sdk-dialog-title">Start a new puzzle?</h2><p>Your current puzzle will be replaced.</p><div class="sdk-actions"><button type="button" class="sdk-button" data-sudoku="cancel">Keep playing</button><button type="button" class="sdk-button" data-sudoku="confirm">Start new game</button></div></dialog>`;
+      <dialog class="sdk-dialog" data-sudoku="dialog" aria-labelledby="sdk-dialog-title"><h2 id="sdk-dialog-title">Switch to another puzzle?</h2><p>Your current puzzle will be replaced.</p><div class="sdk-actions"><button type="button" class="sdk-button" data-sudoku="cancel">Keep playing</button><button type="button" class="sdk-button" data-sudoku="confirm">Switch puzzle</button></div></dialog>`;
     for (let r = 0; r < 9; r++) {
       const row = document.createElement('div'); row.className = 'sdk-row'; row.setAttribute('role', 'row');
       for (let c = 0; c < 9; c++) {

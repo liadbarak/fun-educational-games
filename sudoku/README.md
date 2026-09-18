@@ -15,7 +15,7 @@ Labels are estimates based on techniques, not a universal human difficulty score
 
 ## Integration
 
-Load `puzzles.js` before `model.js`. On New Game, call `SudokuModel.select(SudokuPuzzles, difficulty, previousIndex)`. Keep the previous index separately for each difficulty, initially -1; update it after each selection. This selects uniformly among all alternatives, excluding the last puzzle in that difficulty when possible. Remember these indices in local storage only if avoiding repeats across reloads is desired.
+Load `puzzles.js` before `model.js`. On New puzzle, call `SudokuModel.select(SudokuPuzzles, difficulty, previousIndex)`. Keep the previous index separately for each difficulty, initially -1; update it after each selection. This selects uniformly among all alternatives, excluding the last puzzle in that difficulty when possible. Remember these indices in local storage only if avoiding repeats across reloads is desired.
 
 The returned object has `difficulty`, `index`, `givens`, and `solution`. Initialize the editable board using `puzzle.givens.slice()` and lock nonzero givens in the UI. The model provides `complete`, `mistakes`, `conflicts`, and `hint`. A hint returns the selected incorrect/blank editable cell, or the first such cell when none is selected. The caller applies the returned value and updates its own gameplay state.
 
