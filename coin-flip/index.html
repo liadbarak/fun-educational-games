@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coin Flip – Heads or Tails & Multiple Coins | PuzzleTen</title>
+<meta name="description" content="Flip a coin online for heads or tails. Flip up to 100 coins, play best of three, and see your flip history and heads/tails totals. Free, no signup.">
+<link rel="canonical" href="https://puzzleten.com/coin-flip/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#5B8DEF">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Coin Flip – Heads or Tails & Multiple Coins | PuzzleTen">
+<meta property="og:description" content="Flip a coin online for heads or tails. Flip up to 100 coins, play best of three, and see your flip history and heads/tails totals. Free, no signup.">
+<meta property="og:url" content="https://puzzleten.com/coin-flip/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Coin Flip", "url": "https://puzzleten.com/coin-flip/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "description": "Flip a coin online for heads or tails. Flip up to 100 coins, play best of three, and see your flip history and heads/tails totals. Free, no signup.", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}</script>
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/random-tools.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
+</head>
+<body class="utility-page" data-utility="coin-flip">
+<main>
+<nav class="utility-nav" aria-label="Main navigation"><a href="../">← PuzzleTen</a><a href="../#random-tools">Random tools</a></nav>
+<header class="utility-hero"><h1>Coin Flip</h1><p>Heads or tails? Flip one coin, try best of three, or flip multiple coins and compare the results.</p></header>
+<section class="utility-card" aria-label="Coin Flip tool">
+<noscript><p>Enable JavaScript to use this tool. The instructions and examples below are still available.</p></noscript>
+<form id="utility-form">
+<div class="utility-fields">
+<label for="coin-mode">Flip mode<select id="coin-mode"><option value="standard">Single or multiple coins</option><option value="best">Best of three</option></select></label>
+<label for="quantity">How many coins?<input id="quantity" type="number" value="1" min="1" max="100" step="1" required></label></div>
+<div class="utility-actions"><button type="submit" class="btn-primary">Flip coin</button></div>
+<p id="error" class="utility-error" role="alert"></p>
+<div class="utility-stage"><div id="coin-face" class="coin-face" aria-hidden="true">?</div><div id="results" class="utility-result" aria-label="Latest results">Your flips will appear here.</div></div>
+<p id="totals" class="utility-hint">Heads: 0 · Tails: 0 · Total flips: 0</p>
+<div class="utility-actions"><button type="button" id="copy-results" disabled>Copy results</button><button type="button" id="clear-results">Clear results</button></div>
+<p id="status" class="utility-status" role="status" aria-live="polite" aria-atomic="true"></p>
+</form>
+<h2>Recent draws</h2><p id="history-empty" class="utility-hint">Your last ten draws will appear here. History clears on reload.</p><ol id="history" class="utility-history" aria-label="Recent draws, newest first"></ol>
+</section>
+<section class="utility-copy" aria-label="Instructions and examples">
+<h2>Flip a coin for heads or tails</h2>
+<p>Select <strong>Flip coin</strong> to toss one virtual coin. Heads and tails each have a 50% chance on every flip. Use it to decide who starts a board game, settle a friendly choice, or run a probability experiment without finding a physical coin.</p>
+<p>Agree which option means heads and which means tails before you flip. Results appear as text as well as on the coin, so you do not need sound or animation to use the tool.</p>
+<h2>Best-of-three coin flip</h2>
+<p>Choose <strong>Best of three</strong> to run a short series. The first side to appear twice wins. Heads, heads ends the series at 2–0; heads, tails, tails ends it at 1–2 with tails winning. Each series takes two or three flips, and both sides have an equal chance of winning.</p>
+<h2>Flip multiple coins at once</h2>
+<p>In Single or multiple coins mode, enter any quantity from 1 to 100. Flip 2 coins for a pair of outcomes, 10 for a quick experiment, or 100 for a larger sample. Every coin is selected independently; the results show each flip and the batch's heads/tails counts.</p>
+<p>Session totals include all flips, including best-of-three rounds. Copy the latest batch, review the last ten batches, or clear results to start over. Reloading the page clears the session.</p>
+<h2>Try a simple probability experiment</h2>
+<p>First flip 10 coins and count the heads. Then flip 100. Compare the proportions rather than the raw counts: 6 heads out of 10 is 60%, while 53 out of 100 is 53%. Larger samples tend to approach 50% over time, but no individual batch is guaranteed to split evenly.</p>
+<h2>Coin flip questions</h2>
+<details><summary>Is this a fair coin flip?</summary><p>Each result uses your browser's cryptographic random-number generator with two equally likely outcomes. The animation displays that result; it does not influence which side wins.</p></details>
+<details><summary>Does a run of heads make tails more likely next?</summary><p>No. Each flip is independent. Even after five heads, the next flip still has a 50% chance of heads and a 50% chance of tails.</p></details>
+<details><summary>What is the chance of two heads in two flips?</summary><p>There are four equally likely ordered outcomes: heads–heads, heads–tails, tails–heads, and tails–tails. Two heads has a 1 in 4 chance, or 25%. One of each has a 50% chance because it can happen in two orders.</p></details>
+<h2>More tools for your next game</h2><div class="utility-links"><a data-utility-link="random-number-generator" href="../random-number-generator/">Random Number Generator<small>Pick numbers with optional no repeats.</small></a>
+<a data-utility-link="dice-roller" href="../dice-roller/">Dice Roller<small>Roll D6, D20, and more.</small></a>
+<a data-utility-link="spin-the-wheel" href="../spin-the-wheel/">Spin the Wheel<small>Pick from your own list.</small></a><a data-game-link="maketen" href="../maketen/">Play Make10<small>Turn number combinations into a puzzle.</small></a></div>
+<p class="utility-hint">Built by <a href="../about.html">Liad Barak</a> for PuzzleTen. Found a problem? <a href="mailto:hello@puzzleten.com">Send feedback</a>.</p>
+</section>
+</main>
+<script src="../shared/shell.js"></script>
+<script src="../shared/random-tools.js"></script>
+<script src="../shared/random-tools-ui.js"></script>
+<script>renderFooter('../');</script>
+</body>
+</html>
