@@ -20,7 +20,7 @@
   await test('81 cells, 9 rows, fixed givens and accessible grid',()=>{
     assert(game.cells.length===81,'cell count');assert(root.querySelectorAll('[role=row]').length===9,'row count');
     const i=game.puzzle.givens.findIndex(Boolean),original=game.board[i];game.select(i);game.input(original%9+1);game.erase();
-    assert(game.board[i]===original,'given changed');assert(game.$('numbers').children[0].disabled,'given pad active');assert(game.cells[i].getAttribute('aria-readonly')==='true','given not announced');
+    assert(game.board[i]===original,'given changed');assert(!game.$('numbers').children[0].disabled,'pad unavailable for dragging');assert(game.cells[i].getAttribute('aria-readonly')==='true','given not announced');
   });
   await test('number pad and keyboard enter correct answers',()=>{
     const i=blank();game.cells[i].click();number(game.puzzle.solution[i]);assert(game.board[i]===game.puzzle.solution[i],'pad failed');
@@ -94,6 +94,39 @@
     assert(game.done&&!game.$('complete').hidden,'completion missing');const elapsed=game.elapsed;clock+=10000;game.tick();assert(game.elapsed===elapsed,'completed timer running');
     assert(events.filter(e=>e.name==='game_over').length===1,'completion event count');const board=game.board.join('');game.erase();game.hint();game.input(1);assert(game.board.join('')===board,'completed game editable');
     game.save();setup({...values});assert(game.done&&!game.$('complete').hidden,'completed state not restored');assert(events.filter(e=>e.name==='game_over').length===0,'duplicate restored completion event');
+  });
+  function drag(source, target, cancel=false) {
+    // Synthetic pointers cannot acquire native capture; exercise the actual event handlers.
+    source.setPointerCapture=()=>{};
+    const a=source.getBoundingClientRect();
+    const send=(type,x,y)=>source.dispatchEvent(new PointerEvent(type,{bubbles:true,button:0,pointerId:71,clientX:x,clientY:y,cancelable:true}));
+    send('pointerdown',a.left+a.width/2,a.top+a.height/2);
+    send('pointermove',target.x,target.y);
+    send(cancel?'pointercancel':'pointerup',target.x,target.y);
+  }
+  function center(cell){const r=cell.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2};}
+  await test('clicked number is visibly selected, including in notes mode',()=>{
+    number(2);assert(game.$('numbers').children[1].getAttribute('aria-pressed')==='true','missing selection');
+    game.erase();game.toggleNotes();number(7);
+    assert(root.querySelectorAll('.sdk-number[aria-pressed=true]').length===1,'multiple selections');
+    assert(game.$('numbers').children[6].getAttribute('aria-pressed')==='true','notes selection missing');
+  });
+  await test('drag from pad enters answers and notes at the drop cell',()=>{
+    root.scrollIntoView();const i=blank(),n=game.puzzle.solution[i];
+    drag(game.$('numbers').children[n-1],center(game.cells[i]));assert(game.board[i]===n,'drop did not enter answer');
+    game.erase();game.toggleNotes();drag(game.$('numbers').children[3],center(game.cells[i]));
+    assert(game.notes[i]===8&&game.board[i]===0,'drop ignored notes mode');
+  });
+  await test('drag answer outside erases, cancellation and invalid drops preserve board',()=>{
+    root.scrollIntoView();const i=blank(),n=game.puzzle.solution[i];game.select(i);game.input(n);
+    const r=game.$('board').getBoundingClientRect(),outside={x:r.right+12,y:r.top+20};
+    drag(game.cells[i],outside,true);assert(game.board[i]===n,'cancel erased answer');
+    drag(game.cells[i],center(game.cells[i]));assert(game.board[i]===n,'in-board drop erased answer');
+    drag(game.cells[i],outside);assert(game.board[i]===0,'outside drop did not erase');
+    const given=game.puzzle.givens.findIndex(Boolean),before=game.board.join('');
+    drag(game.$('numbers').children[0],center(game.cells[given]));assert(game.board.join('')===before,'fixed clue changed');
+    drag(game.$('numbers').children[0],outside);assert(game.board.join('')===before,'outside pad drop changed board');
+    assert(!document.querySelector('.sdk-drag-number'),'drag ghost leaked');
   });
   await test('every difficulty starts a valid playable board',()=>{
     for(const level of SudokuModel.levels){game.start(level);assert(game.puzzle.difficulty===level&&game.board.includes(0),'cannot start '+level);assert(SudokuModel.mistakes(game.board,game.puzzle.solution).length===0,'bad givens');}

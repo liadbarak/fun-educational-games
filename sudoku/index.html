@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"PuzzleTen Sudoku","url":"https://puzzleten.com/sudoku/","applicationCategory":"GameApplication","operatingSystem":"Any","isAccessibleForFree":true,"description":"Free 9×9 Sudoku with four difficulty levels, notes, hints and saved progress.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link rel="stylesheet" href="../shared/style.css">
-<link rel="stylesheet" href="sudoku.css?v=1">
+<link rel="stylesheet" href="sudoku.css?v=2">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
 </head>
 <body class="sudoku-page">
@@ -27,8 +27,8 @@
 <section class="sdk-guide" id="how-to-play" aria-labelledby="sdk-rules">
 <h2 id="sdk-rules">How to play Sudoku</h2>
 <p>Fill each empty cell with a number from 1 to 9. Each row, column, and outlined 3×3 box must contain every number exactly once. The darker starting numbers are fixed. You do not need arithmetic—look for where each number can fit.</p>
-<ol><li>Select an empty cell. Its row, column, and box are highlighted.</li><li>Tap a number below the board, or type 1–9. Use the arrow keys to move between cells.</li><li>Turn on <strong>Notes</strong> to record possible numbers. Tap a number again to remove that note. Turn Notes off to enter an answer.</li></ol>
-<p>Wrong answers are underlined in red and count as mistakes. There is no mistake limit: erase or replace a wrong number and keep going. A correct placement removes matching pencil notes from its row, column, and box.</p>
+<ol><li>Select an empty cell. Its row, column, and box are highlighted.</li><li>Tap a number on the number pad, drag it onto an editable cell, or type 1–9. The chosen number stays highlighted on the pad. Use the arrow keys to move between cells.</li><li>Turn on <strong>Notes</strong> to record possible numbers. Tap a number again to remove that note. Turn Notes off to enter an answer.</li></ol>
+<p>Wrong answers are underlined in red and count as mistakes. Drag an entered answer outside the board to erase it, or use Erase. There is no mistake limit: erase or replace a wrong number and keep going. A correct placement removes matching pencil notes from its row, column, and box.</p>
 <h2>Choose your challenge</h2>
 <p>There are 120 bundled puzzles: 30 each in Easy, Medium, Hard, and Expert. Every puzzle has been automatically checked to have exactly one solution. Choose a difficulty in <strong>Next puzzle</strong>, then press <strong>New game</strong>; changing the menu alone does not replace your current board.</p>
 <p>Easy puzzles can be solved with cells that have only one possible answer. Medium puzzles also need you to find a number's only possible location in a row, column, or box. Hard adds candidate-elimination techniques such as pairs and locked candidates. Expert needs techniques beyond that set. Difficulty is approximate and depends on your experience.</p>
@@ -44,7 +44,7 @@
 <script src="../shared/shell.js"></script>
 <script src="puzzles.js"></script>
 <script src="model.js"></script>
-<script src="sudoku.js?v=1"></script>
+<script src="sudoku.js?v=2"></script>
 <script>new SudokuGame(document.getElementById('sudoku-game'), {analytics: track}); renderFooter('../');</script>
 </body>
 </html>

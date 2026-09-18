@@ -39,3 +39,5 @@ python3 tests/sudoku-difficulty.py
 ```
 
 The Node suite independently counts solutions up to two for every puzzle, checks that its unique result matches the stored solution, validates all rows/columns/boxes and clues, and tests selection and gameplay helpers. The Python check verifies all difficulty assignments against the documented technique rubric. Both solvers are test-only; neither is referenced by a browser page.
+
+Number-pad buttons highlight the last entered digit. Pointer-based dragging supports mouse, pen, and touch: drop a pad digit on an editable cell (including notes), or drag an entered answer outside the board to erase. Cancelled/invalid drops preserve the board. No drag library is used.
