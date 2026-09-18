@@ -1,0 +1,19 @@
+name: Color Pop checks
+on:
+  pull_request:
+    paths: ['color-pop/**', 'tests/color-pop*', '.github/workflows/color-pop.yml']
+  push:
+    branches: [main]
+    paths: ['color-pop/**', 'tests/color-pop*', '.github/workflows/color-pop.yml']
+permissions:
+  contents: read
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/color-pop.test.js
+      - run: node --check color-pop/game.js
