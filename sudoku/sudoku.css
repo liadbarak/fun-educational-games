@@ -1,0 +1,74 @@
+.sudoku-page main { max-width: 850px; margin: auto; padding: 22px 20px 36px; }
+.sudoku-page a { color: #315fa6; text-underline-offset: 3px; }
+.sdk-header { display: flex; justify-content: space-between; font-size: 14px; }
+.sdk-heading { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin: 22px 0 16px; }
+.sdk-heading h1 { margin: 0; font-size: 34px; letter-spacing: -.8px; }
+.sdk-heading p { margin: 0; color: #525d75; font-size: 15px; }
+.sdk-game { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: var(--shadow-lg); }
+.sdk-top { display: flex; justify-content: space-between; align-items: end; gap: 14px; }
+.sdk-top label { display: grid; gap: 5px; font-size: 12px; font-weight: 700; color: #525d75; }
+.sdk-top select { font: inherit; font-size: 15px; border: 1px solid #a4b6d0; border-radius: 10px; padding: 10px; background: white; color: var(--ink); min-width: 120px; }
+.sdk-button { min-height: 44px; border-radius: 10px; padding: 9px 13px; font-size: 14px; }
+.sdk-top .sdk-button, .sdk-complete .sdk-button { background: #315fa6; color: white; border-color: #315fa6; }
+.sdk-stats { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 16px 0; color: #525d75; font-size: 13px; font-variant-numeric: tabular-nums; }
+.sdk-stats [data-sudoku=level] { font-weight: 800; color: #315fa6; }
+.sdk-layout { display: grid; grid-template-columns: minmax(0, 1fr) 215px; align-items: start; gap: 22px; }
+.sdk-board { border: 3px solid #596984; border-radius: 8px; overflow: hidden; background: #fff; width: 100%; }
+.sdk-row { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); }
+.sdk-row:nth-child(3n):not(:last-child) { border-bottom: 2px solid #596984; }
+.sdk-cell { position: relative; border: 0; border-radius: 0; border-right: 1px solid #dce3f0; border-bottom: 1px solid #dce3f0; padding: 0; min-width: 0; aspect-ratio: 1; background: #fff; font-size: clamp(19px,3vw,29px); font-weight: 500; color: #2757ae; touch-action: manipulation; }
+.sdk-cell:nth-child(3n):not(:last-child) { border-right: 2px solid #596984; }
+.sdk-cell:last-child { border-right: 0; }
+.sdk-row:last-child .sdk-cell { border-bottom: 0; }
+.sdk-cell.is-given { color: #2D3142; font-weight: 800; }
+.sdk-cell.is-related { background: #edf3fd; }
+.sdk-cell.is-matching { background: #d8e5fc; }
+.sdk-cell.is-selected { background: #cbdcfc; box-shadow: inset 0 0 0 2px #315fa6; }
+.sdk-cell.is-wrong { color: #a51f30; text-decoration: underline; text-decoration-thickness: 2px; background: #ffedf0; }
+.sdk-cell.is-wrong.is-selected { background: #ffdce3; }
+.sdk-cell:hover { border-color: #dce3f0; background: #dce8fc; }
+.sdk-cell:nth-child(3n):not(:last-child):hover { border-right-color: #596984; }
+.sudoku-page .sdk-cell:focus-visible { outline: 3px solid #315fa6; outline-offset: -3px; z-index: 1; }
+.sdk-pencil { display: grid; position: absolute; inset: 2px; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(3,1fr); font-size: clamp(9px,1.2vw,12px); font-weight: 500; color: #4c5971; line-height: 1; text-decoration: none; }
+.sdk-pencil span { display: grid; place-items: center; }
+.sdk-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.sdk-actions .sdk-button { flex: 1; padding-inline: 8px; }
+.sdk-button[aria-pressed=true] { color: #fff; background: #315fa6; border-color: #315fa6; }
+.sdk-numbers { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 12px; }
+.sdk-number { border-radius: 12px; padding: 12px 0; min-height: 48px; font-size: 23px; color: #2757ae; background: #eaf1ff; }
+.sudoku-page button:disabled { opacity: .45; cursor: default; }
+.sdk-help, .sdk-save { font-size: 12px; color: #525d75; line-height: 1.6; }
+.sdk-status { min-height: 2.8em; font-size: 13px; line-height: 1.5; color: #455269; margin: 14px 0 4px; }
+.sdk-save { margin: 10px 0 0; }
+.sdk-complete { background: #dcf4e7; padding: 18px; border-radius: 14px; margin: 12px 0; }
+.sdk-complete h2 { margin: 0 0 8px; font-size: 22px; }
+.sdk-complete p { font-size: 14px; line-height: 1.6; }
+.sdk-dialog { max-width: 360px; width: calc(100% - 32px); padding: 24px; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); }
+.sdk-dialog::backdrop { background: #2d314266; }
+.sdk-dialog h2 { margin-top: 0; }
+.sdk-guide { line-height: 1.75; font-size: 15px; margin-top: 28px; }
+.sdk-guide h2 { font-size: 22px; margin: 24px 0 10px; }
+.sdk-guide details { border-bottom: 1px solid #dce3f0; padding: 12px 0; }
+.sdk-guide summary { font-weight: 700; cursor: pointer; }
+.sudoku-page :focus-visible { outline: 3px solid #315fa6; outline-offset: 3px; }
+.sudoku-page #site-footer { position: static; padding: 12px 18px 24px; line-height: 2; }
+.sudoku-page #site-footer a { display: inline-block; }
+@media(max-width:650px) {
+ .sudoku-page main { padding: 16px 12px 28px; max-width: 520px; }
+ .sdk-heading { margin: 18px 0 14px; gap: 6px 12px; }
+ .sdk-heading h1 { font-size: 29px; }
+ .sdk-game { padding: 14px 10px; border-radius: 16px; }
+ .sdk-layout { grid-template-columns: minmax(0,1fr); gap: 12px; }
+ .sdk-numbers { grid-template-columns: repeat(9,minmax(0,1fr)); gap: 4px; margin-top: 8px; }
+ .sdk-number { font-size: 21px; min-height: 44px; padding: 8px 0; border-radius: 8px; }
+ .sdk-help { margin: 8px 0 0; }
+ .sdk-cell { font-size: clamp(20px,5vw,27px); }
+ .sdk-stats { font-size: 12px; margin: 12px 0; }
+}
+@media(max-width:400px) { .sdk-numbers { grid-template-columns: repeat(5,minmax(0,1fr)); gap: 6px; } }
+
+.sdk-number, .sdk-cell.is-draggable { touch-action: none; user-select: none; cursor: grab; }
+.sdk-number[aria-pressed=true] { background: #315fa6; color: #fff; box-shadow: inset 0 0 0 2px #22477f; }
+.sdk-cell.is-drop-target { background: #c9efd9; box-shadow: inset 0 0 0 3px #26815a; }
+.sdk-board.is-drag-out { border-color: #bd5268; }
+.sdk-drag-number { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -115%); display: grid; place-items: center; width: 42px; height: 46px; border-radius: 10px; background: #315fa6; color: white; font: 700 26px system-ui; box-shadow: 0 4px 12px #25385940; }
