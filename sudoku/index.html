@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#5B8DEF">
+<title>Sudoku – Free Online Puzzles, Easy to Expert | PuzzleTen</title>
+<meta name="description" content="Play free Sudoku online with 120 puzzles from easy to expert. Use pencil notes, hints, mistake checks and a timer. Your game saves in this browser.">
+<link rel="canonical" href="https://puzzleten.com/sudoku/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sudoku – Free Online Puzzles | PuzzleTen">
+<meta property="og:description" content="A fresh Sudoku challenge, with notes, hints and saved progress. Choose Easy, Medium, Hard or Expert.">
+<meta property="og:url" content="https://puzzleten.com/sudoku/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"PuzzleTen Sudoku","url":"https://puzzleten.com/sudoku/","applicationCategory":"GameApplication","operatingSystem":"Any","isAccessibleForFree":true,"description":"Free 9×9 Sudoku with four difficulty levels, notes, hints and saved progress.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="sudoku.css?v=1">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
+</head>
+<body class="sudoku-page">
+<main>
+<header class="sdk-header"><a href="../">← PuzzleTen</a><a href="#how-to-play">How to play</a></header>
+<div class="sdk-heading"><h1>Sudoku</h1><p>Nine numbers. One satisfying solution.</p></div>
+<section class="sdk-game" id="sudoku-game" aria-label="Sudoku game"><noscript>Enable JavaScript to play Sudoku. Read the rules below.</noscript></section>
+<section class="sdk-guide" id="how-to-play" aria-labelledby="sdk-rules">
+<h2 id="sdk-rules">How to play Sudoku</h2>
+<p>Fill each empty cell with a number from 1 to 9. Each row, column, and outlined 3×3 box must contain every number exactly once. The darker starting numbers are fixed. You do not need arithmetic—look for where each number can fit.</p>
+<ol><li>Select an empty cell. Its row, column, and box are highlighted.</li><li>Tap a number below the board, or type 1–9. Use the arrow keys to move between cells.</li><li>Turn on <strong>Notes</strong> to record possible numbers. Tap a number again to remove that note. Turn Notes off to enter an answer.</li></ol>
+<p>Wrong answers are underlined in red and count as mistakes. There is no mistake limit: erase or replace a wrong number and keep going. A correct placement removes matching pencil notes from its row, column, and box.</p>
+<h2>Choose your challenge</h2>
+<p>There are 120 bundled puzzles: 30 each in Easy, Medium, Hard, and Expert. Every puzzle has been automatically checked to have exactly one solution. Choose a difficulty in <strong>Next puzzle</strong>, then press <strong>New game</strong>; changing the menu alone does not replace your current board.</p>
+<p>Easy puzzles can be solved with cells that have only one possible answer. Medium puzzles also need you to find a number's only possible location in a row, column, or box. Hard adds candidate-elimination techniques such as pairs and locked candidates. Expert needs techniques beyond that set. Difficulty is approximate and depends on your experience.</p>
+<h2>Hints, timer, and saved games</h2>
+<p><strong>Hint</strong> reveals the correct answer in the selected editable cell. If that cell is already correct or is a starting clue, it finds another cell to help with. Hints are counted separately from mistakes.</p>
+<p>The timer measures time while this tab is visible and stops on completion. Progress, pencil notes, time, and hint/mistake counts save automatically in this browser when storage is available. Come back to continue your latest puzzle. Clearing browser data removes that saved game; private browsing may prevent saving.</p>
+<details><summary>Where should I start?</summary><p>Look at rows, columns, or boxes with many numbers already filled. For an empty cell, rule out every number already in those three groups. If only one remains, you can place it. If several remain, record them as notes and inspect another area.</p></details>
+<details><summary>Does Sudoku need an account or internet connection to get new puzzles?</summary><p>No account is needed. The puzzle collection loads with the page, so New game does not call an external puzzle service. The website still needs to load initially; it is not an installed offline app.</p></details>
+<details><summary>Can the same puzzle appear twice?</summary><p>New game randomly chooses a puzzle from the selected difficulty and avoids the last one you played at that level. Earlier puzzles can reappear after you have played another.</p></details>
+<p>Try another puzzle: <a href="../blocks/">Blocks</a> · <a href="../maketen/">Make10</a> · <a href="../wordsearch/">Word Search</a>.</p>
+</section>
+</main>
+<script src="../shared/shell.js"></script>
+<script src="puzzles.js"></script>
+<script src="model.js"></script>
+<script src="sudoku.js?v=1"></script>
+<script>new SudokuGame(document.getElementById('sudoku-game'), {analytics: track}); renderFooter('../');</script>
+</body>
+</html>

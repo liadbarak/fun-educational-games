@@ -1,0 +1,34 @@
+name: Sudoku integrity
+on:
+  pull_request:
+    paths:
+      - 'sudoku/**'
+      - 'tests/sudoku*'
+      - '.github/workflows/sudoku-integrity.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'sudoku/**'
+      - 'tests/sudoku*'
+      - '.github/workflows/sudoku-integrity.yml'
+permissions:
+  contents: read
+jobs:
+  verify-puzzles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate every puzzle and selection rules
+        run: node --test tests/sudoku.test.js
+      - name: Validate difficulty labels
+        run: python3 tests/sudoku-difficulty.py
+      - name: Check browser JavaScript syntax
+        run: |
+          node --check sudoku/sudoku.js
+          node --check tests/sudoku.tests.js

@@ -1,4 +1,4 @@
-# Sudoku V1 puzzle collection
+# Sudoku V1
 
 120 distinct puzzles, generated offline specifically for PuzzleTen: 30 Easy, 30 Medium, 30 Hard, and 30 Expert. The local dataset is about 21 KB before compression. No third-party puzzle source, network request, backend, or browser puzzle generator is used.
 
@@ -19,7 +19,15 @@ Load `puzzles.js` before `model.js`. On New Game, call `SudokuModel.select(Sudok
 
 The returned object has `difficulty`, `index`, `givens`, and `solution`. Initialize the editable board using `puzzle.givens.slice()` and lock nonzero givens in the UI. The model provides `complete`, `mistakes`, `conflicts`, and `hint`. A hint returns the selected incorrect/blank editable cell, or the first such cell when none is selected. The caller applies the returned value and updates its own gameplay state.
 
-This change prepares data and model APIs; it does not add a playable page, New Game button, or navigation entry.
+## Playable game
+
+`index.html` serves the `/sudoku/` SEO page. `sudoku.js` provides the board and controls; `sudoku.css` scopes the page layout. Shared site styles, footer, and analytics are reused. The homepage Recommended row links to Sudoku with a lightweight SVG cover.
+
+The controller supports keyboard/touch number input, pencil notes, erase, hints, immediate solution-based mistake feedback, unit and matching-value highlights, a visible-tab timer, confirmed replacement of in-progress games, and completion. Correct entries prune matching peer notes; wrong answers remain editable. Hints reveal answers and do not claim to teach a solving technique.
+
+Progress is saved under `puzzleten:sudoku:v1` on changes, every ten seconds, and when the page hides. Restore validates the saved data against the bundled clues before accepting it; altered clues and malformed saves are discarded. The completed state is derived from the board, not trusted from storage. No account or cross-device synchronization is provided. Storage or analytics failure does not stop play.
+
+Run browser gameplay tests by serving the repository and opening `/tests/sudoku.html`. Tests use an isolated fixture and test storage, leaving normal saved games alone. The GitHub Actions workflow validates every puzzle's uniqueness and difficulty on relevant pull requests and pushes to main.
 
 ## Verification
 
