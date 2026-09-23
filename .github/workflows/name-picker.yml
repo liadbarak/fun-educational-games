@@ -1,0 +1,20 @@
+name: Random Name Picker checks
+on:
+  pull_request:
+    paths: ['random-name-picker/**', 'shared/random-tools.js', 'tests/name-picker*', '.github/workflows/name-picker.yml']
+  push:
+    branches: [main]
+    paths: ['random-name-picker/**', 'shared/random-tools.js', 'tests/name-picker*', '.github/workflows/name-picker.yml']
+permissions:
+  contents: read
+jobs:
+  picker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/name-picker-model.test.js tests/random-tools-model.test.js
+      - run: node --check random-name-picker/picker.js
+      - run: node --check tests/name-picker.tests.js

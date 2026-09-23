@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Name Picker — Pick a Random Name | PuzzleTen</title>
+<meta name="description" content="Pick a random name instantly from your own list. Free random name picker for classrooms, games, giveaways, teams and group activities.">
+<link rel="canonical" href="https://puzzleten.com/random-name-picker/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#5B8DEF">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Random Name Picker — Pick a Random Name | PuzzleTen">
+<meta property="og:description" content="Pick a random name instantly from your own list. Free random name picker for classrooms, games, giveaways, teams and group activities.">
+<meta property="og:url" content="https://puzzleten.com/random-name-picker/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Random Name Picker","url":"https://puzzleten.com/random-name-picker/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","description":"Pick a random name instantly from your own list. Free random name picker for classrooms, games, giveaways, teams and group activities.","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/random-tools.css">
+<link rel="stylesheet" href="style.css?v=2">
+</head>
+<body class="utility-page" data-utility="random-name-picker"><main>
+<nav class="utility-nav" aria-label="Main navigation"><a href="../">← PuzzleTen</a><a href="../#random-tools">Random tools</a></nav>
+<header class="utility-hero"><h1>Random Name Picker</h1><p>Enter a list of names and randomly pick one. Perfect for classrooms, games, giveaways, teams, and group activities.</p></header>
+<section class="utility-card" id="name-tool" aria-label="Random Name Picker tool">
+<noscript>Enable JavaScript to pick names locally in your browser.</noscript>
+<form id="name-form">
+<label class="name-input" for="names">Names — one per line<textarea id="names" placeholder="Emma&#10;Noah&#10;Olivia&#10;Liam&#10;Sophia" spellcheck="false" autocomplete="off" aria-describedby="entered-count name-privacy"></textarea></label>
+<p id="entered-count" class="utility-hint">0 names entered</p>
+<p id="name-privacy" class="utility-hint">Your list stays in your browser. Names are not sent to a server or saved by this tool.</p>
+<div class="name-options"><label for="pick-count">Number to pick:<select id="pick-count"><option>1</option><option>2</option><option>3</option><option>5</option></select></label><label class="utility-check"><input type="checkbox" id="remove-picked">Remove picked names</label></div>
+<p id="remaining-count" class="utility-hint"></p>
+<div class="utility-actions name-actions"><button class="btn-primary" id="pick-name" type="submit" disabled>Pick a Name</button><button id="reset-list" type="button">Reset List</button></div>
+<div class="utility-stage" id="name-stage" aria-busy="false"><p id="result-label" class="utility-hint">Your next pick</p><ul id="name-results" class="utility-result name-results" aria-label="Selected names"></ul></div>
+<div class="utility-actions name-actions"><button id="pick-again" type="button" hidden>Pick Again</button></div>
+<p id="name-error" role="alert" class="utility-error"></p><p id="name-status" role="status" aria-live="polite" class="utility-status"></p>
+</form></section>
+<section class="utility-copy" aria-label="Instructions and ideas">
+<h2>What Is a Random Name Picker?</h2><p>A random name picker selects one or more entries from a list you provide. Use this random name selector to make a fair choice without writing slips of paper. It picks from your names; it does not generate new names.</p>
+<h2>How to Pick a Random Name</h2><ol><li>Enter or paste your names, one per line.</li><li>Choose how many names to pick, or leave it at one.</li><li>Click <strong>Pick a Name</strong> to reveal your selection.</li></ol><p>Enable <strong>Remove picked names</strong> to work through the list without reusing an entry. <strong>Reset List</strong> restores all entries. Editing the text starts a fresh list.</p>
+<h2>Ways to Use a Random Name Picker</h2><p>Choose a classroom student to answer a question, pick winners for a giveaway, decide who goes first in a game, or assign turns in group activities. To choose teams, pick a batch for one team, remove those entries, and repeat for the next team.</p>
+<h2>Random Name Picker FAQ</h2>
+<details><summary>How does the Random Name Picker work?</summary><p>Your browser uses cryptographic random numbers with unbiased sampling to select entries. Each line has an equal chance. The brief name cycle is visual feedback and does not affect the result.</p></details>
+<details><summary>Can I paste a list of names?</summary><p>Yes. Paste one name per line. Spaces at the beginning and end are trimmed, and blank lines are ignored. Duplicate names remain separate entries, so a name listed twice has two chances.</p></details>
+<details><summary>Can I pick multiple names?</summary><p>Choose 1, 2, 3, or 5 entries. Options larger than the available list are disabled. Each entry can appear only once within a batch, but separate entries with the same name may both be selected.</p></details>
+<details><summary>Can I prevent the same name from being picked twice?</summary><p>Turn on Remove picked names. Each selected entry is removed from subsequent draws. If a name appears on multiple lines, its other entries remain eligible; use one line per person to prevent this. Reset List restores the full list.</p></details>
+<details><summary>Can I use it as a random winner picker?</summary><p>Yes. Enter the eligible names and pick one or more winners. Give each person one entry for equal chances per person.</p></details>
+<details><summary>Are the names I enter stored?</summary><p>No. The tool keeps your list only in the current page's memory. It does not save names locally or remotely, or include names in analytics. Reloading the page clears the list.</p></details>
+<h2>More random tools</h2><div class="utility-links">
+<a data-utility-link="spin-the-wheel" href="../spin-the-wheel/">Spin the Wheel</a>
+<a data-utility-link="random-number-generator" href="../random-number-generator/">Random Number Generator</a>
+<a data-utility-link="coin-flip" href="../coin-flip/">Coin Flip</a>
+<a data-utility-link="dice-roller" href="../dice-roller/">Dice Roller</a>
+<a data-utility-link="random-word-generator" href="../random-word-generator/">Random Word Generator</a>
+</div></section></main><script src="../shared/shell.js"></script><script src="../shared/random-tools.js"></script><script src="model.js"></script><script src="picker.js"></script><script>
+new NamePickerPage(document.getElementById('name-tool'), {analytics: track});
+document.querySelectorAll('[data-utility-link]').forEach(link => link.addEventListener('click', () => track('utility_to_utility', {utility_name:'random-name-picker',from_utility:'random-name-picker',to_utility:link.dataset.utilityLink})));
+renderFooter('../');
+</script></body></html>
