@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Word Generator — Generate Random Words | PuzzleTen</title>
+<meta name="description" content="Generate random words for writing and brainstorming. Filter nouns, verbs and adjectives, or try Pictionary, Charades and Hangman prompts.">
+<link rel="canonical" href="https://puzzleten.com/random-word-generator/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#5B8DEF">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Random Word Generator — Generate Random Words | PuzzleTen">
+<meta property="og:description" content="Generate random words for writing and brainstorming. Filter nouns, verbs and adjectives, or try Pictionary, Charades and Hangman prompts.">
+<meta property="og:url" content="https://puzzleten.com/random-word-generator/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Random Word Generator","url":"https://puzzleten.com/random-word-generator/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","description":"Generate random words for games, writing and brainstorming. Choose nouns, verbs or adjectives, with dedicated Pictionary, Charades and Hangman modes.","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/random-tools.css">
+<link rel="stylesheet" href="style.css?v=2">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
+</head>
+<body class="utility-page" data-utility="random-word-generator">
+<main>
+<nav class="utility-nav" aria-label="Main navigation"><a href="../">← PuzzleTen</a><a href="../#random-tools">Random tools</a></nav>
+<header class="utility-hero"><h1>Random Word Generator</h1><p>Generate random words instantly for writing, brainstorming, inspiration, vocabulary activities, and more.</p></header>
+<section class="utility-card" id="word-tool" aria-label="Random Word Generator tool">
+<noscript><p>Enable JavaScript to generate words. The instructions and examples below are still available.</p></noscript>
+<div class="utility-presets word-modes" role="group" aria-label="Generator mode"><button type="button" data-word-mode="everyday" aria-pressed="true">All Words</button><button type="button" data-word-mode="pictionary" aria-pressed="false">Pictionary</button><button type="button" data-word-mode="charades" aria-pressed="false">Charades</button><button type="button" data-word-mode="hangman" aria-pressed="false">Hangman</button></div>
+<p id="mode-description" class="utility-hint">Common English words for brainstorming, creative writing, inspiration, vocabulary activities, and random selection.</p>
+<form id="word-form">
+<div class="utility-fields">
+<label for="word-count">Number of words<select id="word-count"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="10">10</option></select></label>
+<label id="word-type-field" for="word-type">Word type<select id="word-type"><option value="all">All word types</option><option value="nouns">Nouns</option><option value="verbs">Verbs</option><option value="adjectives">Adjectives</option></select></label>
+</div>
+<div class="utility-stage"><p id="result-label" class="utility-hint">All Words</p><ul id="word-results" class="utility-result word-results" aria-label="Generated words"><li>Your word will appear here.</li></ul></div>
+<div class="utility-actions word-actions"><button type="submit" class="btn-primary" id="generate-word">Generate Word</button></div>
+<div class="utility-actions word-actions"><button type="button" id="generate-again">Generate Again</button><button type="button" id="copy-words" disabled>Copy Words</button></div>
+<p id="word-error" class="utility-error" role="alert"></p>
+<p id="word-status" class="utility-status" role="status" aria-live="polite" aria-atomic="true"></p>
+<div id="copy-fallback" hidden><label class="word-copy-field" for="manual-copy">Copy manually<textarea id="manual-copy" readonly spellcheck="false"></textarea></label></div>
+</form>
+
+</section>
+<section class="utility-copy" aria-label="Instructions and ideas">
+<h2>What is a Random Word Generator?</h2>
+<p>A random word generator picks words from a built-in list to give you a fresh prompt. This tool uses more than 1,200 recognizable English words, from everyday objects and animals to actions and descriptive words. Use a random noun generator for people, places and things, a random verb generator for actions, or a random adjective generator for descriptions.</p>
+<h2>How to Use the Random Word Generator</h2>
+<ol><li>Start with <strong>All Words</strong>, the default general-purpose mode. Choose 1, 3, 5, or 10 results and optionally filter by Nouns, Verbs, or Adjectives.</li><li>Press <strong>Generate Word</strong> or <strong>Generate Again</strong> for a fresh selection. Changing a control also generates new results.</li><li>For a game, optionally choose <strong>Pictionary</strong>, <strong>Charades</strong>, or <strong>Hangman</strong>. Each uses its own suitable pool; word-type filters apply only to All Words.</li><li>Use <strong>Copy Words</strong> to copy each word or phrase on its own line.</li></ol>
+<p>Words do not repeat within a batch. When generating one word at a time, the last word is excluded from the next draw. Earlier words can appear again in later draws.</p>
+<h2>Ways to Use Random Words</h2>
+<ul><li><strong>Pictionary:</strong> draw concrete prompts such as a lighthouse, dinosaur, or birthday cake.</li><li><strong>Charades:</strong> act out prompts such as brushing your teeth, swimming, or playing guitar without speaking.</li><li><strong>Hangman:</strong> choose a familiar word with 4–10 letters and let other players guess it.</li><li><strong>Creative writing:</strong> generate five words and include each in a short story.</li><li><strong>Brainstorming:</strong> connect a random word to your topic and see what new ideas it suggests.</li><li><strong>Classroom activities:</strong> choose adjectives for descriptive sentences or verbs for an action-word exercise.</li><li><strong>Word games:</strong> use ten random words for a memory challenge or a round of improvised clues.</li></ul>
+<h2>Random Word Generator FAQ</h2>
+<details><summary>How are the random words selected?</summary><p>Your browser selects from the built-in word list using its cryptographic random-number generator and an unbiased integer-sampling helper. Selection happens locally, without requesting words from a server. Words are grouped by a common use; some English words can also serve other grammatical roles.</p></details>
+<details><summary>Can I generate multiple random words?</summary><p>Yes. Choose 3, 5, or 10 words to see separate results with no duplicates in that batch. Copy Words puts each result on its own line.</p></details>
+<details><summary>Can I generate only nouns or verbs?</summary><p>Yes. In All Words mode, choose Nouns, Verbs, or Adjectives in the Word type menu, or leave All word types selected for a broad mix. Your filter is remembered when you return from a game mode.</p></details>
+<details><summary>Can I generate random Pictionary words?</summary><p>Yes. Choose Pictionary for concrete objects and simple scenes that are practical to draw, such as an airplane, snowman, or birthday cake. These are independently curated prompts, not an official game's card list.</p></details>
+<details><summary>Can I generate words for Charades?</summary><p>Yes. Choose Charades for recognizable actions and short phrases, such as taking a selfie, walking a dog, and playing guitar. This mode uses acting prompts rather than the general word-type filter.</p></details>
+<details><summary>Can I generate Hangman words?</summary><p>Yes. Choose Hangman for familiar English words with 4–10 letters, such as butterfly. This pool avoids proper names, abbreviations, and very short or excessively long words.</p></details>
+<details><summary>Do I need an account?</summary><p>No. Generate words freely without signing in or reloading the page. Results are not saved between visits.</p></details>
+<h2>More tools for your next game</h2>
+<div class="utility-links"><a data-utility-link="dice-roller" href="../dice-roller/">Dice Roller<small>Roll dice to choose a turn or a challenge.</small></a><a data-utility-link="random-number-generator" href="../random-number-generator/">Random Number Generator<small>Pick a number or a list of numbers.</small></a><a data-utility-link="coin-flip" href="../coin-flip/">Coin Flip<small>Decide who goes first.</small></a><a data-utility-link="spin-the-wheel" href="../spin-the-wheel/">Spin the Wheel<small>Choose from your own list.</small></a></div>
+<p class="utility-hint">Built by <a href="../about.html">Liad Barak</a> for PuzzleTen. Found a problem? <a href="mailto:hello@puzzleten.com">Send feedback</a>.</p>
+</section></main>
+<script src="../shared/shell.js"></script><script src="../shared/random-tools.js"></script><script src="words.js"></script><script src="model.js"></script><script src="generator.js"></script>
+<script>
+new RandomWordPage(document.getElementById('word-tool'), {analytics: track});
+document.querySelectorAll('[data-utility-link]').forEach(link => link.addEventListener('click', () => track('utility_to_utility', {utility_name:'random-word-generator',from_utility:'random-word-generator',to_utility:link.dataset.utilityLink})));
+renderFooter('../');
+</script>
+</body></html>

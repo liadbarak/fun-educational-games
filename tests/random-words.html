@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Random Word Generator tests</title><link rel="stylesheet" href="../shared/style.css"><link rel="stylesheet" href="../shared/random-tools.css"><link rel="stylesheet" href="../random-word-generator/style.css"><style>.pass{color:#17663b}.fail{color:#a01930}</style></head><body class="utility-page" data-utility="random-word-generator"><main><h1>Random Word Generator tests</h1><p id="summary">Running…</p><ol id="test-results"></ol><div id="fixture"><section class="utility-card" id="word-tool" aria-label="Random Word Generator tool">
+<noscript><p>Enable JavaScript to generate words. The instructions and examples below are still available.</p></noscript>
+<div class="utility-presets word-modes" role="group" aria-label="Generator mode"><button type="button" data-word-mode="everyday" aria-pressed="true">All Words</button><button type="button" data-word-mode="pictionary" aria-pressed="false">Pictionary</button><button type="button" data-word-mode="charades" aria-pressed="false">Charades</button><button type="button" data-word-mode="hangman" aria-pressed="false">Hangman</button></div>
+<p id="mode-description" class="utility-hint">Common English words for brainstorming, creative writing, inspiration, vocabulary activities, and random selection.</p>
+<form id="word-form">
+<div class="utility-fields">
+<label for="word-count">Number of words<select id="word-count"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="10">10</option></select></label>
+<label id="word-type-field" for="word-type">Word type<select id="word-type"><option value="all">All word types</option><option value="nouns">Nouns</option><option value="verbs">Verbs</option><option value="adjectives">Adjectives</option></select></label>
+</div>
+<div class="utility-stage"><p id="result-label" class="utility-hint">All Words</p><ul id="word-results" class="utility-result word-results" aria-label="Generated words"><li>Your word will appear here.</li></ul></div>
+<div class="utility-actions word-actions"><button type="submit" class="btn-primary" id="generate-word">Generate Word</button></div>
+<div class="utility-actions word-actions"><button type="button" id="generate-again">Generate Again</button><button type="button" id="copy-words" disabled>Copy Words</button></div>
+<p id="word-error" class="utility-error" role="alert"></p>
+<p id="word-status" class="utility-status" role="status" aria-live="polite" aria-atomic="true"></p>
+<div id="copy-fallback" hidden><label class="word-copy-field" for="manual-copy">Copy manually<textarea id="manual-copy" readonly spellcheck="false"></textarea></label></div>
+</form>
+
+</section></div></main><script src="../shared/random-tools.js"></script><script src="../random-word-generator/words.js"></script><script src="../random-word-generator/model.js"></script><script src="../random-word-generator/generator.js"></script><script src="random-words.tests.js"></script></body></html>

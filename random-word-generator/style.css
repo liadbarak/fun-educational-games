@@ -1,0 +1,12 @@
+/* Small additions to the shared utility components, scoped to this page. */
+.utility-page[data-utility="random-word-generator"] .utility-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.utility-page[data-utility="random-word-generator"] .utility-fields label:last-child { grid-column: auto; }
+.word-results { list-style: none; padding: 0; margin: 0; max-height: none; overflow: visible; }
+.word-actions { justify-content: center; }
+.word-modes button[aria-pressed="true"] { background: #285ba8; border-color: #285ba8; color: white; }
+.word-copy-field { display: grid; gap: 7px; font-size: 14px; }
+.word-copy-field textarea { width: 100%; min-height: 100px; border: 1px solid #a7b7d0; border-radius: 10px; padding: 12px; font: inherit; resize: vertical; }
+.utility-page[data-utility="random-word-generator"] #generate-word { min-width: 190px; }
+@media (max-width: 360px) { .utility-page[data-utility="random-word-generator"] .utility-fields { grid-template-columns: 1fr; } }
+
+#word-type-field[hidden] { display: none; }
