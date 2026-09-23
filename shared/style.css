@@ -1059,3 +1059,7 @@ body.is-themed .ws-words li.is-found { background: #D6F2E3; color: #226B47; }
   .home-page .guide-list { grid-template-columns: minmax(0, 1fr); }
   .home-page .game-card { border-radius: 17px; }
 }
+
+/* Keep the Word Search footer inside narrow mobile viewports. */
+#ws-app ~ #site-footer { min-width: 0; max-width: 100%; }
+#ws-app ~ #site-footer a { display: inline-block; }

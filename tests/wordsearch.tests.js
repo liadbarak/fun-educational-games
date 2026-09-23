@@ -13,6 +13,30 @@
  */
 
 const TESTS = [
+  {
+    name: 'first visit immediately shows a playable puzzle without an overlay',
+    run(w) {
+      if (w.getComputedStyle(w.document.getElementById('overlay')).display !== 'none') return 'intro visible';
+      if (w.document.querySelectorAll('.ws-cell').length !== 100) return 'initial grid missing';
+      if (!w.document.getElementById('ws-instructions')) return 'instructions target missing';
+      if (w.shell.isBlocked()) return 'game blocked';
+    },
+  },
+  {
+    name: 'native timer waits for interaction and resets between puzzles',
+    async run(w) {
+      w.mode = 'native'; w.shell.start();
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      if (w.seconds !== 0) return 'timer ran before input';
+      tap(w, {x:0,y:0});
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      if (w.seconds < 1) return 'timer did not start';
+      w.shell.start();
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      if (w.seconds !== 0) return 'new puzzle timer ran before input';
+    },
+  },
+
 
   /* ── generation ─────────────────────────────────────────── */
 
@@ -362,6 +386,9 @@ const TESTS = [
         .filter(a => a[0] === 'event' && a[1] === 'game_start').length;
       const before = count();
       w.shell.start();
+      if (count() !== before) return 'preview counted as play';
+      tap(w, {x:0,y:0});
+      tap(w, {x:0,y:0});
       const after = count();
       if (after !== before + 1) return `game_start went ${before} -> ${after}`;
     },
