@@ -14,7 +14,9 @@
     document.getElementById('test-results').append(li);
   }
   await test('defaults show one prominent word without counting a user action', () => {
-    assert(page.current.length === 1 && page.$('word-type').value === 'all', 'defaults');
+    assert(page.current.length === 1 && page.$('word-type').value === 'all' && page.mode === 'everyday', 'defaults');
+    assert(page.$('result-label').textContent === 'All Words' && !page.$('word-type-field').hidden, 'general-purpose default');
+    assert([...page.root.querySelectorAll('[data-word-mode]')].map(button => button.textContent).join('|') === 'All Words|Pictionary|Charades|Hangman', 'four modes');
     assert(page.$('word-results').classList.contains('single'), 'single styling');
     assert(events.filter(e => e.name === 'utility_view').length === 1, 'view event');
     assert(!events.some(e => e.name === 'utility_use'), 'automatic draw counted');
@@ -42,8 +44,12 @@
     page.root.querySelector('[data-word-mode="charades"]').click();
     assert(page.current.length === 5 && page.$('word-type').value === 'verbs', 'filters reset');
     assert(page.root.querySelectorAll('[data-word-mode][aria-pressed="true"]').length === 1, 'mode selection');
-    assert(page.$('result-label').textContent === 'Charades Words · Verbs', 'result label');
+    assert(page.$('result-label').textContent === 'Charades', 'result label');
+    assert(page.$('word-type-field').hidden && page.$('word-type').disabled, 'game filters visible');
+    assert(page.current.every(word => WordData.modes.charades.includes(word)), 'acting pool');
     page.root.querySelector('[data-word-mode="everyday"]').click(); assert(page.mode === 'everyday', 'return mode');
+    assert(!page.$('word-type-field').hidden && !page.$('word-type').disabled, 'filter not restored');
+    assert(page.$('word-type').value === 'verbs' && page.current.every(word => WordData.pools.verbs.includes(word)), 'general filter lost');
   });
   await test('Copy Words passes the exact displayed batch with newline separators', async () => {
     change('word-count', 10); await page.copy();

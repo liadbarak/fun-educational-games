@@ -16,17 +16,23 @@ test('curated data has 1,200+ distinct lowercase words and no duplicate categori
   assert(data.pools.verbs.includes('swim'));
   assert(data.pools.adjectives.includes('happy'));
 });
-test('game modes contain only known words, no duplicates, and differ from each other', () => {
+test('game pools have unique recognizable prompts and correct constraints', () => {
   for (const words of Object.values(data.modes)) {
     assert(words.length > 100 && words.length < all.length);
     assert.equal(new Set(words).size, words.length);
-    assert(words.every(word => all.includes(word)));
+    assert(words.every(word => /^[a-z]+(?: [a-z]+)*$/.test(word)));
   }
-  assert.notDeepEqual([...data.modes.pictionary].sort(), [...data.modes.charades].sort());
-  assert(data.modes.pictionary.includes('lighthouse'));
-  assert(!data.modes.charades.includes('lighthouse'));
-  assert(data.modes.charades.includes('pretend'));
-  assert(!data.modes.pictionary.includes('pretend'));
+  for (const word of ['airplane', 'volcano', 'birthday cake', 'snowman', 'pirate', 'rainbow', 'dinosaur', 'lighthouse']) assert(data.modes.pictionary.includes(word));
+  assert(!data.modes.pictionary.includes('dream'));
+  for (const word of ['brushing your teeth', 'swimming', 'dancing', 'taking a selfie', 'walking a dog', 'playing guitar']) assert(data.modes.charades.includes(word));
+  assert(data.modes.hangman.includes('butterfly'));
+  assert(data.modes.hangman.every(word => /^[a-z]{4,10}$/.test(word) && all.includes(word)));
+});
+test('All Words defaults to the complete general pool; game pools ignore grammar filters', () => {
+  assert.deepEqual(model.pool(), all);
+  for (const word of ['apple', 'mountain', 'dream', 'bicycle', 'ocean', 'curious', 'travel', 'window', 'laugh', 'forest']) assert(model.pool().includes(word));
+  for (const type of model.types) for (const mode of ['pictionary', 'charades', 'hangman']) assert.deepEqual(model.pool(type, mode), data.modes[mode]);
+  for (const type of ['nouns', 'verbs', 'adjectives']) assert.deepEqual(model.pool(type), data.pools[type]);
 });
 test('every mode/type/count combination returns a complete, unique valid batch', () => {
   let seed = 19;

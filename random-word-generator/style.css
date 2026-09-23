@@ -8,3 +8,5 @@
 .word-copy-field textarea { width: 100%; min-height: 100px; border: 1px solid #a7b7d0; border-radius: 10px; padding: 12px; font: inherit; resize: vertical; }
 .utility-page[data-utility="random-word-generator"] #generate-word { min-width: 190px; }
 @media (max-width: 360px) { .utility-page[data-utility="random-word-generator"] .utility-fields { grid-template-columns: 1fr; } }
+
+#word-type-field[hidden] { display: none; }

@@ -3,17 +3,16 @@ const WordGenerator = (() => {
   const data = typeof module !== 'undefined' ? require('./words.js') : WordData;
   const random = typeof module !== 'undefined' ? require('../shared/random-tools.js') : RandomTools;
   const types = Object.freeze(['all', 'nouns', 'verbs', 'adjectives']);
-  const modes = Object.freeze(['everyday', 'pictionary', 'charades']);
+  const modes = Object.freeze(['everyday', 'pictionary', 'charades', 'hangman']);
   const quantities = Object.freeze([1, 3, 5, 10]);
   const all = Object.freeze(Object.values(data.pools).flat());
   const cache = new Map();
   function pool(type = 'all', mode = 'everyday') {
     if (!types.includes(type) || !modes.includes(mode)) throw Error('Choose a valid word type and game mode.');
-    const key = type + ':' + mode;
+    const key = (mode === 'everyday' ? type : 'all') + ':' + mode;
     if (!cache.has(key)) {
       const base = type === 'all' ? all : data.pools[type];
-      const allowed = mode === 'everyday' ? null : new Set(data.modes[mode]);
-      cache.set(key, Object.freeze(allowed ? base.filter(word => allowed.has(word)) : [...base]));
+      cache.set(key, Object.freeze([...(mode === 'everyday' ? base : data.modes[mode])]));
     }
     return cache.get(key);
   }

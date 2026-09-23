@@ -8,7 +8,7 @@ class RandomWordPage {
     this.current = [];
     this.mode = 'everyday';
     this.copying = false;
-    this.modeNames = {everyday: 'Everyday Words', pictionary: 'Pictionary Words', charades: 'Charades Words'};
+    this.modeNames = {everyday: 'All Words', pictionary: 'Pictionary', charades: 'Charades', hangman: 'Hangman'};
     this.typeNames = {all: 'All Words', nouns: 'Nouns', verbs: 'Verbs', adjectives: 'Adjectives'};
     this.$('word-form').addEventListener('submit', event => { event.preventDefault(); this.generate(); });
     this.$('generate-again').addEventListener('click', () => this.generate());
@@ -40,12 +40,20 @@ class RandomWordPage {
       this.$('copy-words').disabled = this.copying;
       this.$('copy-fallback').hidden = true;
       this.$('manual-copy').value = '';
-      const label = this.modeNames[this.mode] + ' · ' + this.typeNames[type];
+      const general = this.mode === 'everyday';
+      this.$('word-type-field').hidden = !general;
+      this.$('word-type').disabled = !general;
+      const label = this.modeNames[this.mode] + (general && type !== 'all' ? ' · ' + this.typeNames[type] : '');
       this.$('result-label').textContent = label;
       this.$('word-status').textContent = label + ': ' + words.join(', ') + '.';
       this.root.querySelectorAll('[data-word-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.wordMode === this.mode)));
-      this.$('mode-description').textContent = this.mode === 'pictionary' ? 'Drawing-friendly objects, actions, and visual qualities. Your word type and quantity still apply.' : this.mode === 'charades' ? 'Animals, roles, actions, and feelings to act out. Your word type and quantity still apply.' : 'Everyday vocabulary for writing, brainstorming, classrooms, and word games.';
-      if (trackUse) this.emit('utility_use', {count, word_type: type, mode: this.mode});
+      this.$('mode-description').textContent = {
+        everyday: 'Common English words for brainstorming, creative writing, inspiration, vocabulary activities, and random selection.',
+        pictionary: 'Concrete objects and simple scenes that are practical and fun to draw.',
+        charades: 'Recognizable actions and short phrases to act out without speaking.',
+        hangman: 'Familiar English words with 4–10 letters for guessing.'
+      }[this.mode];
+      if (trackUse) this.emit('utility_use', {count, word_type: general ? type : 'all', mode: this.mode});
     } catch (error) { this.$('word-error').textContent = error.message; }
   }
   async copy() {
