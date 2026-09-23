@@ -63,47 +63,6 @@ const PLACE_ATTEMPTS = 200;      // per word, before giving up on it
 const GENERATE_ATTEMPTS = 12;    // whole grids to try before accepting a short one
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-const HOW_TO = `
-  <div class="howto">
-    <div class="howto-step">
-      <span class="howto-num">1</span>
-      <div class="howto-text">
-        Tap the <b>first letter</b> of a word you can see.
-      </div>
-      <div class="howto-demo">
-        <span class="ws-demo-cell is-anchor">C</span>
-        <span class="ws-demo-cell">A</span>
-        <span class="ws-demo-cell">T</span>
-      </div>
-    </div>
-
-    <div class="howto-step">
-      <span class="howto-num">2</span>
-      <div class="howto-text">
-        Then tap the <b>last letter</b>. No dragging.
-      </div>
-      <div class="howto-demo">
-        <span class="ws-demo-cell is-found">C</span>
-        <span class="ws-demo-cell is-found">A</span>
-        <span class="ws-demo-cell is-found">T</span>
-      </div>
-    </div>
-
-    <div class="howto-step">
-      <span class="howto-num">3</span>
-      <div class="howto-text">
-        Words run <b>across, down or diagonally</b> — never backwards.
-      </div>
-      <div class="howto-demo">
-        <span class="howto-arrow">→</span>
-        <span class="howto-arrow">↓</span>
-        <span class="howto-arrow">↘</span>
-        <span class="howto-arrow">↗</span>
-      </div>
-    </div>
-  </div>
-`;
-
 /* ── state ──────────────────────────────────────────────────── */
 
 let mode = 'learner';
@@ -112,6 +71,7 @@ let grid = [];          // grid[y][x] = letter
 let words = [];         // { word, meaning, cells, found }
 let anchor = null;      // first tapped cell, or null
 let seconds = 0;
+let hasInteracted = false;
 let score = 0;
 
 /* ── generation ─────────────────────────────────────────────── */
@@ -218,6 +178,7 @@ function generateOnce() {
  */
 function buildGameUI(host) {
   host.innerHTML = `
+    <p class="ws-note" style="text-align:center">Tap the first letter, then the last. No dragging.</p>
     <div class="game-wrap">
       <div id="game">
         <div id="ws-grid" class="ws-grid"></div>
@@ -244,7 +205,7 @@ function buildGameUI(host) {
           <ul id="ws-words" class="ws-words"></ul>
 
           <div class="game-actions">
-            <button id="howto-btn" class="btn-block">❓ How to play</button>
+            <a href="#ws-instructions">How to play</a>
             <button id="pause-btn" class="btn-block">⏸ Pause</button>
             <button id="mute-btn" class="btn-block">🔊 Sound on</button>
           </div>
@@ -465,6 +426,11 @@ function setAnchor(cell) {
 
 function handleTap(x, y) {
   if (shell.isBlocked()) return;
+  if (!hasInteracted) {
+    hasInteracted = true;
+    shell.resume(); // Begin a full timer interval at the first grid interaction.
+    shell.markStarted();
+  }
 
   if (!anchor) {
     setAnchor({ x, y });
@@ -546,11 +512,12 @@ const shell = createGameShell({
   name: () => `wordsearch-${mode}`,
   title: 'WORD SEARCH',
   subtitle: 'Find every word in the grid',
-  howTo: HOW_TO,
+  deferStartUntilInput: true,
   stepMs: 1000,   // one tick per second, for the timer
 
   onReset() {
     seconds = 0;
+    hasInteracted = false;
     score = 0;
     anchor = null;
     say('');
@@ -562,7 +529,7 @@ const shell = createGameShell({
   },
 
   onStep() {
-    if (!MODES[mode].hasTimer) return;
+    if (!MODES[mode].hasTimer || !hasInteracted) return;
     seconds++;
     updateStats();
   },
@@ -573,7 +540,7 @@ const shell = createGameShell({
 });
 
 document.getElementById('pause-btn').addEventListener('click', () => shell.togglePause());
-document.getElementById('howto-btn').addEventListener('click', () => shell.showHowTo());
+
 document.getElementById('print-btn').addEventListener('click', () => window.print());
 
 const muteBtn = document.getElementById('mute-btn');
@@ -585,3 +552,6 @@ muteBtn.addEventListener('click', () => {
   syncMuteButton();
 });
 syncMuteButton();
+
+// Render a playable puzzle immediately, without a blocking introduction.
+shell.start();

@@ -1,0 +1,20 @@
+name: Word Search checks
+on:
+  pull_request:
+    paths: ['wordsearch/**', 'shared/shell.js', 'tests/shell-start.test.js', 'tests/wordsearch.tests.js', '.github/workflows/wordsearch.yml']
+  push:
+    branches: [main]
+    paths: ['wordsearch/**', 'shared/shell.js', 'tests/shell-start.test.js', 'tests/wordsearch.tests.js', '.github/workflows/wordsearch.yml']
+permissions:
+  contents: read
+jobs:
+  startup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/shell-start.test.js
+      - run: node --check wordsearch/wordsearch.js
+      - run: node --check tests/wordsearch.tests.js

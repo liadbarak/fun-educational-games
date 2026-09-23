@@ -165,6 +165,7 @@ function renderFooter(base) {
  *                                   whose modes should score separately.
  * @param {string}   config.title     Shown on the start overlay.
  * @param {string}   config.subtitle  Shown under the title on the start overlay.
+ * @param {boolean}  config.deferStartUntilInput Wait for markStarted() to track play.
  * @param {number}   config.stepMs    Milliseconds between game steps.
  * @param {function} config.onReset   Sets up a fresh game.
  * @param {function} config.onStep    Advances the game one step.
@@ -237,9 +238,16 @@ function createGameShell(config) {
 
     redraw() { config.onDraw(); },
 
-    start() {
+    // Games with an immediate preview can wait for input before tracking play.
+    markStarted() {
+      if (startedAt !== null) return;
       track('game_start', { game_name: scoreKey() });
       startedAt = Date.now();
+    },
+
+    start() {
+      startedAt = null;
+      if (!config.deferStartUntilInput) shell.markStarted();
       config.onReset();
       paused = false;
       suspended = false;
