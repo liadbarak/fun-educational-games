@@ -28,3 +28,5 @@
 .gf-draw-note{background:#fff5cf;border:1px solid #dfc36c;border-radius:10px;padding:9px 12px;font-size:.85rem;color:#624910;line-height:1.5;margin:8px 0 12px}
 .gf-rank.is-drawn,.gf-hand.is-ready .gf-rank.is-drawn{border-color:#b8841d;background:#fff9e7;box-shadow:0 0 0 3px #e1bf6040}
 .gf-new-card{font-size:.65rem;font-weight:800;color:#795616;text-align:center;margin:4px 0}
+
+.gf-stock{max-width:100px;text-align:center}.gf-stock strong{overflow-wrap:break-word}
