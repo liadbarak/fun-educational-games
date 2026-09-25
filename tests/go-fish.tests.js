@@ -83,6 +83,14 @@
     for(let n=0;n<12;n++)game.say('Action '+n);assert(game.$('log').children.length===10,'journal bound');assert(game.$('log').firstChild.textContent==='Action 11','latest not first');
     game.delay=1700;assert(game.eventDelay('ask')>=1900,'requests too fast');assert(game.eventDelay('book')>=2300,'reward too fast');
   });
+  await test('mobile feed keeps two recent actions and an expandable full history',()=>{
+    game.say('Sarah asked you for 9s.');game.say('You said Go Fish!');game.say('Sarah took a card from the deck.');
+    assert(game.$('recent').children.length===2,'recent feed size');
+    assert(game.$('recent').firstChild.textContent==='Sarah took a card from the deck.','latest action missing');
+    assert(game.$('mobile-log').textContent.includes('Sarah asked you'),'history missing older request');
+    const details=game.$('mobile-log').parentElement;details.querySelector('summary').click();assert(details.open,'history did not expand');
+    game.reset();assert(game.$('recent').children.length===1,'old actions survived restart');
+  });
   await test('a complete game through the controller reaches thirteen books and final scores',async()=>{
     let steps=0;
     while(game.state.status==='playing'&&steps++<2500){

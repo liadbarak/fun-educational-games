@@ -8,7 +8,7 @@ class GoFishGame {
     root.innerHTML=`<div class="gf-toolbar"><span class="gf-chip">YOU + 2 COMPUTER PLAYERS</span><button data-gf="restart" class="gf-small">New game</button></div>
       <div class="gf-layout"><div class="gf-table"><div class="gf-guidance" data-gf="guidance" role="status" aria-live="polite"><strong data-gf="headline"></strong><span data-gf="instruction"></span></div><div class="gf-opponents" data-gf="opponents"></div>
       <div class="gf-center"><div class="gf-stock"><div class="gf-back gf-deck" aria-hidden="true">✦</div><strong data-gf="deck"></strong></div>
-      <div class="gf-announcement"><span class="gf-turn" data-gf="turn"></span><p data-gf="message" role="status" aria-live="polite" aria-atomic="true"></p></div></div>
+      <div class="gf-announcement"><span class="gf-turn" data-gf="turn"></span><p data-gf="message" role="status" aria-live="polite" aria-atomic="true"></p><div class="gf-mobile-feed"><ol data-gf="recent" aria-live="polite" aria-label="Latest table actions"></ol><details><summary>History</summary><ol data-gf="mobile-log"></ol></details></div></div></div>
       <div class="gf-flight" data-gf="flight" aria-hidden="true"></div>
       <div class="gf-player-heading"><h2>Your hand <span data-gf="count"></span></h2><span data-gf="score"></span></div>
       <div class="gf-tutorial" data-gf="tutorial"><span data-gf="lesson"></span><button data-gf="skip">Skip tips</button></div>
@@ -59,7 +59,9 @@ class GoFishGame {
   say(text){
     this.$('message').textContent=text;
     this.history.unshift(text);this.history=this.history.slice(0,10);
-    this.$('log').replaceChildren(...this.history.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));
+    for(const [key,items] of [['log',this.history],['recent',this.history.slice(0,2)],['mobile-log',this.history]]){
+      this.$(key).replaceChildren(...items.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));
+    }
   }
   destroy(){this.epoch++;}
   render(){
@@ -69,7 +71,7 @@ class GoFishGame {
     this.$('hand').classList.toggle('is-ready',ready);
     this.$('headline').textContent=s.status==='finished'?'Game complete':ready?'Your turn':s.turn===0?'Your turn · cards are moving':this.names[s.turn]+'’s turn';
     this.$('instruction').textContent=s.status==='finished'?'See the final scores below.':ready?(this.selected===null?'1. Click or tap a card rank in your hand ↓':'2. Click Sarah or Alex to ask for '+this.M.RANKS[this.selected]+'s.'):(s.turn===0?'Watch what happens — your cards will unlock in a moment.':'Watch '+this.names[s.turn]+' play. No need to click yet.');
-    this.$('opponents').innerHTML=[1,2].map(p=>`<button class="gf-opponent ${s.turn===p?'is-turn':''} ${ready&&this.selected!==null?'can-ask':''}" data-target="${p}" ${!ready||this.selected===null||(!s.hands[p].length&&!s.deck.length)?'disabled':''} aria-label="Ask ${this.names[p]}${this.selected!==null?' for '+this.M.RANKS[this.selected]+'s':''}. ${s.hands[p].length} cards, ${s.books[p].length} books"><span class="gf-avatar" aria-hidden="true">${p===1?'☀':'✿'}</span><strong>${this.names[p]}</strong><span class="gf-seat-status">${s.turn===p?'Playing now':ready&&this.selected!==null?'Click to ask':'Waiting'}</span><span class="gf-fan" aria-hidden="true">${Array.from({length:Math.min(5,s.hands[p].length)},()=>'<i class="gf-back">✦</i>').join('')}</span><span>${s.hands[p].length} cards · <b>${s.books[p].length} books</b></span><span class="gf-mini-books">${s.books[p].length?s.books[p].map(r=>this.M.RANKS[r]).join(' · '):'No books yet'}</span>${ready&&this.selected!==null&&(s.hands[p].length||s.deck.length)?'<span class="gf-ask-label">Ask for '+this.M.RANKS[this.selected]+'s →</span>':''}</button>`).join('');
+    this.$('opponents').innerHTML=[1,2].map(p=>`<button class="gf-opponent ${s.turn===p?'is-turn':''} ${ready&&this.selected!==null?'can-ask':''}" data-target="${p}" ${!ready||this.selected===null||(!s.hands[p].length&&!s.deck.length)?'disabled':''} aria-label="Ask ${this.names[p]}${this.selected!==null?' for '+this.M.RANKS[this.selected]+'s':''}. ${s.hands[p].length} cards, ${s.books[p].length} books"><span class="gf-avatar" aria-hidden="true">${p===1?'☀':'✿'}</span><strong>${this.names[p]}</strong><span class="gf-seat-status">${s.turn===p?'Playing now':ready&&this.selected!==null?'Click to ask':'Waiting'}</span><span class="gf-fan" aria-hidden="true">${Array.from({length:Math.min(5,s.hands[p].length)},()=>'<i class="gf-back">✦</i>').join('')}</span><span class="gf-seat-count">${s.hands[p].length} cards · <b>${s.books[p].length} books</b></span><span class="gf-mini-books">${s.books[p].length?s.books[p].map(r=>this.M.RANKS[r]).join(' · '):'No books yet'}</span>${ready&&this.selected!==null&&(s.hands[p].length||s.deck.length)?'<span class="gf-ask-label">Ask for '+this.M.RANKS[this.selected]+'s →</span>':''}</button>`).join('');
     this.$('deck').textContent=s.deck.length?s.deck.length+' cards left':'Deck empty — keep asking!';
     this.$('deck').previousElementSibling.classList.toggle('is-empty',!s.deck.length);
     this.$('turn').textContent=s.status==='finished'?'ALL BOOKS COLLECTED':s.turn===0?'YOUR TURN':this.names[s.turn].toUpperCase()+"’S TURN";
