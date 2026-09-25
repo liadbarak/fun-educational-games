@@ -105,7 +105,7 @@ class GoFishGame {
       if(e.type==='ask')this.say(`${who=== 'You'?'You asked':who+' asked'} ${e.target===0?'you':this.names[e.target]}: “Do you have any ${rank}s?”`);
       if(e.type==='fish')this.say(`${e.target===0?'You said':this.names[e.target]+' said'} “Go Fish!”`);
       if(e.type==='transfer'){
-        this.say(`${this.names[e.target]} gave ${p===0?'you':who} ${e.count} ${rank}${e.count===1?'':'s'}. ${p===0?'You get':who+' gets'} another go!`);
+        this.say(`${this.names[e.target]} gave ${p===0?'you':who} ${rank}. ${p===0?'You get':who+' gets'} another go!`);
         this.fly(e.target,p,e.count+' × '+rank);
       }
       if(e.type==='draw'){
