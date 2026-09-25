@@ -5,3 +5,22 @@
 @media(min-width:760px){.gf-rank{min-height:126px}.gf-hand{grid-template-columns:repeat(auto-fit,minmax(82px,104px))}.gf-table{padding:26px 32px}}
 @media(max-width:480px){.go-fish-page main{padding:14px 10px 32px}.gf-heading{gap:5px;margin-bottom:14px}.gf-heading p{font-size:.87rem}.gf-header{font-size:.9rem;margin-bottom:14px}.gf-table{padding:12px;border-radius:20px}.gf-opponents{gap:10px}.gf-opponent{padding:9px 6px;font-size:.78rem}.gf-center{gap:18px;min-height:132px;margin:10px 0}.gf-hand{grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:8px}.gf-rank{min-height:100px;padding:6px}.gf-chip{font-size:.62rem;letter-spacing:.025em}.gf-small{font-size:.82rem}.gf-player-heading h2 span{display:block;margin-top:3px}.gf-tutorial{padding:6px 8px;font-size:.8rem}.gf-deck{width:47px;height:65px}.gf-guide{padding:0 8px}.gf-suits{font-size:1.3rem}.gf-card-top{font-size:1.2rem}}
 @media(prefers-reduced-motion:reduce){.gf-game *{animation:none!important;transition:none!important}.gf-flight.gf-moving,.gf-flight.gf-reward{display:none}}
+
+/* Clear next-action guidance and a persistent, compact table journal. */
+.go-fish-page main{max-width:1220px}
+.gf-game{container-type:inline-size}
+.gf-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}
+.gf-guidance{display:flex;flex-direction:column;gap:5px;background:#edf0fa;border:1px solid #cbd5e7;border-left:5px solid #7a86a8;border-radius:14px;padding:12px 15px;margin-bottom:18px;color:#3b4c67;min-height:76px}
+.gf-guidance strong{font-size:1.15rem}.gf-guidance span{font-size:.88rem;line-height:1.5}
+.gf-guidance.is-yours{background:#fff7dc;border-color:#dfc272;border-left-color:#bc8826;color:#654b16}
+.gf-seat-status{font-size:.72rem;font-weight:800;color:#617085;min-height:1.1em}
+.gf-opponent.is-turn .gf-seat-status{color:#225c80}.gf-opponent.is-turn{box-shadow:0 0 0 3px #478bac25}
+.gf-opponent.can-ask .gf-seat-status{color:#22695b}.gf-hand.is-ready .gf-rank{border-color:#81a7c9}
+.gf-hand.is-ready .gf-rank.is-selected{border-color:#275db7}.gf-hand:not(.is-ready){opacity:.72}
+.gf-log{background:#ffffffd9;border:1px solid #dae5ef;border-radius:20px;padding:18px;color:#3f5368;min-width:0}
+.gf-log h2{font-size:1.05rem;margin:0 0 6px;color:var(--ink)}.gf-log-intro{font-size:.8rem;line-height:1.5;color:#67778a;margin:0 0 12px}
+.gf-log ol{list-style:none;padding:0;margin:0;max-height:430px;overflow:auto;overscroll-behavior:contain}
+.gf-log li{font-size:.85rem;line-height:1.6;padding:12px 10px;border-bottom:1px solid #e4eaf2;overflow-wrap:anywhere}
+.gf-log li:first-child{background:#eaf5fc;border-radius:10px;font-weight:700;color:#315979}.gf-log li:last-child{border-bottom:0}
+@container(min-width:1000px){.gf-layout{grid-template-columns:minmax(0,1fr) 265px}.gf-log{position:sticky;top:18px}}
+@media(max-width:480px){.gf-guidance{padding:10px;min-height:84px}.gf-guidance strong{font-size:1.05rem}.gf-guidance span{font-size:.82rem}.gf-log ol{max-height:250px}}

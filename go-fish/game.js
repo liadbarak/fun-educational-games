@@ -2,11 +2,11 @@
 class GoFishGame {
   constructor(root, options={}) {
     this.root=root;this.M=GoFishModel;this.random=options.random||Math.random;
-    this.analytics=options.analytics||(()=>{});this.delay=options.delay??850;
+    this.analytics=options.analytics||(()=>{});this.delay=options.delay??1700;
     this.names=['You','Sarah','Alex'];this.selected=null;this.epoch=0;
     try { this.storage=options.storage??localStorage;this.taught=this.storage.getItem('go-fish:tutorial')==='done'; } catch { this.taught=false; }
     root.innerHTML=`<div class="gf-toolbar"><span class="gf-chip">YOU + 2 COMPUTER PLAYERS</span><button data-gf="restart" class="gf-small">New game</button></div>
-      <div class="gf-table"><div class="gf-opponents" data-gf="opponents"></div>
+      <div class="gf-layout"><div class="gf-table"><div class="gf-guidance" data-gf="guidance" role="status" aria-live="polite"><strong data-gf="headline"></strong><span data-gf="instruction"></span></div><div class="gf-opponents" data-gf="opponents"></div>
       <div class="gf-center"><div class="gf-stock"><div class="gf-back gf-deck" aria-hidden="true">✦</div><strong data-gf="deck"></strong></div>
       <div class="gf-announcement"><span class="gf-turn" data-gf="turn"></span><p data-gf="message" role="status" aria-live="polite" aria-atomic="true"></p></div></div>
       <div class="gf-flight" data-gf="flight" aria-hidden="true"></div>
@@ -15,7 +15,7 @@ class GoFishGame {
       <p class="gf-prompt" data-gf="prompt"></p><div class="gf-hand" data-gf="hand" role="group" aria-label="Your cards, grouped by rank"></div>
       <div class="gf-books" data-gf="books" aria-label="Your completed books"></div>
       <section class="gf-result" data-gf="result" hidden aria-labelledby="gf-result-title"><span class="gf-trophy" aria-hidden="true">✦</span><h2 id="gf-result-title" tabindex="-1"></h2><div data-gf="scores"></div><button data-gf="again" class="gf-primary">Play Again</button><a href="../#games">Explore more PuzzleTen games →</a></section></div>
-      <details class="gf-log"><summary>Recent turns</summary><ol data-gf="log"></ol></details>
+      <aside class="gf-log" aria-labelledby="gf-log-title"><h2 id="gf-log-title">Around the table</h2><p class="gf-log-intro">The latest action first. Follow every ask and catch.</p><ol data-gf="log"></ol></aside></div>
       <dialog data-gf="confirm"><h2>Start a new game?</h2><p>This will replace your current game.</p><div><button data-gf="cancel">Keep playing</button><button data-gf="new" class="gf-primary">New game</button></div></dialog>`;
     this.$('hand').addEventListener('click',e=>{
       const b=e.target.closest('[data-rank]');if(!b)return;
@@ -58,14 +58,18 @@ class GoFishGame {
   }
   say(text){
     this.$('message').textContent=text;
-    this.history.unshift(text);this.history=this.history.slice(0,6);
+    this.history.unshift(text);this.history=this.history.slice(0,10);
     this.$('log').replaceChildren(...this.history.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));
   }
   destroy(){this.epoch++;}
   render(){
     this.$('hand').classList.remove('gf-deal');
     const s=this.shown, ready=!this.busy&&s.turn===0&&s.status==='playing';
-    this.$('opponents').innerHTML=[1,2].map(p=>`<button class="gf-opponent ${s.turn===p?'is-turn':''} ${ready&&this.selected!==null?'can-ask':''}" data-target="${p}" ${!ready||this.selected===null||(!s.hands[p].length&&!s.deck.length)?'disabled':''} aria-label="Ask ${this.names[p]}${this.selected!==null?' for '+this.M.RANKS[this.selected]+'s':''}. ${s.hands[p].length} cards, ${s.books[p].length} books"><span class="gf-avatar" aria-hidden="true">${p===1?'☀':'✿'}</span><strong>${this.names[p]}</strong><span class="gf-fan" aria-hidden="true">${Array.from({length:Math.min(5,s.hands[p].length)},()=>'<i class="gf-back">✦</i>').join('')}</span><span>${s.hands[p].length} cards · <b>${s.books[p].length} books</b></span><span class="gf-mini-books">${s.books[p].length?s.books[p].map(r=>this.M.RANKS[r]).join(' · '):'No books yet'}</span>${ready&&this.selected!==null&&(s.hands[p].length||s.deck.length)?'<span class="gf-ask-label">Ask for '+this.M.RANKS[this.selected]+'s →</span>':''}</button>`).join('');
+    this.$('guidance').classList.toggle('is-yours',ready);
+    this.$('hand').classList.toggle('is-ready',ready);
+    this.$('headline').textContent=s.status==='finished'?'Game complete':ready?'Your turn':s.turn===0?'Your turn · cards are moving':this.names[s.turn]+'’s turn';
+    this.$('instruction').textContent=s.status==='finished'?'See the final scores below.':ready?(this.selected===null?'1. Click or tap a card rank in your hand ↓':'2. Click Sarah or Alex to ask for '+this.M.RANKS[this.selected]+'s.'):(s.turn===0?'Watch what happens — your cards will unlock in a moment.':'Watch '+this.names[s.turn]+' play. No need to click yet.');
+    this.$('opponents').innerHTML=[1,2].map(p=>`<button class="gf-opponent ${s.turn===p?'is-turn':''} ${ready&&this.selected!==null?'can-ask':''}" data-target="${p}" ${!ready||this.selected===null||(!s.hands[p].length&&!s.deck.length)?'disabled':''} aria-label="Ask ${this.names[p]}${this.selected!==null?' for '+this.M.RANKS[this.selected]+'s':''}. ${s.hands[p].length} cards, ${s.books[p].length} books"><span class="gf-avatar" aria-hidden="true">${p===1?'☀':'✿'}</span><strong>${this.names[p]}</strong><span class="gf-seat-status">${s.turn===p?'Playing now':ready&&this.selected!==null?'Click to ask':'Waiting'}</span><span class="gf-fan" aria-hidden="true">${Array.from({length:Math.min(5,s.hands[p].length)},()=>'<i class="gf-back">✦</i>').join('')}</span><span>${s.hands[p].length} cards · <b>${s.books[p].length} books</b></span><span class="gf-mini-books">${s.books[p].length?s.books[p].map(r=>this.M.RANKS[r]).join(' · '):'No books yet'}</span>${ready&&this.selected!==null&&(s.hands[p].length||s.deck.length)?'<span class="gf-ask-label">Ask for '+this.M.RANKS[this.selected]+'s →</span>':''}</button>`).join('');
     this.$('deck').textContent=s.deck.length+' cards left';
     this.$('deck').previousElementSibling.classList.toggle('is-empty',!s.deck.length);
     this.$('turn').textContent=s.status==='finished'?'ALL BOOKS COLLECTED':s.turn===0?'YOUR TURN':this.names[s.turn].toUpperCase()+"’S TURN";
@@ -79,7 +83,10 @@ class GoFishGame {
     this.$('books').innerHTML=s.books[0].length?'<span>Your books</span>'+s.books[0].map(r=>`<span class="gf-book">${this.M.RANKS[r]} <small>♠ ♥ ♦ ♣</small></span>`).join(''):'<span>Collect all four suits of a rank to make a book.</span>';
     this.$('tutorial').hidden=this.taught||!ready;
     this.$('lesson').textContent=this.selected===null?'1. Pick a card rank ↓':'2. Ask them for it ↑';
-    this.$('prompt').textContent=ready?(this.selected===null?'Choose a rank from your hand.':'Selected '+this.M.RANKS[this.selected]+'s — choose Sarah or Alex above.'):(s.status==='finished'?'Well played!':'Watch the table — your turn is coming.');
+    this.$('prompt').textContent=ready?(this.selected===null?'Choose a rank from your hand.':'Selected '+this.M.RANKS[this.selected]+'s — choose Sarah or Alex above.'):(s.status==='finished'?'Well played!':s.turn===0?'Cards are moving — please wait.':this.names[s.turn]+' is playing. Your cards are paused.');
+  }
+  eventDelay(type){
+    return this.delay*({ask:1.15,fish:.9,draw:1.15,transfer:1.2,book:1.4,refill:1.1}[type]||1);
   }
   async wait(ms, epoch){
     await new Promise(resolve=>setTimeout(resolve,ms));
@@ -95,14 +102,14 @@ class GoFishGame {
       if(epoch!==this.epoch)return;
       this.shown=e.view;this.render();
       const rank=this.M.RANKS[e.rank],who=this.names[e.player];
-      if(e.type==='ask')this.say(`${who=== 'You'?'You ask':who+' asks'} ${this.names[e.target]}: “Do you have any ${rank}s?”`);
-      if(e.type==='fish')this.say(`${this.names[e.target]} says “Go Fish!”`);
+      if(e.type==='ask')this.say(`${who=== 'You'?'You asked':who+' asked'} ${e.target===0?'you':this.names[e.target]}: “Do you have any ${rank}s?”`);
+      if(e.type==='fish')this.say(`${e.target===0?'You said':this.names[e.target]+' said'} “Go Fish!”`);
       if(e.type==='transfer'){
-        this.say(`${this.names[e.target]} gave ${p===0?'you':who} ${e.count} ${rank}${e.count===1?'':'s'}. Ask again!`);
+        this.say(`${this.names[e.target]} gave ${p===0?'you':who} ${e.count} ${rank}${e.count===1?'':'s'}. ${p===0?'You get':who+' gets'} another go!`);
         this.fly(e.target,p,e.count+' × '+rank);
       }
       if(e.type==='draw'){
-        this.say(e.again?`Nice catch! ${p===0?'You drew':who+' drew'} a ${rank} — ask again!`:p===0?`You drew ${this.M.RANKS[this.M.rank(e.card)]}${this.M.SUITS[Math.floor(e.card/13)]}. ${this.names[(p+1)%3]} is next.`:`${who} drew a card. Turn passes.`);
+        this.say(e.again?`Nice catch! ${p===0?'You drew':who+' drew'} a ${rank} — ask again!`:p===0?`You drew ${this.M.RANKS[this.M.rank(e.card)]}${this.M.SUITS[Math.floor(e.card/13)]}. Your turn is over.`:`${who} took a card from the deck. Their turn is over.`);
         this.fly(-1,p,e.again||p===0?this.M.RANKS[this.M.rank(e.card)]:'✦');
       }
       if(e.type==='empty')this.say('The deck is empty. No card to draw — turn passes.');
@@ -112,14 +119,15 @@ class GoFishGame {
       }
       if(e.type==='refill'){this.say(`${who=== 'You'?'You draw':who+' draws'} ${e.count} cards for a fresh hand.`);this.fly(-1,e.player,'+'+e.count);}
       if(e.type==='finish'||e.type==='turn')continue;
-      if(!await this.wait(this.delay,epoch))return;
+      if(!await this.wait(this.eventDelay(e.type),epoch))return;
     }
     this.$('flight').className='gf-flight';
     this.shown=this.M.view(this.state);this.busy=false;this.render();
     if(this.state.status==='finished'){this.finish();return;}
-    if(this.state.turn===0){this.say('Your turn! Choose a rank, then an opponent.');this.focusRank();}
+    if(this.state.turn===0){this.$('message').textContent='Your turn! Choose a rank, then an opponent.';this.focusRank();}
     else {
       this.busy=true;this.render();
+      this.$('message').textContent=this.names[this.state.turn]+' is thinking about who to ask…';
       if(!await this.wait(this.delay,epoch))return;
       this.busy=false;
       const move=this.M.choose(this.state,this.random);

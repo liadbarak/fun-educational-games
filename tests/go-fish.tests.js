@@ -19,7 +19,7 @@
     game.taught=false;game.render();assert(!game.$('tutorial').hidden,'tip missing');
     game.$('hand').querySelector('button').click();assert(game.$('hand').querySelector('[aria-pressed="true"]'),'no selection');
     assert(document.activeElement.dataset.target==='1','keyboard focus did not move to an opponent');
-    assert(game.$('lesson').textContent.startsWith('2.'),'wrong step');assert(!game.$('opponents').querySelector('button').disabled,'target blocked');
+    assert(game.$('lesson').textContent.startsWith('2.'),'wrong step');assert(game.$('instruction').textContent.startsWith('2. Click Sarah'),'unclear target instruction');assert(!game.$('opponents').querySelector('button').disabled,'target blocked');
     game.$('hand').querySelector('button').click();assert(events.filter(e=>e.name==='game_start').length===1,'duplicate start');
     game.$('skip').click();assert(game.$('tutorial').hidden,'skip did not work');game.reset();assert(game.$('tutorial').hidden,'tips repeat');
   });
@@ -60,6 +60,13 @@
     preset([Array.from({length:13},(_,i)=>i),[13],[14]]);
     for(const width of [280,350,728,960]){root.style.width=width+'px';assert(root.scrollWidth<=width+1,'overflow at '+width);for(const b of game.$('hand').querySelectorAll('button')){assert(b.getBoundingClientRect().width>=44,'small target');assert(b.getBoundingClientRect().height>=44,'short target');}}
     root.style.width='';
+  });
+  await test('turn guidance distinguishes waiting from input and journal stays visible',()=>{
+    assert(game.$('headline').textContent==='Your turn','human turn heading');assert(game.$('instruction').textContent.includes('card rank'),'missing first step');
+    game.shown.turn=1;game.busy=true;game.render();assert(game.$('headline').textContent==='Sarah’s turn','CPU heading');assert(game.$('instruction').textContent.includes('No need to click'),'missing wait cue');
+    assert(root.querySelector('.gf-log').tagName==='ASIDE','log still collapsed');
+    for(let n=0;n<12;n++)game.say('Action '+n);assert(game.$('log').children.length===10,'journal bound');assert(game.$('log').firstChild.textContent==='Action 11','latest not first');
+    game.delay=1700;assert(game.eventDelay('ask')>=1900,'requests too fast');assert(game.eventDelay('book')>=2300,'reward too fast');
   });
   await test('a complete game through the controller reaches thirteen books and final scores',async()=>{
     let steps=0;
