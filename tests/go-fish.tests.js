@@ -31,6 +31,21 @@
   await test('matching draw announces Nice catch and keeps the turn',async()=>{
     preset([[6],[2],[3]],[19]);await game.run(1,6);assert(game.state.turn===0,'no extra turn');assert(game.history.some(t=>t.includes('Nice catch!')),'no catch feedback');
   });
+  await test('drawn card is visible for both new and existing ranks',async()=>{
+    for(const existing of [false,true]){
+      preset([existing?[6,2]:[6],[3],[4]],[15]);
+      game.delay=0;game.state.turn=0;
+      // Pause at the draw event before computer turns can take that card away.
+      game.wait=async()=>{if(game.lastDraw!==null)return false;return true;};
+      await game.run(1,6);
+      assert(game.state.hands[0].includes(15),'draw missing from model');
+      assert(game.$('draw-note').textContent.includes('3♥'),'draw identity missing');
+      assert(game.$('draw-note').textContent.includes(existing?'now 2 cards':'added to your hand'),'group explanation');
+      assert(game.$('hand').querySelector('[data-rank="2"] .gf-new-card'),'draw badge missing');
+      assert(game.$('count').textContent.includes(existing?'3 cards':'2 cards'),'hand count did not increase');
+      game.lastDraw=null;game.busy=false;
+    }
+  });
   await test('book completion produces reward, collection and updated score',async()=>{
     preset([[6,19,32,1],[45,2],[3]]);await game.run(1,6);assert(game.$('books').querySelector('.gf-book'),'missing book');assert(game.$('score').textContent==='1 / 13 books','score');assert(events.some(e=>e.name==='book_complete'),'analytics');
   });
