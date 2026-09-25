@@ -24,3 +24,9 @@
 .gf-log li:first-child{background:#eaf5fc;border-radius:10px;font-weight:700;color:#315979}.gf-log li:last-child{border-bottom:0}
 @container(min-width:1000px){.gf-layout{grid-template-columns:minmax(0,1fr) 265px}.gf-log{position:sticky;top:18px}}
 @media(max-width:480px){.gf-guidance{padding:10px;min-height:84px}.gf-guidance strong{font-size:1.05rem}.gf-guidance span{font-size:.82rem}.gf-log ol{max-height:250px}}
+
+.gf-draw-note{background:#fff5cf;border:1px solid #dfc36c;border-radius:10px;padding:9px 12px;font-size:.85rem;color:#624910;line-height:1.5;margin:8px 0 12px}
+.gf-rank.is-drawn,.gf-hand.is-ready .gf-rank.is-drawn{border-color:#b8841d;background:#fff9e7;box-shadow:0 0 0 3px #e1bf6040}
+.gf-new-card{font-size:.65rem;font-weight:800;color:#795616;text-align:center;margin:4px 0}
+
+.gf-stock{max-width:100px;text-align:center}.gf-stock strong{overflow-wrap:break-word}

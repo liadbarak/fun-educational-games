@@ -12,7 +12,7 @@ class GoFishGame {
       <div class="gf-flight" data-gf="flight" aria-hidden="true"></div>
       <div class="gf-player-heading"><h2>Your hand <span data-gf="count"></span></h2><span data-gf="score"></span></div>
       <div class="gf-tutorial" data-gf="tutorial"><span data-gf="lesson"></span><button data-gf="skip">Skip tips</button></div>
-      <p class="gf-prompt" data-gf="prompt"></p><div class="gf-hand" data-gf="hand" role="group" aria-label="Your cards, grouped by rank"></div>
+      <p class="gf-prompt" data-gf="prompt"></p><p class="gf-draw-note" data-gf="draw-note" hidden></p><div class="gf-hand" data-gf="hand" role="group" aria-label="Your cards, grouped by rank"></div>
       <div class="gf-books" data-gf="books" aria-label="Your completed books"></div>
       <section class="gf-result" data-gf="result" hidden aria-labelledby="gf-result-title"><span class="gf-trophy" aria-hidden="true">✦</span><h2 id="gf-result-title" tabindex="-1"></h2><div data-gf="scores"></div><button data-gf="again" class="gf-primary">Play Again</button><a href="../#games">Explore more PuzzleTen games →</a></section></div>
       <aside class="gf-log" aria-labelledby="gf-log-title"><h2 id="gf-log-title">Around the table</h2><p class="gf-log-intro">The latest action first. Follow every ask and catch.</p><ol data-gf="log"></ol></aside></div>
@@ -35,7 +35,7 @@ class GoFishGame {
   finishTutorial(){this.taught=true;try{this.storage.setItem('go-fish:tutorial','done');}catch{}}
   reset(){
     this.epoch++;this.state=this.M.create(this.random);this.shown=this.M.view(this.state);
-    this.selected=null;this.busy=false;this.started=false;this.ended=false;this.history=[];
+    this.selected=null;this.lastDraw=null;this.busy=false;this.started=false;this.ended=false;this.history=[];
     this.$('result').hidden=true;this.$('flight').className='gf-flight';this.$('log').replaceChildren();
     this.render();this.say('Your turn! Pick a rank, then ask Sarah or Alex.');
     this.$('hand').classList.remove('gf-deal');void this.$('hand').offsetWidth;this.$('hand').classList.add('gf-deal');
@@ -44,7 +44,7 @@ class GoFishGame {
   select(r){
     if(this.busy||this.state.turn!==0||this.state.status!=='playing')return;
     if(!this.M.ranks(this.state.hands[0]).includes(r))return;
-    this.selected=r;
+    this.selected=r;this.lastDraw=null;
     if(!this.started){this.started=true;this.emit('game_start');}
     this.render();
     this.$('hand').querySelector('[data-rank="'+r+'"]')?.focus({preventScroll:true});
@@ -70,15 +70,21 @@ class GoFishGame {
     this.$('headline').textContent=s.status==='finished'?'Game complete':ready?'Your turn':s.turn===0?'Your turn · cards are moving':this.names[s.turn]+'’s turn';
     this.$('instruction').textContent=s.status==='finished'?'See the final scores below.':ready?(this.selected===null?'1. Click or tap a card rank in your hand ↓':'2. Click Sarah or Alex to ask for '+this.M.RANKS[this.selected]+'s.'):(s.turn===0?'Watch what happens — your cards will unlock in a moment.':'Watch '+this.names[s.turn]+' play. No need to click yet.');
     this.$('opponents').innerHTML=[1,2].map(p=>`<button class="gf-opponent ${s.turn===p?'is-turn':''} ${ready&&this.selected!==null?'can-ask':''}" data-target="${p}" ${!ready||this.selected===null||(!s.hands[p].length&&!s.deck.length)?'disabled':''} aria-label="Ask ${this.names[p]}${this.selected!==null?' for '+this.M.RANKS[this.selected]+'s':''}. ${s.hands[p].length} cards, ${s.books[p].length} books"><span class="gf-avatar" aria-hidden="true">${p===1?'☀':'✿'}</span><strong>${this.names[p]}</strong><span class="gf-seat-status">${s.turn===p?'Playing now':ready&&this.selected!==null?'Click to ask':'Waiting'}</span><span class="gf-fan" aria-hidden="true">${Array.from({length:Math.min(5,s.hands[p].length)},()=>'<i class="gf-back">✦</i>').join('')}</span><span>${s.hands[p].length} cards · <b>${s.books[p].length} books</b></span><span class="gf-mini-books">${s.books[p].length?s.books[p].map(r=>this.M.RANKS[r]).join(' · '):'No books yet'}</span>${ready&&this.selected!==null&&(s.hands[p].length||s.deck.length)?'<span class="gf-ask-label">Ask for '+this.M.RANKS[this.selected]+'s →</span>':''}</button>`).join('');
-    this.$('deck').textContent=s.deck.length+' cards left';
+    this.$('deck').textContent=s.deck.length?s.deck.length+' cards left':'Deck empty — keep asking!';
     this.$('deck').previousElementSibling.classList.toggle('is-empty',!s.deck.length);
     this.$('turn').textContent=s.status==='finished'?'ALL BOOKS COLLECTED':s.turn===0?'YOUR TURN':this.names[s.turn].toUpperCase()+"’S TURN";
     this.$('count').textContent='('+s.hands[0].length+' cards)';
     this.$('score').textContent=s.books[0].length+' / 13 books';
+    const drawn=this.lastDraw;
+    this.$('draw-note').hidden=drawn===null;
+    if(drawn!==null){
+      const r=this.M.rank(drawn),label=this.M.RANKS[r]+this.M.SUITS[Math.floor(drawn/13)],count=s.hands[0].filter(c=>this.M.rank(c)===r).length;
+      this.$('draw-note').textContent=s.hands[0].includes(drawn)?'You drew '+label+' — '+(count>1?'added to your '+this.M.RANKS[r]+' group (now '+count+' cards).':'added to your hand below.') : s.books[0].includes(r)?'You drew '+label+' and completed a book!':'Your last draw was '+label+'. It has since been passed to an opponent.';
+    }
     const rs=this.M.ranks(s.hands[0]);
     this.$('hand').innerHTML=rs.map((r,i)=>{
       const cards=s.hands[0].filter(c=>this.M.rank(c)===r).sort((a,b)=>a-b);
-      return `<button class="gf-rank ${this.selected===r?'is-selected':''} ${!this.taught&&ready&&this.selected===null&&i===0?'is-guide':''}" data-rank="${r}" aria-pressed="${this.selected===r}" aria-label="${this.M.RANKS[r]}, ${cards.length} ${cards.length===1?'card':'cards'}: ${cards.map(c=>['spades','hearts','diamonds','clubs'][Math.floor(c/13)]).join(', ')}" ${ready?'':'disabled'}><span class="gf-card-top">${this.M.RANKS[r]}<small>×${cards.length}</small></span><span class="gf-suits">${cards.map(c=>`<span class="${[1,2].includes(Math.floor(c/13))?'gf-red':''}">${this.M.SUITS[Math.floor(c/13)]}</span>`).join('')}</span><span class="gf-card-bottom" aria-hidden="true">${this.M.RANKS[r]}</span></button>`;
+      return `<button class="gf-rank ${drawn!==null&&cards.includes(drawn)?'is-drawn':''} ${this.selected===r?'is-selected':''} ${!this.taught&&ready&&this.selected===null&&i===0?'is-guide':''}" data-rank="${r}" aria-pressed="${this.selected===r}" aria-label="${this.M.RANKS[r]}, ${cards.length} ${cards.length===1?'card':'cards'}: ${cards.map(c=>['spades','hearts','diamonds','clubs'][Math.floor(c/13)]).join(', ')}" ${ready?'':'disabled'}><span class="gf-card-top">${this.M.RANKS[r]}<small>×${cards.length}</small></span><span class="gf-suits">${cards.map(c=>`<span class="${[1,2].includes(Math.floor(c/13))?'gf-red':''}">${this.M.SUITS[Math.floor(c/13)]}</span>`).join('')}</span>${drawn!==null&&cards.includes(drawn)?'<span class="gf-new-card">+1 drawn</span>':''}<span class="gf-card-bottom" aria-hidden="true">${this.M.RANKS[r]}</span></button>`;
     }).join('')||'<p class="gf-empty-hand">No cards in hand. You’ll draw up to five on your next turn if the deck has cards.</p>';
     this.$('books').innerHTML=s.books[0].length?'<span>Your books</span>'+s.books[0].map(r=>`<span class="gf-book">${this.M.RANKS[r]} <small>♠ ♥ ♦ ♣</small></span>`).join(''):'<span>Collect all four suits of a rank to make a book.</span>';
     this.$('tutorial').hidden=this.taught||!ready;
@@ -100,6 +106,7 @@ class GoFishGame {
     this.busy=true;this.render();
     for(const e of events){
       if(epoch!==this.epoch)return;
+      if(e.type==='draw'&&e.player===0)this.lastDraw=e.card;
       this.shown=e.view;this.render();
       const rank=this.M.RANKS[e.rank],who=this.names[e.player];
       if(e.type==='ask')this.say(`${who=== 'You'?'You asked':who+' asked'} ${e.target===0?'you':this.names[e.target]}: “Do you have any ${rank}s?”`);
