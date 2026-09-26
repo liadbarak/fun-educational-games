@@ -1,0 +1,20 @@
+name: Cat Merge checks
+on:
+  pull_request:
+    paths: ['cat-merge/**', 'tests/cat-merge*', '.github/workflows/cat-merge.yml']
+  push:
+    branches: [main]
+    paths: ['cat-merge/**', 'tests/cat-merge*', '.github/workflows/cat-merge.yml']
+permissions:
+  contents: read
+jobs:
+  game:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/cat-merge.test.js
+      - run: node --check cat-merge/game.js
+      - run: node --check tests/cat-merge.tests.js
