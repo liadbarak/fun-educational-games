@@ -1,0 +1,20 @@
+name: Yes or No Generator checks
+on:
+  pull_request:
+    paths: ['yes-or-no-generator/**', 'shared/random-tools.js', 'tests/yes-no*', '.github/workflows/yes-no.yml']
+  push:
+    branches: [main]
+    paths: ['yes-or-no-generator/**', 'shared/random-tools.js', 'tests/yes-no*', '.github/workflows/yes-no.yml']
+permissions:
+  contents: read
+jobs:
+  generator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/yes-no.test.js
+      - run: node --check yes-or-no-generator/generator.js
+      - run: node --check tests/yes-no.tests.js
