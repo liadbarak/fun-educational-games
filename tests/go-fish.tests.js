@@ -13,15 +13,15 @@
   });
   await test('blocked browser storage does not prevent playing or skipping tips',()=>{
     game.destroy();game=new GoFishGame(root,{delay:0,storage:{getItem(){throw Error('blocked');},setItem(){throw Error('blocked');}}});
-    assert(game.state.hands[0].length>0,'no hand');game.$('skip').click();assert(game.$('tutorial').hidden,'skip failed');
+    assert(game.state.hands[0].length>0,'no hand');game.$('skip').click();assert(game.$('skip').hidden,'skip failed');
   });
   await test('two-step tutorial, selected highlight and first-interaction analytics',()=>{
-    game.taught=false;game.render();assert(!game.$('tutorial').hidden,'tip missing');
+    game.taught=false;game.render();assert(!game.$('skip').hidden,'tip missing');
     game.$('hand').querySelector('button').click();assert(game.$('hand').querySelector('[aria-pressed="true"]'),'no selection');
     assert(document.activeElement.dataset.target==='1','keyboard focus did not move to an opponent');
-    assert(game.$('lesson').textContent.startsWith('2.'),'wrong step');assert(game.$('instruction').textContent.startsWith('2. Click Sarah'),'unclear target instruction');assert(!game.$('opponents').querySelector('button').disabled,'target blocked');
+    assert(game.$('message').textContent.startsWith('Ask for'),'wrong step');assert(game.$('detail').textContent==='Choose Sarah or Alex above.','unclear target instruction');assert(!game.$('opponents').querySelector('button').disabled,'target blocked');
     game.$('hand').querySelector('button').click();assert(events.filter(e=>e.name==='game_start').length===1,'duplicate start');
-    game.$('skip').click();assert(game.$('tutorial').hidden,'skip did not work');game.reset();assert(game.$('tutorial').hidden,'tips repeat');
+    game.$('skip').click();assert(game.$('skip').hidden,'skip did not work');game.reset();assert(game.$('skip').hidden,'tips repeat');
   });
   await test('clicking rank then opponent transfers all matching cards and retains turn',async()=>{
     preset([[6,1],[19,32,2],[3]]);game.$('hand').querySelector('[data-rank="6"]').click();game.$('opponents').querySelector('[data-target="1"]').click();
@@ -39,8 +39,8 @@
       game.wait=async()=>{if(game.lastDraw!==null)return false;return true;};
       await game.run(1,6);
       assert(game.state.hands[0].includes(15),'draw missing from model');
-      assert(game.$('draw-note').textContent.includes('3♥'),'draw identity missing');
-      assert(game.$('draw-note').textContent.includes(existing?'now 2 cards':'added to your hand'),'group explanation');
+      assert(game.$('message').textContent.includes('3♥'),'draw identity missing');
+      assert(game.$('detail').textContent.toLowerCase().includes(existing?'now 2 cards':'added to your hand'),'group explanation');
       assert(game.$('hand').querySelector('[data-rank="2"] .gf-new-card'),'draw badge missing');
       assert(game.$('count').textContent.includes(existing?'3 cards':'2 cards'),'hand count did not increase');
       game.lastDraw=null;game.busy=false;
@@ -76,20 +76,36 @@
     for(const width of [280,350,728,960]){root.style.width=width+'px';assert(root.scrollWidth<=width+1,'overflow at '+width);for(const b of game.$('hand').querySelectorAll('button')){assert(b.getBoundingClientRect().width>=44,'small target');assert(b.getBoundingClientRect().height>=44,'short target');}}
     root.style.width='';
   });
-  await test('turn guidance distinguishes waiting from input and journal stays visible',()=>{
-    assert(game.$('headline').textContent==='Your turn','human turn heading');assert(game.$('instruction').textContent.includes('card rank'),'missing first step');
-    game.shown.turn=1;game.busy=true;game.render();assert(game.$('headline').textContent==='Sarah’s turn','CPU heading');assert(game.$('instruction').textContent.includes('No need to click'),'missing wait cue');
-    assert(root.querySelector('.gf-log').tagName==='ASIDE','log still collapsed');
-    for(let n=0;n<12;n++)game.say('Action '+n);assert(game.$('log').children.length===10,'journal bound');assert(game.$('log').firstChild.textContent==='Action 11','latest not first');
-    game.delay=1700;assert(game.eventDelay('ask')>=1900,'requests too fast');assert(game.eventDelay('book')>=2300,'reward too fast');
+  await test('one current action owns human input guidance; history is secondary',()=>{
+    assert(root.querySelectorAll('[role="status"]').length===1,'multiple live status areas');
+    assert(game.$('route').textContent==='YOUR TURN','human turn label');
+    assert(game.$('message').textContent==='Choose a card to ask for','missing first step');
+    assert(!game.$('history').open,'history must start collapsed');
+    assert(game.$('history').querySelector('summary').textContent.trim()==='Game History','history label');
+    assert(!root.querySelector('.gf-guidance, .gf-mobile-feed, .gf-prompt, .gf-draw-note, .gf-seat-status'),'duplicate status UI remains');
+    for(let n=0;n<12;n++)game.say('Action '+n);
+    assert(game.$('log').children.length===10,'journal bound');assert(game.$('log').firstChild.textContent==='Action 11','latest not first');
+    game.$('history').querySelector('summary').click();assert(game.$('history').open,'history did not expand');
+    game.reset();assert(!game.$('history').open&&game.$('log').children.length===1,'reset did not clear history');
   });
-  await test('mobile feed keeps two recent actions and an expandable full history',()=>{
-    game.say('Sarah asked you for 9s.');game.say('You said Go Fish!');game.say('Sarah took a card from the deck.');
-    assert(game.$('recent').children.length===2,'recent feed size');
-    assert(game.$('recent').firstChild.textContent==='Sarah took a card from the deck.','latest action missing');
-    assert(game.$('mobile-log').textContent.includes('Sarah asked you'),'history missing older request');
-    const details=game.$('mobile-log').parentElement;details.querySelector('summary').click();assert(details.open,'history did not expand');
-    game.reset();assert(game.$('recent').children.length===1,'old actions survived restart');
+  await test('AI request, response and draw form a paced sequence with one active player',async()=>{
+    preset([[0],[1],[2]],[3]);game.state.turn=2;game.shown=GoFishModel.view(game.state);game.delay=1700;
+    const observed=[];
+    game.wait=async ms=>{
+      observed.push({route:game.$('route').textContent,message:game.$('message').textContent,detail:game.$('detail').textContent,ms});
+      assert(game.$('opponents').querySelector('.is-turn').dataset.target==='2','wrong active opponent');
+      assert([...game.$('hand').querySelectorAll('button')].every(b=>b.disabled),'human input available during AI action');
+      assert(root.querySelectorAll('[role="status"]').length===1,'duplicate status');
+      return observed.length<3;
+    };
+    await game.run(1,2);
+    assert(observed.length===3,'missing action stages');
+    assert(observed[0].route==='Alex → Sarah'&&observed[0].message.includes('3s'),'request lacks participants or rank');
+    assert(observed[1].route==='Alex → Sarah'&&observed[1].message.includes('Go Fish!'),'response lost context');
+    assert(observed[1].detail==='Sarah has no 3s.','result lacks requested rank');
+    assert(observed[2].message==='Alex draws a card','draw missing or private card exposed');
+    assert(observed[0].ms>=2000&&observed[1].ms>=1700&&observed[2].ms>=2200,'actions too fast');
+    assert(game.history[0].includes('Alex draws a card'),'draw absent from history');
   });
   await test('a complete game through the controller reaches thirteen books and final scores',async()=>{
     let steps=0;
