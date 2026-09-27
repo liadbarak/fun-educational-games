@@ -7,3 +7,16 @@
   .ss-objective{font-size:20px;margin-top:4px}.ss-instruction{margin-bottom:8px}
   .ss-feedback{min-height:70px}
 }
+
+/* A single opening gesture; pointer input cancels it immediately. */
+.ss-demo,.ss-demo-piece{pointer-events:none}
+.ss-demo-line{stroke:#ffbf62;stroke-width:3;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;animation:ss-demo-draw 2.4s ease-in-out both}
+.ss-demo-pointer{animation:ss-demo-hand 2.4s ease-in-out both}
+.ss-demo-pointer circle:first-child{fill:#fff9;stroke:#7560aa;stroke-width:2}
+.ss-demo-pointer circle:last-child{fill:#7560aa}
+.ss-demo-original{animation:ss-demo-hide 2.4s linear both}
+.ss-demo-piece{animation:ss-demo-split 2.4s ease-in-out both}
+@keyframes ss-demo-draw{0%,12%{stroke-dashoffset:283;opacity:0}18%{opacity:1}55%,85%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes ss-demo-hand{0%,12%{transform:translate(100px,70px);opacity:0}18%{opacity:1}55%{transform:translate(300px,270px);opacity:1}65%,100%{transform:translate(300px,270px);opacity:0}}
+@keyframes ss-demo-hide{0%,54%{opacity:1}55%,100%{opacity:0}}
+@keyframes ss-demo-split{0%,54%{opacity:0;transform:translate(0,0)}55%{opacity:1;transform:translate(0,0)}75%,100%{opacity:1;transform:translate(var(--tx),var(--ty))}}
