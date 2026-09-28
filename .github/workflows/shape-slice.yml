@@ -1,0 +1,20 @@
+name: Shape Slice checks
+on:
+  pull_request:
+    paths: ['shape-slice/**', 'tests/shape-slice*', '.github/workflows/shape-slice.yml']
+  push:
+    branches: [main]
+    paths: ['shape-slice/**', 'tests/shape-slice*', '.github/workflows/shape-slice.yml']
+permissions:
+  contents: read
+jobs:
+  geometry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/shape-slice.test.js
+      - run: node --check shape-slice/game.js
+      - run: node --check tests/shape-slice.tests.js
