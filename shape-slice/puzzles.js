@@ -7,7 +7,7 @@
   function add(title,kind,shape,solution,extra={}){P.push({id:P.length+1,title,kind,polygons:[shape],solution,...extra});}
   add('Make 2 triangles','sides',square,[[100,70],[300,270]],{counts:[3,3],hint:'Connect two opposite corners.'});
   add('Make 2 rectangles','rectangles',rect,[[200,60],[200,280]],{hint:'A straight cut from edge to opposite edge.'});
-  add('Split the square equally','area',square,[[70,170],[330,170]],{ratio:.5});
+  add('Turn a square into a pentagon','sides',square,[[200,70],[300,170]],{one:5,hint:'Can removing one corner give the shape an extra side?'});
   add('Make one piece a triangle','sides',triangle,[[80,180],[320,180]],{one:3});
   add('Cut off 25%','area',square,[[150,40],[150,300]],{ratio:.25});
   add('Find the mirror line','symmetry',triangle,[[200,30],[200,310]]);
