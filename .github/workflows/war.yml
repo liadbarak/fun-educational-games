@@ -1,0 +1,19 @@
+name: War Card Game checks
+on:
+  pull_request:
+    paths: ['war-card-game/**', 'tests/war-*.test.js', '.github/workflows/war.yml']
+  push:
+    branches: [main]
+    paths: ['war-card-game/**', 'tests/war-*.test.js', '.github/workflows/war.yml']
+permissions:
+  contents: read
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/war-*.test.js
+      - run: node --check war-card-game/game.js
