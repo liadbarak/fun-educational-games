@@ -1,0 +1,18 @@
+(function(){'use strict';
+const $=id=>document.getElementById(id);let state,auto=false,busy=false,timer=null,started=false,generation=0;
+const suits=['♠','♥','♦','♣'],ranks={11:'J',12:'Q',13:'K',14:'A'};
+function analytics(name,extra={}){if(typeof track==='function')track(name,{game_name:'war_card_game',...extra});}
+function paintCard(id,card){const el=$(id);el.className='playing-card'+(card?' revealed':' back')+(card&&(card.suit===1||card.suit===2)?' red':'');el.textContent=card?(ranks[card.rank]||card.rank)+' '+suits[card.suit]:'✦';if(card&&!matchMedia('(prefers-reduced-motion: reduce)').matches)el.animate([{transform:'scaleX(.3)',opacity:.5},{transform:'scaleX(1)',opacity:1}],{duration:250});el.setAttribute('aria-label',card?(ranks[card.rank]||card.rank)+' of '+['spades','hearts','diamonds','clubs'][card.suit]:'Face-down card');}
+function counts(){ $('you-count').textContent=state.hands[0].length; $('cpu-count').textContent=state.hands[1].length;$('pot').textContent=state.pile.length+' cards in the middle';$('rounds').textContent='Flips: '+state.rounds+' · Wars: '+state.wars;}
+function controls(){ $('flip').disabled=busy||auto||state.winner!==null;$('player-deck').disabled=$('flip').disabled;$('flip').textContent=state.war?'Flip for War':'Flip Card';$('auto').textContent=auto?'Stop Auto Play':'Auto Play';$('auto').setAttribute('aria-pressed',String(auto));$('auto').disabled=state.winner!==null;}
+function stop(){auto=false;clearTimeout(timer);timer=null;controls();}
+function reset(){generation++;clearTimeout(timer);auto=false;busy=false;started=false;state=WarModel.create();paintCard('you-card');paintCard('cpu-card');$('action').textContent='Ready? Flip your first card.';$('detail').textContent='Higher card wins. Ace is highest.';$('table').classList.remove('war');$('restart').textContent='New Game';counts();controls();}
+function flip(){if(busy||state.winner!==null)return;busy=true;if(!started){started=true;analytics('game_start');}const event=WarModel.step(state);paintCard('you-card',event.cards[0]);paintCard('cpu-card',event.cards[1]);counts();$('table').classList.toggle('war',state.war);
+ if(state.winner!==null){$('action').textContent=state.winner===0?'You Win! 🎉':'Computer Wins';$('detail').textContent='All 52 cards collected. Ready for a rematch?';$('restart').textContent='Play Again';auto=false;analytics('game_over',{winner:state.winner===0?'player':'computer',rounds:state.rounds});}
+ else if(event.redeal){$('action').textContent='An even finish — play on!';$('detail').textContent='Both decks ran out during war. The tied pile was shuffled and split equally.';}
+ else if(state.war){$('action').textContent='WAR! Equal ranks.';$('detail').textContent='Next: up to 3 face down, then 1 face up. Winner takes the whole pile.';}
+ else{$('action').textContent=event.winner===0?'You take '+event.pot+' cards!':'Computer takes '+event.pot+' cards.';$('detail').textContent=event.wasWar?'War settled! Face-down cards: you '+event.down[0]+', computer '+event.down[1]+'.':'Cards go to the bottom of the winning deck.';}
+ controls();const current=generation;setTimeout(()=>{if(current!==generation)return;busy=false;controls();if(auto&&state.winner===null)timer=setTimeout(flip,state.war?1300:700);},450);
+}
+$('flip').addEventListener('click',flip);$('player-deck').addEventListener('click',flip);$('auto').addEventListener('click',()=>{if(auto)stop();else{auto=true;controls();if(!busy)flip();}});$('restart').addEventListener('click',reset);document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});reset();analytics('game_view');
+})();
