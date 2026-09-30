@@ -6,10 +6,12 @@ function paintCard(id,card){const el=$(id);el.className='playing-card'+(card?' r
 function counts(){ $('you-count').textContent=state.hands[0].length; $('cpu-count').textContent=state.hands[1].length;$('pot').textContent=state.pile.length+' cards in the middle';$('rounds').textContent='Flips: '+state.rounds+' · Wars: '+state.wars;}
 function controls(){
  $('flip').disabled=busy||auto||state.winner!==null;
- $('flip').textContent=busy?'Resolving…':auto?'Auto Play running…':started?'👆 Flip Next Card':'👆 Flip Your First Card';
+ const gesture=matchMedia('(pointer: coarse)').matches?'Tap':'Click';
+ $('flip').textContent='👆 '+gesture+(started?' to flip the next cards':' to flip your first cards');
  $('flip').classList.toggle('ready',!busy&&!auto&&state.winner===null);
  $('auto').textContent=auto?'Stop Auto Play':'Auto Play';$('auto').setAttribute('aria-pressed',String(auto));$('auto').disabled=state.winner!==null;
- $('flip').hidden=state.winner!==null;
+ $('flip').hidden=busy||auto||state.winner!==null;
+ $('flip').parentElement.classList.toggle('waiting',busy||auto||state.winner!==null);
 }
 function stop(){auto=false;clearTimeout(timer);timer=null;controls();}
 function say(title,detail){$('action').textContent=title;$('detail').textContent=detail;}
