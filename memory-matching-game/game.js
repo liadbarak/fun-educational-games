@@ -31,6 +31,18 @@
     $('announcement').textContent=$('summary').textContent;
     emit('game_over',{moves:result.moves,duration_sec:result.seconds,completed:true,new_best:record});
   }
+  function celebrate(i) {
+    const paired=buttons.filter((_,j)=>game.matched.has(j)&&game.cards[j].id===game.cards[i].id);
+    paired.forEach(button=>{
+      button.classList.remove('match-pop');
+      // Restart the animation for this newly matched pair only.
+      void button.offsetWidth;
+      button.classList.add('match-pop');
+    });
+    const cheer=$('match-cheer');
+    cheer.textContent=['Lovely pair!','You found it!','Memory magic!','Perfect match!'][game.matches%4];
+    cheer.classList.remove('celebrate'); void cheer.offsetWidth; cheer.classList.add('celebrate');
+  }
   function flip(i) {
     const outcome=game.flip(i); if(outcome==='ignored') return;
     if(!started) { started=true;since=performance.now();ticker=setInterval(()=>{$('time').textContent=format(seconds());},250);emit('game_start'); }
@@ -39,13 +51,14 @@
     if(outcome==='miss') {
       $('announcement').textContent=`${game.cards[game.open[0]].name} and ${game.cards[i].name}. No match. Try again.`;
       mismatch=setTimeout(()=>{game.conceal();draw();},950);
-    } else if(outcome==='match') $('announcement').textContent=`${game.cards[i].name} pair found. ${game.matches} of ${game.pairs} pairs.`;
-    else if(outcome==='complete') finish();
+    } else if(outcome==='match') { celebrate(i); $('announcement').textContent=`${game.cards[i].name} pair found. ${game.matches} of ${game.pairs} pairs.`; }
+    else if(outcome==='complete') { celebrate(i); finish(); }
   }
   function reset(reason) {
     if(game && reason) emit(reason==='settings'?'game_settings':'game_restart',{next_theme:$('theme').value,next_difficulty:$('difficulty').value,moves:game.moves});
     clearTimeout(mismatch);clearInterval(ticker); elapsed=0;since=null;started=false;progress=false;
     game=new MemoryModel.Game($('theme').value,$('difficulty').value);
+    $('match-cheer').classList.remove('celebrate'); $('match-cheer').textContent='';
     $('completion').hidden=true; $('announcement').textContent='New board ready. Flip any two cards.';
     $('board').replaceChildren(); $('board').dataset.difficulty=game.difficulty;
     buttons=game.cards.map((item,i)=>{
