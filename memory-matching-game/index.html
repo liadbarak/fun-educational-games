@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Matching Game – Play Free Online | PuzzleTen</title>
+<meta name="description" content="Play a free memory matching game online. Flip identical pairs with animal, letter, dinosaur, food and space themes. Three levels, no signup or download.">
+<link rel="canonical" href="https://puzzleten.com/memory-matching-game/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#5B8DEF">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Memory Matching Game – Play Free Online | PuzzleTen">
+<meta property="og:description" content="Find identical pairs in five themes and three difficulty levels. Start with animals, then challenge your best moves and time.">
+<meta property="og:url" content="https://puzzleten.com/memory-matching-game/">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="memory.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
+</head>
+<body class="memory-page">
+<main class="memory-main">
+<header><nav><a href="/">← PuzzleTen</a><a href="#how-to-play">How to play</a></nav>
+<h1>Memory Matching Game</h1><p>Two cards. One pair. How many can you remember?</p></header>
+<section class="memory-game" aria-label="Memory matching game">
+<div class="memory-controls">
+<label for="theme">Theme<select id="theme"><option value="animals">Animals</option><option value="letters">Letters</option><option value="dinosaurs">Dinosaurs</option><option value="food">Food</option><option value="space">Space</option></select></label>
+<label for="difficulty">Level<select id="difficulty"><option value="easy">Easy · 6 pairs</option><option value="medium">Medium · 8 pairs</option><option value="hard">Hard · 12 pairs</option></select></label>
+<button id="new-game" type="button">New Game</button>
+</div>
+<div class="memory-stats"><div>Moves<strong id="moves">0</strong></div><div>Matches<strong id="matches">0 / 6</strong></div><div>Time<strong id="time">0:00</strong></div><div class="best-stat">Personal best<strong id="best">Set your first best</strong></div></div>
+<p class="board-hint">Flip any two cards to begin. Find two identical pictures.</p>
+<noscript><p>Enable JavaScript to flip cards and play. The rules and theme descriptions below are available without it.</p></noscript>
+<div class="memory-board-wrap"><div id="board" class="memory-board" aria-label="Cards"></div><div id="match-cheer" class="match-cheer" aria-hidden="true"></div></div>
+<p id="announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+<div id="completion" class="memory-completion" hidden><h2>Every pair found!</h2><p id="summary"></p><button type="button" id="play-again">Play Again</button></div>
+<p class="settings-note">Changing the theme or level deals a new board.</p>
+</section>
+<section class="memory-copy">
+<h2>Free Memory Matching Game</h2>
+<p>Play a free online matching pairs game with no signup or download. Every card has one identical partner. Animals and Easy are ready when you arrive; choose another theme or a larger board whenever you want a new challenge. There is no countdown or time limit.</p>
+<h2 id="how-to-play">How to Play</h2>
+<ol><li>Flip a card, then choose a second card. Two flips count as one move.</li><li>If the pictures or uppercase letters are identical, the pair stays face up with a check mark.</li><li>If they differ, both cards turn back over after a short pause. Remember their positions for your next turn.</li><li>Find all the pairs to finish. Play again to try for fewer moves, then a faster time.</li></ol>
+<p>Use a mouse or tap on a phone. With a keyboard, Tab to a card and press Enter or Space to flip it; arrow keys move between cards.</p>
+<h2>Memory Game Themes</h2>
+<ul><li><strong>Animals:</strong> match cats, rabbits, frogs and other animal portraits. A friendly starting point for a memory game for kids or a quick break for adults.</li><li><strong>Letters:</strong> large uppercase alphabet cards. Match A with A, never A with a picture or a lowercase letter.</li><li><strong>Dinosaurs:</strong> match illustrated dinosaur cards, from Rex to Triceratops. Each has a name label to help distinguish it.</li><li><strong>Food:</strong> find identical fruit, snacks and treats, including apples, pizza and ice cream.</li><li><strong>Space:</strong> pair rockets, planets, stars and other space pictures.</li></ul>
+<p>All five themes use the same rule: two visually identical cards make a pair. Theme changes stay on this page.</p>
+<h2>Difficulty Levels</h2>
+<p><strong>Easy:</strong> 6 pairs (12 cards). <strong>Medium:</strong> 8 pairs (16 cards). <strong>Hard:</strong> 12 pairs (24 cards). Start small to learn the positions, then add more cards when you are ready. Every new board shuffles the cards and may choose different items.</p>
+<h2>How do personal bests work?</h2>
+<p>Your best completed round is saved in this browser separately for each theme and level. Fewer moves wins; time breaks a tie. The timer starts with your first card and pauses when the page is hidden. Reloading starts a fresh board but keeps saved bests. Clearing browser data removes them; if storage is unavailable, you can still play.</p>
+<p>For another card game, try <a href="/go-fish/">Go Fish</a>. Prefer a dinosaur sorting challenge? Play <a href="/dinosaur-matching-game/">Dino Nestkeepers</a>. Or find hidden vocabulary in <a href="/wordsearch/">Word Search</a>.</p>
+</section>
+</main>
+<script src="../shared/shell.js"></script><script src="model.js"></script><script src="game.js"></script><script>renderFooter('../');</script>
+</body>
+</html>
