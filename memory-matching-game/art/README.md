@@ -1,0 +1,1 @@
+Original SVG illustrations authored for PuzzleTen. No third-party artwork or fonts. Dinosaur illustrations are stylized game symbols, not scientific reconstructions. Matching cards use the same SVG file and label.
