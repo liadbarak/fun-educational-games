@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Münze werfen online – Kopf oder Zahl | PuzzleTen</title>
+<meta name="description" content="Wirf kostenlos eine oder mehrere Münzen online. Kopf oder Zahl haben jeweils eine Chance von 50 %. Auch als Zwei-aus-drei-Runde, ohne Anmeldung.">
+<link rel="canonical" href="https://puzzleten.com/de/coin-flip/">
+<link rel="alternate" hreflang="en" href="https://puzzleten.com/coin-flip/">
+<link rel="alternate" hreflang="de" href="https://puzzleten.com/de/coin-flip/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#5B8DEF">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Münze werfen online – Kopf oder Zahl | PuzzleTen">
+<meta property="og:description" content="Wirf kostenlos eine oder mehrere Münzen online. Kopf oder Zahl haben jeweils eine Chance von 50 %. Auch als Zwei-aus-drei-Runde, ohne Anmeldung.">
+<meta property="og:url" content="https://puzzleten.com/de/coin-flip/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Münze werfen online – Kopf oder Zahl", "url": "https://puzzleten.com/de/coin-flip/", "inLanguage": "de", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "description": "Wirf kostenlos eine oder mehrere Münzen online. Kopf oder Zahl haben jeweils eine Chance von 50 %.", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}</script>
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/random-tools.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8141000664581999" crossorigin="anonymous"></script>
+</head>
+<body class="utility-page" data-utility="coin-flip">
+<main>
+<nav class="utility-nav" aria-label="Hauptnavigation"><a href="/">← PuzzleTen</a><a href="/#random-tools">Zufallstools</a></nav>
+<nav class="utility-language" aria-label="Sprache"><a lang="en" hreflang="en" href="/coin-flip/">English</a><span lang="de" aria-current="page">Deutsch</span></nav>
+<header class="utility-hero"><h1>Münze werfen – Kopf oder Zahl</h1><p>Kopf oder Zahl? Wirf eine einzelne Münze, spiele zwei aus drei oder vergleiche die Ergebnisse mehrerer Würfe.</p></header>
+<section class="utility-card" aria-label="Virtueller Münzwurf">
+<noscript><p>Aktiviere JavaScript, um eine Münze zu werfen. Die Anleitung und die Beispiele unten kannst du auch ohne JavaScript lesen.</p></noscript>
+<form id="utility-form">
+<div class="utility-fields">
+<label for="coin-mode">Modus<select id="coin-mode"><option value="standard">Eine oder mehrere Münzen</option><option value="best">Zwei aus drei</option></select></label>
+<label for="quantity">Wie viele Münzen?<input id="quantity" type="number" value="1" min="1" max="100" step="1" required></label></div>
+<div class="utility-actions"><button type="submit" class="btn-primary">Münze werfen</button></div>
+<p id="error" class="utility-error" role="alert"></p>
+<div class="utility-stage"><div id="coin-face" class="coin-face" aria-hidden="true">?</div><div id="results" class="utility-result" aria-label="Letzte Ergebnisse">Hier erscheinen deine Würfe.</div></div>
+<p id="totals" class="utility-hint">Kopf: 0 · Zahl: 0 · Würfe insgesamt: 0</p>
+<div class="utility-actions"><button type="button" id="copy-results" disabled>Ergebnisse kopieren</button><button type="button" id="clear-results">Ergebnisse löschen</button></div>
+<p id="status" class="utility-status" role="status" aria-live="polite" aria-atomic="true"></p>
+</form>
+<h2>Letzte Runden</h2><p id="history-empty" class="utility-hint">Hier erscheinen deine letzten zehn Runden. Beim Neuladen wird der Verlauf gelöscht.</p><ol id="history" class="utility-history" aria-label="Letzte Runden, neueste zuerst"></ol>
+</section>
+<section class="utility-copy" aria-label="Anleitung und Beispiele">
+<h2>So wirfst du online eine Münze</h2>
+<p>Wähle <strong>Münze werfen</strong>, um sofort eine virtuelle Münze zu werfen. Das Tool ist kostenlos und funktioniert ohne Download oder Anmeldung. Das Ergebnis erscheint auf der Münze und als Text. Du brauchst weder Ton noch Animation.</p>
+<h2>Kopf oder Zahl</h2>
+<p>Eine Münze hat zwei Seiten: Kopf und Zahl. Lege vor dem Wurf fest, wofür jede Seite steht. Bei Kopf beginnst du zum Beispiel das Spiel, bei Zahl ist dein Gegenüber zuerst dran.</p>
+<h2>Steht die Chance wirklich 50 zu 50?</h2>
+<p>Ja. Bei jedem Wurf wählt der kryptografische Zufallszahlengenerator deines Browsers eines von zwei gleich wahrscheinlichen Ergebnissen: 50 % Kopf und 50 % Zahl. Die Animation zeigt das Ergebnis an und hat keinen Einfluss darauf.</p>
+<p>Jeder Wurf ist unabhängig. Auch nach mehreren Würfen mit Kopf ist Zahl beim nächsten Wurf genauso wahrscheinlich wie Kopf. Bei zehn Würfen müssen die beiden Seiten nicht je fünfmal fallen.</p>
+<h2>Wann hilft ein Münzwurf?</h2>
+<p>Finde heraus, wer beim Brettspiel anfängt, wähle zwischen zwei Snacks oder probiere ein Zufallsexperiment aus. Ein Münzwurf eignet sich für einfache Entscheidungen im Alltag.</p>
+<h2>Zwei aus drei</h2>
+<p>Wähle <strong>Zwei aus drei</strong>, um eine kurze Runde zu spielen. Die Seite, die zuerst zweimal fällt, gewinnt. Bei Kopf, Kopf endet die Runde 2:0. Bei Kopf, Zahl, Zahl gewinnt Zahl mit 2:1. Jede Runde dauert zwei oder drei Würfe, und beide Seiten haben die gleiche Gewinnchance.</p>
+<h2>Mehrere Münzen auf einmal werfen</h2>
+<p>Wähle <strong>Eine oder mehrere Münzen</strong> und gib eine Anzahl von 1 bis 100 ein. Wirf zwei Münzen für ein Ergebnispaar, zehn für einen kurzen Versuch oder hundert für eine größere Stichprobe. Jede Münze wird unabhängig geworfen. Die Anzeige zeigt alle Ergebnisse und zählt, wie oft Kopf und Zahl gefallen sind.</p>
+<p>Die Gesamtzahl enthält alle Würfe, auch die aus Zwei-aus-drei-Runden. Du kannst die letzten Ergebnisse kopieren, die letzten zehn Runden ansehen oder alles löschen. Beim Neuladen wird die gesamte Sitzung zurückgesetzt.</p>
+<h2>Ein einfaches Zufallsexperiment</h2>
+<p>Wirf zuerst zehn Münzen und zähle, wie oft Kopf fällt. Wiederhole den Versuch mit hundert Münzen. Vergleiche die Anteile: Sechsmal Kopf bei zehn Würfen entspricht 60 %, 53-mal Kopf bei hundert Würfen entspricht 53 %. Bei größeren Stichproben liegt der Anteil meist näher an 50 %. Genau die Hälfte ist bei keinem einzelnen Versuch garantiert.</p>
+<h2>Häufige Fragen zum Münzwurf</h2>
+<details><summary>Wie werfe ich online eine Münze?</summary><p>Lass die Anzahl auf 1 stehen und wähle <strong>Münze werfen</strong>. Das Ergebnis erscheint direkt unter der Schaltfläche.</p></details>
+<details><summary>Ist der Online-Münzwurf zufällig?</summary><p>Das Tool verwendet den kryptografischen Zufallszahlengenerator deines Browsers. Jeder Wurf ist unabhängig von den vorherigen Würfen.</p></details>
+<details><summary>Sind Kopf und Zahl gleich wahrscheinlich?</summary><p>Ja. Bei jedem Wurf hat jede Seite eine Chance von 50 %. Auch nach fünfmal Kopf ist beim nächsten Wurf keine Seite im Vorteil.</p></details>
+<details><summary>Kann ich mit einem Münzwurf etwas entscheiden?</summary><p>Ja. Ordne vor dem Wurf eine Option Kopf und die andere Zahl zu. Das eignet sich für Spiele und kleine Alltagsentscheidungen.</p></details>
+<details><summary>Kann ich mehrmals werfen?</summary><p>Ja. Wähle erneut <strong>Münze werfen</strong>, gib eine Anzahl von 1 bis 100 ein oder wähle <strong>Zwei aus drei</strong>. Du kannst die letzten Runden und die Gesamtzahlen ansehen oder die letzten Ergebnisse kopieren.</p></details>
+<h2>Weitere Tools für dein nächstes Spiel</h2>
+<div class="utility-links">
+<a data-utility-link="random-word-generator" href="/random-word-generator/">Zufallswortgenerator<small>Wörter zum Zeichnen, Darstellen und Schreiben (auf Englisch).</small></a>
+<a data-utility-link="random-number-generator" href="/random-number-generator/">Zufallszahlengenerator<small>Zahlen ziehen, auf Wunsch ohne Wiederholung (auf Englisch).</small></a>
+<a data-utility-link="dice-roller" href="/de/dice-roller/">Online würfeln<small>Wirf einen D6, D20 oder andere Würfel.</small></a>
+<a data-utility-link="spin-the-wheel" href="/spin-the-wheel/">Glücksrad<small>Lass das Rad aus deiner Liste wählen (auf Englisch).</small></a>
+<a data-game-link="maketen" href="/maketen/">Make10 spielen<small>Löse ein Rätsel mit Zahlenkombinationen (auf Englisch).</small></a>
+</div>
+<p class="utility-hint">Entwickelt von <a href="/about.html">Liad Barak</a> für PuzzleTen. Ist dir ein Fehler aufgefallen? <a href="mailto:hello@puzzleten.com">Schreib uns</a>.</p>
+</section>
+</main>
+<script src="/shared/shell.js"></script>
+<script src="/shared/random-tools.js"></script>
+<script src="/shared/random-tools-ui.js"></script>
+<script>renderFooter('/');</script>
+</body>
+</html>
