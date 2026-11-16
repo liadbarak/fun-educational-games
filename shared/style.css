@@ -1066,3 +1066,14 @@ body.is-themed .ws-words li.is-found { background: #D6F2E3; color: #226B47; }
 /* Keep the Word Search footer inside narrow mobile viewports. */
 #ws-app ~ #site-footer { min-width: 0; max-width: 100%; }
 #ws-app ~ #site-footer a { display: inline-block; }
+
+.utility-language {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0;
+  font-size: 14px;
+}
+.utility-language [aria-current="page"] { font-weight: 700; }
+.utility-language a { text-decoration: underline; }

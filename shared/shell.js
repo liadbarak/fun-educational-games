@@ -142,15 +142,18 @@ const SLOT_IDS = {
 
 /* `base` is the relative path back to the site root: '' from the hub, '../' from a game. */
 function renderFooter(base) {
+  const [games, guides, about, privacy, contact, support] = document.documentElement?.lang === 'de'
+    ? ['Alle Spiele', 'Anleitungen', 'Über PuzzleTen', 'Datenschutz', 'Kontakt', 'Unterstützen']
+    : ['All games', 'Guides', 'About', 'Privacy', 'Contact', 'Support'];
   const footer = document.createElement('div');
   footer.id = 'site-footer';
   footer.innerHTML =
-    `<a href="${base}index.html">All games</a>·` +
-    `<a href="${base}guides/">Guides</a>·` +
-    `<a href="${base}about.html">About</a>·` +
-    `<a href="${base}about.html#privacy">Privacy</a>·` +
-    `<a href="mailto:hello@puzzleten.com">Contact</a>·` +
-    `<a href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">Support</a>`;
+    `<a href="${base}index.html">${games}</a>·` +
+    `<a href="${base}guides/">${guides}</a>·` +
+    `<a href="${base}about.html">${about}</a>·` +
+    `<a href="${base}about.html#privacy">${privacy}</a>·` +
+    `<a href="mailto:hello@puzzleten.com">${contact}</a>·` +
+    `<a href="https://buymeacoffee.com/liadb" target="_blank" rel="noopener">${support}</a>`;
   document.body.appendChild(footer);
 }
 

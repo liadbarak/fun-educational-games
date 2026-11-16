@@ -3,11 +3,51 @@
  * fair random rolls, visuals, animation and analytics.
  */
 
+const diceRollerText = {
+  en: {
+    results: 'Dice results',
+    roll: 'ROLL DICE',
+    choose: 'Choose your dice',
+    type: 'Dice type',
+    count: 'Number of dice',
+    quick: 'Quick rolls',
+    one: 'Roll 1 Die',
+    two: 'Roll 2 Dice',
+    d20: 'D20 Roller',
+    note: 'Each die is rolled independently. No results are saved or sent anywhere.',
+    rolling: 'Rolling…',
+    total: 'Total',
+    prompt: roll => `Press <span>${roll}</span>`,
+    rolled: (values, sides) => `Rolled ${values.join(', ')} on ${values.length} D${sides}${values.length === 1 ? '' : ' dice'}`,
+    face: (sides, value) => `D${sides} rolled ${value}`,
+    ready: sides => `D${sides} ready`,
+  },
+  de: {
+    results: 'Würfelergebnisse',
+    roll: 'WÜRFELN',
+    choose: 'Würfel auswählen',
+    type: 'Würfeltyp',
+    count: 'Anzahl der Würfel',
+    quick: 'Schnellwahl',
+    one: '1 Würfel',
+    two: '2 Würfel',
+    d20: 'D20 würfeln',
+    note: 'Jeder Würfel wird unabhängig geworfen. Die einzelnen Ergebnisse werden weder gespeichert noch übertragen.',
+    rolling: 'Würfeln …',
+    total: 'Summe',
+    prompt: roll => `Wähle <span>${roll}</span>`,
+    rolled: (values, sides) => `${values.length} × D${sides} gewürfelt: ${values.join(', ')}`,
+    face: (sides, value) => `D${sides}: ${value} gewürfelt`,
+    ready: sides => `D${sides} bereit`,
+  }
+};
+
 class DiceRoller {
   constructor(root, config = {}) {
     if (!root) throw new Error('DiceRoller needs a mount element');
 
     this.root = root;
+    this.text = { ...diceRollerText.en, ...diceRollerText[config.language] };
     this.sides = Number(config.sides) || 6;
     this.count = Number(config.count) || 1;
     this.supportedSides = [4, 6, 8, 10, 12, 20, 100];
@@ -31,6 +71,7 @@ class DiceRoller {
   }
 
   build() {
+    const text = this.text;
     const sideOptions = this.supportedSides
       .map(sides => `<option value="${sides}"${sides === this.sides ? ' selected' : ''}>D${sides}</option>`)
       .join('');
@@ -42,27 +83,27 @@ class DiceRoller {
     this.root.innerHTML = `
       <div class="dr-stage">
         <p class="dr-summary"></p>
-        <div class="dr-results" aria-label="Dice results"></div>
-        <p class="dr-total" aria-live="polite">Press <span>ROLL DICE</span></p>
-        <button class="dr-roll" type="button">ROLL DICE</button>
+        <div class="dr-results" aria-label="${text.results}"></div>
+        <p class="dr-total" aria-live="polite">${text.prompt(text.roll)}</p>
+        <button class="dr-roll" type="button">${text.roll}</button>
       </div>
       <aside class="dr-controls">
-        <h2>Choose your dice</h2>
+        <h2>${text.choose}</h2>
         <label class="dr-field">
-          <span>Dice type</span>
-          <select class="dr-sides" aria-label="Dice type">${sideOptions}</select>
+          <span>${text.type}</span>
+          <select class="dr-sides" aria-label="${text.type}">${sideOptions}</select>
         </label>
         <label class="dr-field">
-          <span>Number of dice</span>
-          <select class="dr-count" aria-label="Number of dice">${countOptions}</select>
+          <span>${text.count}</span>
+          <select class="dr-count" aria-label="${text.count}">${countOptions}</select>
         </label>
-        <p class="dr-presets-title">Quick rolls</p>
+        <p class="dr-presets-title">${text.quick}</p>
         <div class="dr-presets">
-          <button class="dr-preset" type="button" data-sides="6" data-count="1">Roll 1 Die</button>
-          <button class="dr-preset" type="button" data-sides="6" data-count="2">Roll 2 Dice</button>
-          <button class="dr-preset" type="button" data-sides="20" data-count="1">D20 Roller</button>
+          <button class="dr-preset" type="button" data-sides="6" data-count="1">${text.one}</button>
+          <button class="dr-preset" type="button" data-sides="6" data-count="2">${text.two}</button>
+          <button class="dr-preset" type="button" data-sides="20" data-count="1">${text.d20}</button>
         </div>
-        <p class="dr-note">Each die is rolled independently. No results are saved or sent anywhere.</p>
+        <p class="dr-note">${text.note}</p>
       </aside>`;
 
     this.resultsElement = this.root.querySelector('.dr-results');
@@ -145,7 +186,7 @@ class DiceRoller {
     const showTemporaryRoll = () => {
       const temporary = Array.from({ length: this.count }, () => this.randomInt(this.sides));
       this.renderValues(temporary);
-      this.totalElement.innerHTML = 'Rolling…';
+      this.totalElement.innerHTML = this.text.rolling;
     };
     showTemporaryRoll();
     this.timer = window.setInterval(showTemporaryRoll, 75);
@@ -156,7 +197,7 @@ class DiceRoller {
       this.values = finalValues;
       this.renderValues(this.values);
       const total = this.values.reduce((sum, value) => sum + value, 0);
-      this.totalElement.innerHTML = `Total: <span>${total}</span>`;
+      this.totalElement.innerHTML = `${this.text.total}: <span>${total}</span>`;
       this.isRolling = false;
       this.root.classList.remove('is-rolling');
       this.syncDisabled();
@@ -181,7 +222,7 @@ class DiceRoller {
     this.resultsElement.classList.add('is-placeholder');
     this.resultsElement.textContent = '';
     this.resultsElement.appendChild(this.createPlaceholderDie());
-    this.totalElement.innerHTML = 'Press <span>ROLL DICE</span>';
+    this.totalElement.innerHTML = this.text.prompt(this.text.roll);
   }
 
   renderValues(values) {
@@ -193,13 +234,13 @@ class DiceRoller {
       );
     });
     this.resultsElement.setAttribute('aria-label',
-      `Rolled ${values.join(', ')} on ${values.length} D${this.sides}${values.length === 1 ? '' : ' dice'}`);
+      this.text.rolled(values, this.sides));
   }
 
   createD6(value) {
     const die = document.createElement('div');
     die.className = 'dr-die is-d6';
-    die.setAttribute('aria-label', `D6 rolled ${value}`);
+    die.setAttribute('aria-label', this.text.face(6, value));
     const layouts = {
       1: [5],
       2: [1, 9],
@@ -219,7 +260,7 @@ class DiceRoller {
   createNumberedDie(value, sides) {
     const die = document.createElement('div');
     die.className = `dr-die is-poly is-d${sides}`;
-    die.setAttribute('aria-label', `D${sides} ${typeof value === 'number' ? `rolled ${value}` : 'ready'}`);
+    die.setAttribute('aria-label', typeof value === 'number' ? this.text.face(sides, value) : this.text.ready(sides));
     const number = document.createElement('span');
     number.className = 'dr-number';
     number.textContent = value;
@@ -230,7 +271,7 @@ class DiceRoller {
   createPlaceholderDie() {
     const die = document.createElement('div');
     die.className = `dr-die is-poly is-ready${this.sides === 6 ? ' is-d6-ready' : ` is-d${this.sides}`}`;
-    die.setAttribute('aria-label', `D${this.sides} ready`);
+    die.setAttribute('aria-label', this.text.ready(this.sides));
     const label = document.createElement('span');
     label.className = 'dr-number';
     label.textContent = `D${this.sides}`;

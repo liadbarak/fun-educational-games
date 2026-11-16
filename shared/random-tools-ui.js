@@ -5,6 +5,49 @@
   const form = $('utility-form');
   if (!form) return;
   const isCoin = tool === 'coin-flip';
+  const language = isCoin ? document.documentElement.lang : 'en';
+  const coinText = {
+    en: {
+      heads: 'Heads',
+      tails: 'Tails',
+      flips: count => count + ' flips',
+      historyFlips: count => count + ' flip(s)',
+      best: 'Best of three',
+      winner: (face, high, low) => `${face} wins ${high}–${low}.`,
+      summary: (heads, tails) => `${heads} heads and ${tails} tails.`,
+      totals: (heads, tails) => `Heads: ${heads} · Tails: ${tails} · Total flips: ${heads + tails}`,
+      bestHint: 'Best of three stops when Heads or Tails wins twice.',
+      quantityHint: 'Choose how many coins to flip.',
+      cleared: 'Results and history cleared.',
+      copied: 'Results copied.',
+      copyUnavailable: 'Copy is unavailable here. Select the results above to copy them manually.'
+    },
+    de: {
+      heads: 'Kopf',
+      tails: 'Zahl',
+      flips: count => `${count} Würfe`,
+      historyFlips: count => count === 1 ? '1 Wurf' : `${count} Würfe`,
+      best: 'Zwei aus drei',
+      winner: (face, high, low) => `${face} gewinnt ${high}:${low}.`,
+      summary: (heads, tails) => `${heads}× Kopf und ${tails}× Zahl.`,
+      totals: (heads, tails) => `Kopf: ${heads} · Zahl: ${tails} · Würfe insgesamt: ${heads + tails}`,
+      bestHint: 'Die Runde endet, sobald Kopf oder Zahl zweimal gefallen ist.',
+      quantityHint: 'Wähle, wie viele Münzen du werfen möchtest.',
+      cleared: 'Ergebnisse und Verlauf wurden gelöscht.',
+      copied: 'Ergebnisse kopiert.',
+      copyUnavailable: 'Automatisches Kopieren ist hier nicht möglich. Markiere die Ergebnisse oben, um sie zu kopieren.',
+      quantityError: 'Gib eine ganze Zahl zwischen 1 und 100 ein.',
+      rollError: 'Der Münzwurf ist fehlgeschlagen. Versuche es erneut.'
+    }
+  };
+  const coin = { ...coinText.en, ...coinText[language] };
+  const coinFace = face => face === 'Heads' ? coin.heads : coin.tails;
+  const initialResults = $('results').textContent;
+  if (coin.quantityError) {
+    const quantity = $('quantity');
+    quantity.addEventListener('invalid', () => quantity.setCustomValidity(coin.quantityError));
+    quantity.addEventListener('input', () => quantity.setCustomValidity(''));
+  }
   let current = [], heads = 0, tails = 0, busy = false;
   const emit = (event, params = {}) => { try { if (typeof track === 'function') track(event, {utility_name: tool, ...params}); } catch {} };
   const read = id => { const input = $(id); return input.value.trim() === '' ? NaN : Number(input.value); };
@@ -29,13 +72,13 @@
   function reset() {
     if (busy) return;
     current = []; heads = 0; tails = 0;
-    $('results').textContent = isCoin ? 'Your flips will appear here.' : 'Your numbers will appear here.';
+    $('results').textContent = isCoin ? initialResults : 'Your numbers will appear here.';
     $('history').replaceChildren();
     $('history-empty').hidden = false;
     $('copy-results').disabled = true;
     $('error').textContent = '';
-    $('status').textContent = 'Results and history cleared.';
-    if (isCoin) { $('coin-face').textContent = '?'; $('totals').textContent = 'Heads: 0 · Tails: 0 · Total flips: 0'; }
+    $('status').textContent = coin.cleared;
+    if (isCoin) { $('coin-face').textContent = '?'; $('totals').textContent = coin.totals(0, 0); }
   }
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -56,12 +99,16 @@
         controls.forEach((control, i) => { control.disabled = disabled[i]; });
         busy = false;
         heads += batch.heads; tails += batch.tails;
-        show(batch.results);
-        $('coin-face').textContent = batch.winner || (batch.results.length === 1 ? batch.results[0] : batch.results.length + ' flips');
-        const description = batch.winner ? `${batch.winner} wins ${Math.max(batch.heads, batch.tails)}–${Math.min(batch.heads, batch.tails)}.` : `${batch.heads} heads and ${batch.tails} tails.`;
+        const results = batch.results.map(coinFace);
+        const winner = batch.winner && coinFace(batch.winner);
+        show(results);
+        $('coin-face').textContent = winner || (results.length === 1 ? results[0] : coin.flips(results.length));
+        const description = winner
+          ? coin.winner(winner, Math.max(batch.heads, batch.tails), Math.min(batch.heads, batch.tails))
+          : coin.summary(batch.heads, batch.tails);
         $('status').textContent = description;
-        $('totals').textContent = `Heads: ${heads} · Tails: ${tails} · Total flips: ${heads + tails}`;
-        history(`${best ? 'Best of three' : batch.results.length + ' flip(s)'}: ${batch.results.join(', ')}. ${description}`);
+        $('totals').textContent = coin.totals(heads, tails);
+        history(`${best ? coin.best : coin.historyFlips(results.length)}: ${results.join(', ')}. ${description}`);
         emit('utility_use', {mode: best ? 'best_of_three' : 'standard', count: batch.results.length});
       } else {
         const min = read('minimum'), max = read('maximum'), count = read('quantity');
@@ -72,12 +119,12 @@
         history(`${min} to ${max}: ${values.join(', ')}`);
         emit('utility_use', {count, no_repeats: unique});
       }
-    } catch (error) { $('error').textContent = error.message; }
+    } catch (error) { $('error').textContent = coin.rollError ?? error.message; }
   });
   $('clear-results').addEventListener('click', reset);
   $('copy-results').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(current.join(', ')); $('status').textContent = 'Results copied.'; emit('utility_copy'); }
-    catch { $('status').textContent = 'Copy is unavailable here. Select the results above to copy them manually.'; }
+    try { await navigator.clipboard.writeText(current.join(', ')); $('status').textContent = coin.copied; emit('utility_copy'); }
+    catch { $('status').textContent = coin.copyUnavailable; }
   });
   document.querySelectorAll('[data-range]').forEach(button => button.addEventListener('click', () => {
     $('minimum').value = 1;
@@ -87,7 +134,7 @@
   }));
   if (isCoin) $('coin-mode').addEventListener('change', () => {
     $('quantity').disabled = $('coin-mode').value === 'best';
-    $('status').textContent = $('quantity').disabled ? 'Best of three stops when Heads or Tails wins twice.' : 'Choose how many coins to flip.';
+    $('status').textContent = $('quantity').disabled ? coin.bestHint : coin.quantityHint;
   });
   document.querySelectorAll('[data-utility-link]').forEach(link => link.addEventListener('click', () => emit('utility_to_utility', {from_utility: tool, to_utility: link.dataset.utilityLink})));
   document.querySelectorAll('[data-game-link]').forEach(link => link.addEventListener('click', () => emit('utility_to_game', {game_name: link.dataset.gameLink})));
